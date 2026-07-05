@@ -78,7 +78,7 @@ function ClienteDetail() {
       const patch: Record<string, unknown> = { ...edit };
       if ("valor_mensalidade" in patch) patch.valor_mensalidade = parseFloat(String(patch.valor_mensalidade)) || 0;
       if ("dia_vencimento" in patch) patch.dia_vencimento = parseInt(String(patch.dia_vencimento)) || 10;
-      const { error } = await supabase.from("clientes").update(patch).eq("id", id);
+      const { error } = await supabase.from("clientes").update(patch as never).eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
