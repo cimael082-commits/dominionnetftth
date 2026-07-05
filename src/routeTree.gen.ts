@@ -13,6 +13,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppPesquisaRouteImport } from './routes/_app/pesquisa'
+import { Route as AppMapaRouteImport } from './routes/_app/mapa'
 import { Route as AppFinanceiroRouteImport } from './routes/_app/financeiro'
 import { Route as AppDashboardRouteImport } from './routes/_app/dashboard'
 import { Route as AppConfiguracoesRouteImport } from './routes/_app/configuracoes'
@@ -37,6 +38,11 @@ const IndexRoute = IndexRouteImport.update({
 const AppPesquisaRoute = AppPesquisaRouteImport.update({
   id: '/pesquisa',
   path: '/pesquisa',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppMapaRoute = AppMapaRouteImport.update({
+  id: '/mapa',
+  path: '/mapa',
   getParentRoute: () => AppRoute,
 } as any)
 const AppFinanceiroRoute = AppFinanceiroRouteImport.update({
@@ -78,6 +84,7 @@ export interface FileRoutesByFullPath {
   '/configuracoes': typeof AppConfiguracoesRoute
   '/dashboard': typeof AppDashboardRoute
   '/financeiro': typeof AppFinanceiroRoute
+  '/mapa': typeof AppMapaRoute
   '/pesquisa': typeof AppPesquisaRoute
   '/clientes/$id': typeof AppClientesIdRoute
 }
@@ -89,6 +96,7 @@ export interface FileRoutesByTo {
   '/configuracoes': typeof AppConfiguracoesRoute
   '/dashboard': typeof AppDashboardRoute
   '/financeiro': typeof AppFinanceiroRoute
+  '/mapa': typeof AppMapaRoute
   '/pesquisa': typeof AppPesquisaRoute
   '/clientes/$id': typeof AppClientesIdRoute
 }
@@ -102,6 +110,7 @@ export interface FileRoutesById {
   '/_app/configuracoes': typeof AppConfiguracoesRoute
   '/_app/dashboard': typeof AppDashboardRoute
   '/_app/financeiro': typeof AppFinanceiroRoute
+  '/_app/mapa': typeof AppMapaRoute
   '/_app/pesquisa': typeof AppPesquisaRoute
   '/_app/clientes/$id': typeof AppClientesIdRoute
 }
@@ -115,6 +124,7 @@ export interface FileRouteTypes {
     | '/configuracoes'
     | '/dashboard'
     | '/financeiro'
+    | '/mapa'
     | '/pesquisa'
     | '/clientes/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -126,6 +136,7 @@ export interface FileRouteTypes {
     | '/configuracoes'
     | '/dashboard'
     | '/financeiro'
+    | '/mapa'
     | '/pesquisa'
     | '/clientes/$id'
   id:
@@ -138,6 +149,7 @@ export interface FileRouteTypes {
     | '/_app/configuracoes'
     | '/_app/dashboard'
     | '/_app/financeiro'
+    | '/_app/mapa'
     | '/_app/pesquisa'
     | '/_app/clientes/$id'
   fileRoutesById: FileRoutesById
@@ -176,6 +188,13 @@ declare module '@tanstack/react-router' {
       path: '/pesquisa'
       fullPath: '/pesquisa'
       preLoaderRoute: typeof AppPesquisaRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/mapa': {
+      id: '/_app/mapa'
+      path: '/mapa'
+      fullPath: '/mapa'
+      preLoaderRoute: typeof AppMapaRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/financeiro': {
@@ -241,6 +260,7 @@ interface AppRouteChildren {
   AppConfiguracoesRoute: typeof AppConfiguracoesRoute
   AppDashboardRoute: typeof AppDashboardRoute
   AppFinanceiroRoute: typeof AppFinanceiroRoute
+  AppMapaRoute: typeof AppMapaRoute
   AppPesquisaRoute: typeof AppPesquisaRoute
 }
 
@@ -250,6 +270,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppConfiguracoesRoute: AppConfiguracoesRoute,
   AppDashboardRoute: AppDashboardRoute,
   AppFinanceiroRoute: AppFinanceiroRoute,
+  AppMapaRoute: AppMapaRoute,
   AppPesquisaRoute: AppPesquisaRoute,
 }
 
