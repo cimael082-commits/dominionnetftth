@@ -14,16 +14,204 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      clientes: {
+        Row: {
+          bairro: string | null
+          cep: string | null
+          cidade: string | null
+          cpf_cnpj: string | null
+          created_at: string
+          data_ativacao: string | null
+          dia_vencimento: number
+          email: string | null
+          endereco: string | null
+          id: string
+          latitude: number | null
+          login_pppoe: string | null
+          longitude: number | null
+          nome: string
+          observacoes: string | null
+          plano: string | null
+          senha_pppoe: string | null
+          senha_wifi: string | null
+          ssid_wifi: string | null
+          status: Database["public"]["Enums"]["cliente_status"]
+          telefone: string | null
+          updated_at: string
+          valor_mensalidade: number
+          whatsapp: string | null
+        }
+        Insert: {
+          bairro?: string | null
+          cep?: string | null
+          cidade?: string | null
+          cpf_cnpj?: string | null
+          created_at?: string
+          data_ativacao?: string | null
+          dia_vencimento?: number
+          email?: string | null
+          endereco?: string | null
+          id?: string
+          latitude?: number | null
+          login_pppoe?: string | null
+          longitude?: number | null
+          nome: string
+          observacoes?: string | null
+          plano?: string | null
+          senha_pppoe?: string | null
+          senha_wifi?: string | null
+          ssid_wifi?: string | null
+          status?: Database["public"]["Enums"]["cliente_status"]
+          telefone?: string | null
+          updated_at?: string
+          valor_mensalidade?: number
+          whatsapp?: string | null
+        }
+        Update: {
+          bairro?: string | null
+          cep?: string | null
+          cidade?: string | null
+          cpf_cnpj?: string | null
+          created_at?: string
+          data_ativacao?: string | null
+          dia_vencimento?: number
+          email?: string | null
+          endereco?: string | null
+          id?: string
+          latitude?: number | null
+          login_pppoe?: string | null
+          longitude?: number | null
+          nome?: string
+          observacoes?: string | null
+          plano?: string | null
+          senha_pppoe?: string | null
+          senha_wifi?: string | null
+          ssid_wifi?: string | null
+          status?: Database["public"]["Enums"]["cliente_status"]
+          telefone?: string | null
+          updated_at?: string
+          valor_mensalidade?: number
+          whatsapp?: string | null
+        }
+        Relationships: []
+      }
+      configuracoes_empresa: {
+        Row: {
+          cidade: string | null
+          cnpj: string | null
+          created_at: string
+          endereco: string | null
+          id: string
+          nome_empresa: string
+          pix_beneficiario: string
+          pix_chave: string
+          pix_cidade: string
+          pix_tipo: string
+          telefone: string | null
+          updated_at: string
+        }
+        Insert: {
+          cidade?: string | null
+          cnpj?: string | null
+          created_at?: string
+          endereco?: string | null
+          id?: string
+          nome_empresa?: string
+          pix_beneficiario?: string
+          pix_chave?: string
+          pix_cidade?: string
+          pix_tipo?: string
+          telefone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          cidade?: string | null
+          cnpj?: string | null
+          created_at?: string
+          endereco?: string | null
+          id?: string
+          nome_empresa?: string
+          pix_beneficiario?: string
+          pix_chave?: string
+          pix_cidade?: string
+          pix_tipo?: string
+          telefone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      parcelas: {
+        Row: {
+          cliente_id: string
+          created_at: string
+          data_pagamento: string | null
+          data_vencimento: string
+          forma_pagamento: string | null
+          id: string
+          numero_parcela: number | null
+          observacao: string | null
+          origem: string
+          referencia_ano: number
+          referencia_mes: number
+          status: Database["public"]["Enums"]["parcela_status"]
+          total_parcelas: number | null
+          updated_at: string
+          valor: number
+        }
+        Insert: {
+          cliente_id: string
+          created_at?: string
+          data_pagamento?: string | null
+          data_vencimento: string
+          forma_pagamento?: string | null
+          id?: string
+          numero_parcela?: number | null
+          observacao?: string | null
+          origem?: string
+          referencia_ano: number
+          referencia_mes: number
+          status?: Database["public"]["Enums"]["parcela_status"]
+          total_parcelas?: number | null
+          updated_at?: string
+          valor: number
+        }
+        Update: {
+          cliente_id?: string
+          created_at?: string
+          data_pagamento?: string | null
+          data_vencimento?: string
+          forma_pagamento?: string | null
+          id?: string
+          numero_parcela?: number | null
+          observacao?: string | null
+          origem?: string
+          referencia_ano?: number
+          referencia_mes?: number
+          status?: Database["public"]["Enums"]["parcela_status"]
+          total_parcelas?: number | null
+          updated_at?: string
+          valor?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "parcelas_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "clientes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      atualizar_status_vencidos: { Args: never; Returns: undefined }
     }
     Enums: {
-      [_ in never]: never
+      cliente_status: "ativo" | "bloqueado" | "cancelado" | "inadimplente"
+      parcela_status: "pago" | "pendente" | "vencido" | "cancelado"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +338,9 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      cliente_status: ["ativo", "bloqueado", "cancelado", "inadimplente"],
+      parcela_status: ["pago", "pendente", "vencido", "cancelado"],
+    },
   },
 } as const
