@@ -80,17 +80,8 @@ function CarnesPage() {
 
       const dataInicio = new Date(inicio + "T00:00:00");
       const lista: CarneParcela[] = [];
-      const insertRows = [] as Parameters<typeof supabase.from<"parcelas">>[0] extends never ? never : Array<{
-        cliente_id: string;
-        numero_parcela: number;
-        total_parcelas: number;
-        referencia_mes: number;
-        referencia_ano: number;
-        valor: number;
-        data_vencimento: string;
-        status: "pendente";
-        origem: string;
-      }>;
+      type ParcelaInsert = import("@/integrations/supabase/types").TablesInsert<"parcelas">;
+      const insertRows: ParcelaInsert[] = [];
       for (let i = 0; i < parcelas; i++) {
         const venc = new Date(dataInicio);
         venc.setMonth(venc.getMonth() + i);
