@@ -9,6 +9,7 @@ import {
   LogOut,
   Waves,
   Settings,
+  Map,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
@@ -17,6 +18,7 @@ import { toast } from "sonner";
 const nav = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/clientes", label: "Clientes", icon: Users },
+  { to: "/mapa", label: "Mapa da Rede", icon: Map },
   { to: "/financeiro", label: "Financeiro", icon: Wallet },
   { to: "/carnes", label: "Carnês", icon: FileText },
   { to: "/pesquisa", label: "Pesquisa", icon: Search },
