@@ -145,6 +145,7 @@ function ClientesPage() {
 
 function NovoClienteDialog() {
   const qc = useQueryClient();
+  const geocode = useServerFn(geocodeAddress);
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({
     nome: "",
@@ -169,10 +170,23 @@ function NovoClienteDialog() {
 
   const mut = useMutation({
     mutationFn: async () => {
+      let lat: number | null = null;
+      let lng: number | null = null;
+      const addrParts = [form.endereco, form.bairro, form.cidade, form.cep].filter(Boolean);
+      if (addrParts.length >= 2) {
+        try {
+          const geo = await geocode({ data: { address: addrParts.join(", ") } });
+          if (geo) { lat = geo.lat; lng = geo.lng; }
+        } catch {
+          // geocoding is best-effort; ignore
+        }
+      }
       const { error } = await supabase.from("clientes").insert({
         ...form,
         valor_mensalidade: parseFloat(form.valor_mensalidade) || 0,
         dia_vencimento: parseInt(form.dia_vencimento) || 10,
+        latitude: lat,
+        longitude: lng,
       });
       if (error) throw error;
     },
