@@ -80,7 +80,17 @@ function CarnesPage() {
 
       const dataInicio = new Date(inicio + "T00:00:00");
       const lista: CarneParcela[] = [];
-      const insertRows: Array<Record<string, unknown>> = [];
+      const insertRows = [] as Parameters<typeof supabase.from<"parcelas">>[0] extends never ? never : Array<{
+        cliente_id: string;
+        numero_parcela: number;
+        total_parcelas: number;
+        referencia_mes: number;
+        referencia_ano: number;
+        valor: number;
+        data_vencimento: string;
+        status: "pendente";
+        origem: string;
+      }>;
       for (let i = 0; i < parcelas; i++) {
         const venc = new Date(dataInicio);
         venc.setMonth(venc.getMonth() + i);
@@ -93,7 +103,7 @@ function CarnesPage() {
           referencia_ano: venc.getFullYear(),
           valor: v,
           data_vencimento: venc.toISOString().slice(0, 10),
-          status: "pendente",
+          status: "pendente" as const,
           origem: "carne",
         });
       }
