@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      ceo_emendas: {
+        Row: {
+          created_at: string
+          id: string
+          latitude: number
+          longitude: number
+          nome: string
+          observacoes: string | null
+          status: Database["public"]["Enums"]["infra_status"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          latitude: number
+          longitude: number
+          nome: string
+          observacoes?: string | null
+          status?: Database["public"]["Enums"]["infra_status"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          latitude?: number
+          longitude?: number
+          nome?: string
+          observacoes?: string | null
+          status?: Database["public"]["Enums"]["infra_status"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       clientes: {
         Row: {
           bairro: string | null
@@ -140,6 +173,45 @@ export type Database = {
         }
         Relationships: []
       }
+      ctos: {
+        Row: {
+          created_at: string
+          id: string
+          latitude: number
+          longitude: number
+          nome: string
+          observacoes: string | null
+          portas_livres: number
+          portas_totais: number
+          status: Database["public"]["Enums"]["infra_status"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          latitude: number
+          longitude: number
+          nome: string
+          observacoes?: string | null
+          portas_livres?: number
+          portas_totais?: number
+          status?: Database["public"]["Enums"]["infra_status"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          latitude?: number
+          longitude?: number
+          nome?: string
+          observacoes?: string | null
+          portas_livres?: number
+          portas_totais?: number
+          status?: Database["public"]["Enums"]["infra_status"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       parcelas: {
         Row: {
           cliente_id: string
@@ -202,6 +274,39 @@ export type Database = {
           },
         ]
       }
+      rotas_fibra: {
+        Row: {
+          coordenadas: Json
+          created_at: string
+          id: string
+          nome: string
+          observacoes: string | null
+          status: Database["public"]["Enums"]["infra_status"]
+          tipo: Database["public"]["Enums"]["rota_tipo"]
+          updated_at: string
+        }
+        Insert: {
+          coordenadas?: Json
+          created_at?: string
+          id?: string
+          nome: string
+          observacoes?: string | null
+          status?: Database["public"]["Enums"]["infra_status"]
+          tipo?: Database["public"]["Enums"]["rota_tipo"]
+          updated_at?: string
+        }
+        Update: {
+          coordenadas?: Json
+          created_at?: string
+          id?: string
+          nome?: string
+          observacoes?: string | null
+          status?: Database["public"]["Enums"]["infra_status"]
+          tipo?: Database["public"]["Enums"]["rota_tipo"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -211,7 +316,9 @@ export type Database = {
     }
     Enums: {
       cliente_status: "ativo" | "bloqueado" | "cancelado" | "inadimplente"
+      infra_status: "planejado" | "implantacao" | "ativo" | "desativado"
       parcela_status: "pago" | "pendente" | "vencido" | "cancelado"
+      rota_tipo: "fibra" | "colibri"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -340,7 +447,9 @@ export const Constants = {
   public: {
     Enums: {
       cliente_status: ["ativo", "bloqueado", "cancelado", "inadimplente"],
+      infra_status: ["planejado", "implantacao", "ativo", "desativado"],
       parcela_status: ["pago", "pendente", "vencido", "cancelado"],
+      rota_tipo: ["fibra", "colibri"],
     },
   },
 } as const
