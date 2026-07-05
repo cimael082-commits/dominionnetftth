@@ -46,7 +46,7 @@ function ConfigPage() {
       if (!q.data) return;
       const { error } = await supabase
         .from("configuracoes_empresa")
-        .update(form)
+        .update(form as never)
         .eq("id", q.data.id);
       if (error) throw error;
     },
