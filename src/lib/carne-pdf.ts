@@ -202,7 +202,7 @@ async function desenharBoleto(
   doc.setFont("helvetica", "bold");
   doc.setFontSize(7.5);
   const tel = input.empresa.telefone ?? "(82) 98758-5338 ou (82) 99382-3246";
-  doc.text(`Telefone: ${tel}  |  Suporte: ${tel}`, rx + 3, y + 24.5);
+  doc.text(`Telefone: ${tel}`, rx + 3, y + 24.5);
 
   // Linha divisória horizontal
   doc.setDrawColor(...NAVY);
