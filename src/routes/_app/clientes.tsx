@@ -173,25 +173,32 @@ function NovoClienteDialog() {
 
   const mut = useMutation({
     mutationFn: async () => {
-      let lat: number | null = null;
-      let lng: number | null = null;
-      const addrParts = [form.endereco, form.bairro, form.cidade, form.cep].filter(Boolean);
-      if (addrParts.length >= 2) {
-        try {
-          const geo = await geocode({ data: { address: addrParts.join(", ") } });
-          if (geo) { lat = geo.lat; lng = geo.lng; }
-        } catch {
-          // geocoding is best-effort; ignore
+      let lat: number | null = form.latitude ? parseFloat(form.latitude) : null;
+      let lng: number | null = form.longitude ? parseFloat(form.longitude) : null;
+      if (lat == null || lng == null || Number.isNaN(lat) || Number.isNaN(lng)) {
+        lat = null;
+        lng = null;
+        const addrParts = [form.endereco, form.bairro, form.cidade, form.cep].filter(Boolean);
+        if (addrParts.length >= 2) {
+          try {
+            const geo = await geocode({ data: { address: addrParts.join(", ") } });
+            if (geo) { lat = geo.lat; lng = geo.lng; }
+          } catch {
+            // geocoding is best-effort; ignore
+          }
         }
       }
+      const { latitude: _lat, longitude: _lng, ...rest } = form;
+      void _lat; void _lng;
       const { error } = await supabase.from("clientes").insert({
-        ...form,
+        ...rest,
         valor_mensalidade: parseFloat(form.valor_mensalidade) || 0,
         dia_vencimento: parseInt(form.dia_vencimento) || 10,
         latitude: lat,
         longitude: lng,
       });
       if (error) throw error;
+
     },
     onSuccess: () => {
       toast.success("Cliente cadastrado!");
