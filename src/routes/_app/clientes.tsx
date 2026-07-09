@@ -166,7 +166,10 @@ function NovoClienteDialog() {
     senha_wifi: "",
     status: "ativo" as ClienteStatus,
     observacoes: "",
+    latitude: "",
+    longitude: "",
   });
+
 
   const mut = useMutation({
     mutationFn: async () => {
