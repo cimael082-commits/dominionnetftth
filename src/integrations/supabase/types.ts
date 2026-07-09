@@ -277,7 +277,9 @@ export type Database = {
       rotas_fibra: {
         Row: {
           coordenadas: Json
+          cor_cabo: string
           created_at: string
+          fibras_qtd: number
           id: string
           nome: string
           observacoes: string | null
@@ -287,7 +289,9 @@ export type Database = {
         }
         Insert: {
           coordenadas?: Json
+          cor_cabo?: string
           created_at?: string
+          fibras_qtd?: number
           id?: string
           nome: string
           observacoes?: string | null
@@ -297,7 +301,9 @@ export type Database = {
         }
         Update: {
           coordenadas?: Json
+          cor_cabo?: string
           created_at?: string
+          fibras_qtd?: number
           id?: string
           nome?: string
           observacoes?: string | null
