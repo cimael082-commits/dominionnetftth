@@ -166,29 +166,39 @@ function NovoClienteDialog() {
     senha_wifi: "",
     status: "ativo" as ClienteStatus,
     observacoes: "",
+    latitude: "",
+    longitude: "",
   });
+
 
   const mut = useMutation({
     mutationFn: async () => {
-      let lat: number | null = null;
-      let lng: number | null = null;
-      const addrParts = [form.endereco, form.bairro, form.cidade, form.cep].filter(Boolean);
-      if (addrParts.length >= 2) {
-        try {
-          const geo = await geocode({ data: { address: addrParts.join(", ") } });
-          if (geo) { lat = geo.lat; lng = geo.lng; }
-        } catch {
-          // geocoding is best-effort; ignore
+      let lat: number | null = form.latitude ? parseFloat(form.latitude) : null;
+      let lng: number | null = form.longitude ? parseFloat(form.longitude) : null;
+      if (lat == null || lng == null || Number.isNaN(lat) || Number.isNaN(lng)) {
+        lat = null;
+        lng = null;
+        const addrParts = [form.endereco, form.bairro, form.cidade, form.cep].filter(Boolean);
+        if (addrParts.length >= 2) {
+          try {
+            const geo = await geocode({ data: { address: addrParts.join(", ") } });
+            if (geo) { lat = geo.lat; lng = geo.lng; }
+          } catch {
+            // geocoding is best-effort; ignore
+          }
         }
       }
+      const { latitude: _lat, longitude: _lng, ...rest } = form;
+      void _lat; void _lng;
       const { error } = await supabase.from("clientes").insert({
-        ...form,
+        ...rest,
         valor_mensalidade: parseFloat(form.valor_mensalidade) || 0,
         dia_vencimento: parseInt(form.dia_vencimento) || 10,
         latitude: lat,
         longitude: lng,
       });
       if (error) throw error;
+
     },
     onSuccess: () => {
       toast.success("Cliente cadastrado!");
@@ -251,9 +261,43 @@ function NovoClienteDialog() {
               </SelectContent>
             </Select>
           </Field>
+          <Field label="Localização (lat, lng)" col={2}>
+            <div className="flex gap-2">
+              <Input
+                placeholder="Cole aqui: -9.66580, -35.73530 (opcional — use Localizar no Mapa)"
+                value={form.latitude && form.longitude ? `${form.latitude}, ${form.longitude}` : ""}
+                onChange={(e) => {
+                  const parts = e.target.value.split(/[,\s]+/).filter(Boolean);
+                  set("latitude", parts[0] ?? "");
+                  set("longitude", parts[1] ?? "");
+                }}
+              />
+              <Button
+                type="button"
+                variant="outline"
+                onClick={async () => {
+                  try {
+                    const txt = await navigator.clipboard.readText();
+                    const parts = txt.trim().split(/[,\s]+/).filter(Boolean);
+                    if (parts.length >= 2) {
+                      set("latitude", parts[0]);
+                      set("longitude", parts[1]);
+                      toast.success("Coordenadas coladas");
+                    } else toast.error("Formato inválido");
+                  } catch { toast.error("Não foi possível ler a área de transferência"); }
+                }}
+              >
+                Colar
+              </Button>
+            </div>
+            <p className="text-[10px] text-muted-foreground mt-1">
+              Se vazio, será geocodificado automaticamente pelo endereço.
+            </p>
+          </Field>
           <Field label="Observações" col={2}>
             <Textarea rows={2} value={form.observacoes} onChange={(e) => set("observacoes", e.target.value)} />
           </Field>
+
 
           <DialogFooter className="col-span-2 mt-2">
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>Cancelar</Button>

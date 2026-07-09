@@ -7,16 +7,20 @@ import {
   Route as RouteIcon,
   Box,
   Package,
-  UserSearch,
+  MapPin,
   Users,
   Activity,
   Layers,
+  Search,
+  Copy,
+  X,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useGoogleMaps } from "@/hooks/use-google-maps";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
   DialogContent,
@@ -56,10 +60,18 @@ type Cto = {
   status: InfraStatus;
 };
 type Ceo = { id: string; nome: string; latitude: number; longitude: number; status: InfraStatus };
-type Rota = { id: string; nome: string; tipo: RotaTipo; status: InfraStatus; coordenadas: LatLng[] };
+type Rota = {
+  id: string;
+  nome: string;
+  tipo: RotaTipo;
+  status: InfraStatus;
+  coordenadas: LatLng[];
+  cor_cabo?: string | null;
+  fibras_qtd?: number | null;
+};
 type Cliente = { id: string; nome: string; latitude: number | null; longitude: number | null; status: string; plano: string | null };
 
-type Mode = "none" | "cto" | "ceo" | "rota";
+type Mode = "none" | "cto" | "ceo" | "rota" | "locate";
 
 const statusColor: Record<InfraStatus, string> = {
   planejado: "#f59e0b",
@@ -75,10 +87,18 @@ const statusLabel: Record<InfraStatus, string> = {
   desativado: "Desativado",
 };
 
-const rotaColor: Record<RotaTipo, string> = {
-  fibra: "#f59e0b",
-  colibri: "#ec4899",
-};
+const CORES_CABO = [
+  "#f59e0b", // laranja
+  "#ec4899", // rosa
+  "#3b82f6", // azul
+  "#10b981", // verde
+  "#a855f7", // roxo
+  "#ef4444", // vermelho
+  "#eab308", // amarelo
+  "#0ea5e9", // ciano
+  "#111827", // preto
+  "#ffffff", // branco
+];
 
 function MapaPage() {
   const { ready, error } = useGoogleMaps();
@@ -86,6 +106,7 @@ function MapaPage() {
   const mapRef = useRef<google.maps.Map | null>(null);
   const markersRef = useRef<google.maps.Marker[]>([]);
   const polylinesRef = useRef<google.maps.Polyline[]>([]);
+  const locateMarkerRef = useRef<google.maps.Marker | null>(null);
   const drawingRef = useRef<{ points: LatLng[]; markers: google.maps.Marker[]; polyline: google.maps.Polyline | null }>({
     points: [],
     markers: [],
@@ -100,6 +121,7 @@ function MapaPage() {
   const [pendingPoint, setPendingPoint] = useState<LatLng | null>(null);
   const [pendingKind, setPendingKind] = useState<"cto" | "ceo" | null>(null);
   const [pendingRoute, setPendingRoute] = useState<LatLng[] | null>(null);
+  const [locatedPoint, setLocatedPoint] = useState<LatLng | null>(null);
   const [search, setSearch] = useState("");
 
   const ctosQ = useQuery({
@@ -143,7 +165,7 @@ function MapaPage() {
   useEffect(() => {
     if (!ready || !containerRef.current || mapRef.current) return;
     mapRef.current = new google.maps.Map(containerRef.current, {
-      center: { lat: -9.6658, lng: -35.7353 }, // Maceió
+      center: { lat: -9.6658, lng: -35.7353 },
       zoom: 12,
       mapTypeId: mapStyle,
       disableDefaultUI: true,
@@ -161,6 +183,22 @@ function MapaPage() {
       } else if (cur === "ceo") {
         setPendingKind("ceo");
         setPendingPoint(p);
+      } else if (cur === "locate") {
+        setLocatedPoint(p);
+        if (locateMarkerRef.current) locateMarkerRef.current.setMap(null);
+        locateMarkerRef.current = new google.maps.Marker({
+          position: p,
+          map: mapRef.current!,
+          animation: google.maps.Animation.DROP,
+          icon: {
+            path: google.maps.SymbolPath.CIRCLE,
+            scale: 9,
+            fillColor: "#10b981",
+            fillOpacity: 1,
+            strokeColor: "#fff",
+            strokeWeight: 3,
+          },
+        });
       } else if (cur === "rota") {
         const d = drawingRef.current;
         d.points.push(p);
@@ -191,12 +229,10 @@ function MapaPage() {
     });
   }, [ready, mapStyle]);
 
-  // Update map style
   useEffect(() => {
     if (mapRef.current) mapRef.current.setMapTypeId(mapStyle);
   }, [mapStyle]);
 
-  // Render markers/polylines
   useEffect(() => {
     if (!mapRef.current || !ready) return;
     markersRef.current.forEach((m) => m.setMap(null));
@@ -206,7 +242,6 @@ function MapaPage() {
 
     const map = mapRef.current;
 
-    // CTOs — squares
     (ctosQ.data ?? []).forEach((c) => {
       const marker = new google.maps.Marker({
         position: { lat: Number(c.latitude), lng: Number(c.longitude) },
@@ -232,7 +267,6 @@ function MapaPage() {
       markersRef.current.push(marker);
     });
 
-    // CEOs — diamonds
     (ceosQ.data ?? []).forEach((c) => {
       const marker = new google.maps.Marker({
         position: { lat: Number(c.latitude), lng: Number(c.longitude) },
@@ -254,7 +288,6 @@ function MapaPage() {
       markersRef.current.push(marker);
     });
 
-    // Clientes — small green circles
     (clientesQ.data ?? []).forEach((cl) => {
       if (cl.latitude == null || cl.longitude == null) return;
       const marker = new google.maps.Marker({
@@ -277,14 +310,14 @@ function MapaPage() {
       markersRef.current.push(marker);
     });
 
-    // Rotas
     (rotasQ.data ?? []).forEach((r) => {
       const path = Array.isArray(r.coordenadas) ? r.coordenadas : [];
       if (path.length < 2) return;
+      const color = r.cor_cabo || (r.tipo === "colibri" ? "#ec4899" : "#f59e0b");
       const pl = new google.maps.Polyline({
         path,
         map,
-        strokeColor: rotaColor[r.tipo],
+        strokeColor: color,
         strokeWeight: 3,
         strokeOpacity: r.status === "desativado" ? 0.4 : 0.9,
         icons: r.status === "planejado" ? [{ icon: { path: "M 0,-1 0,1", strokeOpacity: 1, scale: 3 }, offset: "0", repeat: "10px" }] : undefined,
@@ -310,11 +343,12 @@ function MapaPage() {
   }
 
   function toggleMode(m: Mode) {
-    if (m === "rota" && mode === "rota") {
-      finishRoute();
-      return;
-    }
+    if (m === "rota" && mode === "rota") { finishRoute(); return; }
     if (mode === "rota" && m !== "rota") cancelDrawing();
+    if (m === "locate" && mode === "locate") {
+      if (locateMarkerRef.current) { locateMarkerRef.current.setMap(null); locateMarkerRef.current = null; }
+      setLocatedPoint(null);
+    }
     setMode(mode === m ? "none" : m);
   }
 
@@ -325,7 +359,7 @@ function MapaPage() {
       clientes: (clientesQ.data ?? []).length,
       ctos: ctos.length,
       rotas: rotas.length,
-      fibras: rotas.filter((r) => r.tipo === "fibra").length,
+      fibras: rotas.reduce((s, r) => s + (r.fibras_qtd ?? 0), 0),
       livres: ctos.reduce((s, c) => s + (c.portas_livres ?? 0), 0),
       pdas: ctos.reduce((s, c) => s + (c.portas_totais - c.portas_livres), 0),
       ativas: ctos.filter((c) => c.status === "ativo").length,
@@ -361,7 +395,7 @@ function MapaPage() {
 
   return (
     <div className="relative h-screen w-full">
-      <div ref={containerRef} className="absolute inset-0" />
+      <div ref={containerRef} className={cn("absolute inset-0", mode === "locate" && "cursor-crosshair")} />
       {!ready && (
         <div className="absolute inset-0 flex items-center justify-center bg-background/70 text-muted-foreground">
           Carregando mapa...
@@ -383,7 +417,7 @@ function MapaPage() {
             className="absolute right-1.5 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center"
             aria-label="Buscar"
           >
-            <UserSearch className="h-4 w-4" />
+            <Search className="h-4 w-4" />
           </button>
         </div>
       </div>
@@ -391,11 +425,34 @@ function MapaPage() {
       {/* Left panel */}
       <div className="absolute top-4 left-4 z-10 w-64 space-y-3">
         <Panel title="Ferramentas">
-          <ToolBtn active={mode === "rota" ? "active" : "idle"} icon={<Zap />} label={mode === "rota" ? "Concluir rota" : "Motor"} onClick={() => toggleMode("rota")} />
-          <ToolBtn active={mode === "rota" ? "active" : "idle"} icon={<RouteIcon />} label="Desenhar Rota" onClick={() => toggleMode("rota")} />
-          <ToolBtn active={mode === "cto" ? "active" : "idle"} icon={<Box />} label="CTO" onClick={() => toggleMode("cto")} />
-          <ToolBtn active={mode === "ceo" ? "active" : "idle"} icon={<Package />} label="Caixa (CEO)" onClick={() => toggleMode("ceo")} />
-          <ToolBtn icon={<UserSearch />} label="Localizar Cliente" onClick={() => document.querySelector<HTMLInputElement>('input[placeholder^="Buscar"]')?.focus()} />
+          <ToolBtn
+            active={mode === "rota"}
+            iconBg="#f59e0b"
+            icon={<RouteIcon className="h-3.5 w-3.5" />}
+            label={mode === "rota" && drawingRef.current.points.length >= 2 ? "Concluir rota" : "Desenhar Rota"}
+            onClick={() => toggleMode("rota")}
+          />
+          <ToolBtn
+            active={mode === "cto"}
+            iconBg="#1E88E5"
+            icon={<Box className="h-3.5 w-3.5" />}
+            label="CTO"
+            onClick={() => toggleMode("cto")}
+          />
+          <ToolBtn
+            active={mode === "ceo"}
+            iconBg="#a855f7"
+            icon={<Package className="h-3.5 w-3.5" />}
+            label="Caixa (CEO)"
+            onClick={() => toggleMode("ceo")}
+          />
+          <ToolBtn
+            active={mode === "locate"}
+            iconBg="#10b981"
+            icon={<MapPin className="h-3.5 w-3.5" />}
+            label="Localizar Cliente"
+            onClick={() => toggleMode("locate")}
+          />
           {mode === "rota" && drawingRef.current.points.length > 0 && (
             <button
               onClick={() => { cancelDrawing(); setMode("none"); }}
@@ -403,6 +460,11 @@ function MapaPage() {
             >
               Cancelar desenho
             </button>
+          )}
+          {mode === "locate" && (
+            <p className="text-[10px] text-muted-foreground px-2 pt-1">
+              Clique no mapa para capturar a coordenada.
+            </p>
           )}
         </Panel>
 
@@ -441,12 +503,54 @@ function MapaPage() {
             <LegendMarker shape="circle" color="#10b981" label="Cliente" />
           </div>
         </Panel>
-
-        <Panel title="Rotas">
-          <LegendMarker shape="line" color={rotaColor.fibra} label="Fibra" />
-          <LegendMarker shape="line" color={rotaColor.colibri} label="Colibri" />
-        </Panel>
       </div>
+
+      {/* Locate coord card */}
+      {locatedPoint && (
+        <div className="absolute top-24 right-4 z-10 w-72 rounded-lg border border-border bg-background/95 backdrop-blur shadow-xl p-4 space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="h-7 w-7 rounded-full bg-emerald-500/15 text-emerald-500 flex items-center justify-center">
+                <MapPin className="h-4 w-4" />
+              </div>
+              <div className="font-semibold text-sm">Coordenada</div>
+            </div>
+            <button
+              onClick={() => {
+                setLocatedPoint(null);
+                if (locateMarkerRef.current) { locateMarkerRef.current.setMap(null); locateMarkerRef.current = null; }
+              }}
+              className="text-muted-foreground hover:text-foreground"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+          <div className="space-y-1.5">
+            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Latitude</div>
+            <div className="font-mono text-sm">{locatedPoint.lat.toFixed(6)}</div>
+            <div className="text-[10px] uppercase tracking-wider text-muted-foreground mt-2">Longitude</div>
+            <div className="font-mono text-sm">{locatedPoint.lng.toFixed(6)}</div>
+          </div>
+          <Button
+            className="w-full"
+            size="sm"
+            onClick={async () => {
+              const txt = `${locatedPoint.lat.toFixed(6)}, ${locatedPoint.lng.toFixed(6)}`;
+              try {
+                await navigator.clipboard.writeText(txt);
+                toast.success("Coordenada copiada", { description: txt });
+              } catch {
+                toast.error("Não foi possível copiar");
+              }
+            }}
+          >
+            <Copy className="h-3.5 w-3.5 mr-1.5" /> Copiar para colar no cliente
+          </Button>
+          <p className="text-[10px] text-muted-foreground text-center">
+            Cole no campo "Localização (lat, lng)" ao cadastrar o cliente.
+          </p>
+        </div>
+      )}
 
       {/* KPI bar */}
       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 rounded-lg border border-border bg-background/95 backdrop-blur shadow-xl px-2 py-1.5">
@@ -456,13 +560,12 @@ function MapaPage() {
           <Kpi icon={<RouteIcon />} value={kpis.rotas} label="Rotas" tone="text-orange-400" />
           <Kpi icon={<Zap />} value={kpis.fibras} label="Fibras" tone="text-yellow-400" />
           <Kpi icon={<Activity />} value={kpis.livres} label="P. Livres" tone="text-emerald-400" />
-          <Kpi icon={<Zap />} value={kpis.pdas} label="P. das" tone="text-rose-400" />
+          <Kpi icon={<Zap />} value={kpis.pdas} label="P. Usadas" tone="text-rose-400" />
           <Kpi icon={<Activity />} value={kpis.ativas} label="Ativa" tone="text-emerald-400" />
           <Kpi icon={<Package />} value={kpis.planejadas} label="Planejadas" tone="text-amber-400" />
         </div>
       </div>
 
-      {/* Dialogs */}
       <CtoCeoDialog
         open={!!pendingPoint}
         kind={pendingKind}
@@ -489,17 +592,34 @@ function Panel({ title, children }: { title: string; children: React.ReactNode }
   );
 }
 
-function ToolBtn({ icon, label, onClick, active }: { icon: React.ReactNode; label: string; onClick: () => void; active?: "active" | "idle" }) {
+function ToolBtn({
+  icon,
+  iconBg,
+  label,
+  onClick,
+  active,
+}: {
+  icon: React.ReactNode;
+  iconBg: string;
+  label: string;
+  onClick: () => void;
+  active?: boolean;
+}) {
   return (
     <button
       onClick={onClick}
       className={cn(
-        "w-full flex items-center gap-2.5 rounded-md px-2 py-2 text-sm transition-colors",
-        active === "active" ? "bg-primary text-primary-foreground" : "hover:bg-muted",
+        "w-full flex items-center gap-2.5 rounded-md px-2 py-1.5 text-sm transition-colors",
+        active ? "bg-primary/15 ring-1 ring-primary/40" : "hover:bg-muted",
       )}
     >
-      <span className="h-4 w-4">{icon}</span>
-      {label}
+      <span
+        className="h-7 w-7 shrink-0 rounded-full flex items-center justify-center text-white shadow-sm"
+        style={{ background: iconBg }}
+      >
+        {icon}
+      </span>
+      <span className="truncate">{label}</span>
     </button>
   );
 }
@@ -624,17 +744,29 @@ function RotaDialog({ points, onClose }: { points: LatLng[] | null; onClose: (sa
   const qc = useQueryClient();
   const [nome, setNome] = useState("");
   const [tipo, setTipo] = useState<RotaTipo>("fibra");
+  const [fibrasQtd, setFibrasQtd] = useState("12");
+  const [corCabo, setCorCabo] = useState("#f59e0b");
   const [status, setStatus] = useState<InfraStatus>("planejado");
+  const [observacoes, setObservacoes] = useState("");
 
   useEffect(() => {
-    if (points) { setNome(""); setTipo("fibra"); setStatus("planejado"); }
+    if (points) {
+      setNome(""); setTipo("fibra"); setFibrasQtd("12");
+      setCorCabo("#f59e0b"); setStatus("planejado"); setObservacoes("");
+    }
   }, [points]);
 
   const mut = useMutation({
     mutationFn: async () => {
       if (!points) return;
       const { error } = await db.from("rotas_fibra").insert({
-        nome, tipo, status, coordenadas: points,
+        nome,
+        tipo,
+        status,
+        coordenadas: points,
+        fibras_qtd: parseInt(fibrasQtd) || 12,
+        cor_cabo: corCabo,
+        observacoes: observacoes || null,
       });
       if (error) throw error;
     },
@@ -648,15 +780,48 @@ function RotaDialog({ points, onClose }: { points: LatLng[] | null; onClose: (sa
 
   return (
     <Dialog open={!!points} onOpenChange={(v) => !v && onClose(false)}>
-      <DialogContent>
+      <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>Nova rota ({points?.length ?? 0} pontos)</DialogTitle>
+          <DialogTitle>Nova Rota de Fibra</DialogTitle>
         </DialogHeader>
-        <div className="space-y-3">
+        <div className="space-y-4">
           <div className="space-y-1.5">
-            <Label className="text-xs">Nome</Label>
-            <Input value={nome} onChange={(e) => setNome(e.target.value)} placeholder="ex: Backbone Centro" />
+            <Label className="text-xs">Nome da Rota *</Label>
+            <Input value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Ex: Cabo Rua Goiás" />
           </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label className="text-xs">Fibras Qtd.</Label>
+              <Select value={fibrasQtd} onValueChange={setFibrasQtd}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {[6, 12, 24, 36, 48, 72, 96, 144].map((n) => (
+                    <SelectItem key={n} value={String(n)}>{n} fibras</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs">Cor do Cabo</Label>
+              <div className="flex items-center gap-1.5 flex-wrap rounded-md border border-input bg-background p-1.5 h-10">
+                {CORES_CABO.map((c) => (
+                  <button
+                    key={c}
+                    type="button"
+                    onClick={() => setCorCabo(c)}
+                    className={cn(
+                      "h-5 w-5 rounded-full border transition-transform",
+                      corCabo === c ? "ring-2 ring-offset-1 ring-offset-background ring-primary scale-110" : "border-border/60",
+                    )}
+                    style={{ background: c }}
+                    aria-label={c}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <Label className="text-xs">Tipo</Label>
@@ -681,11 +846,28 @@ function RotaDialog({ points, onClose }: { points: LatLng[] | null; onClose: (sa
               </Select>
             </div>
           </div>
+
+          <div className="space-y-1.5">
+            <Label className="text-xs">Observações</Label>
+            <Textarea
+              rows={2}
+              value={observacoes}
+              onChange={(e) => setObservacoes(e.target.value)}
+              placeholder="Notas sobre a rota (opcional)"
+            />
+          </div>
+
+          <div className="text-[10px] text-muted-foreground">
+            {points?.length ?? 0} ponto(s) desenhado(s)
+          </div>
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => onClose(false)}>Cancelar</Button>
-          <Button onClick={() => nome.trim() ? mut.mutate() : toast.error("Informe o nome")} disabled={mut.isPending}>
-            Salvar rota
+          <Button
+            onClick={() => nome.trim() ? mut.mutate() : toast.error("Informe o nome da rota")}
+            disabled={mut.isPending}
+          >
+            {mut.isPending ? "Salvando..." : "Salvar"}
           </Button>
         </DialogFooter>
       </DialogContent>
