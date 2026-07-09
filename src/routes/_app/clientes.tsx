@@ -261,9 +261,43 @@ function NovoClienteDialog() {
               </SelectContent>
             </Select>
           </Field>
+          <Field label="Localização (lat, lng)" col={2}>
+            <div className="flex gap-2">
+              <Input
+                placeholder="Cole aqui: -9.66580, -35.73530 (opcional — use Localizar no Mapa)"
+                value={form.latitude && form.longitude ? `${form.latitude}, ${form.longitude}` : ""}
+                onChange={(e) => {
+                  const parts = e.target.value.split(/[,\s]+/).filter(Boolean);
+                  set("latitude", parts[0] ?? "");
+                  set("longitude", parts[1] ?? "");
+                }}
+              />
+              <Button
+                type="button"
+                variant="outline"
+                onClick={async () => {
+                  try {
+                    const txt = await navigator.clipboard.readText();
+                    const parts = txt.trim().split(/[,\s]+/).filter(Boolean);
+                    if (parts.length >= 2) {
+                      set("latitude", parts[0]);
+                      set("longitude", parts[1]);
+                      toast.success("Coordenadas coladas");
+                    } else toast.error("Formato inválido");
+                  } catch { toast.error("Não foi possível ler a área de transferência"); }
+                }}
+              >
+                Colar
+              </Button>
+            </div>
+            <p className="text-[10px] text-muted-foreground mt-1">
+              Se vazio, será geocodificado automaticamente pelo endereço.
+            </p>
+          </Field>
           <Field label="Observações" col={2}>
             <Textarea rows={2} value={form.observacoes} onChange={(e) => set("observacoes", e.target.value)} />
           </Field>
+
 
           <DialogFooter className="col-span-2 mt-2">
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>Cancelar</Button>
