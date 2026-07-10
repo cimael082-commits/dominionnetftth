@@ -20,7 +20,7 @@ function loadGoogleMaps(): Promise<void> {
     }
     (w as Record<string, unknown>)[CALLBACK_NAME] = () => resolve();
     const s = document.createElement("script");
-    s.src = `https://maps.googleapis.com/maps/api/js?key=${key}&loading=async&callback=${CALLBACK_NAME}${channel ? `&channel=${channel}` : ""}`;
+    s.src = `https://maps.googleapis.com/maps/api/js?key=${key}&libraries=geometry&loading=async&callback=${CALLBACK_NAME}${channel ? `&channel=${channel}` : ""}`;
     s.async = true;
     s.defer = true;
     s.onerror = () => reject(new Error("Falha ao carregar Google Maps"));
