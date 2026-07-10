@@ -1,12 +1,12 @@
 /// <reference types="google.maps" />
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Zap,
   Route as RouteIcon,
   Box,
-  Package,
+  Wrench,
   MapPin,
   Users,
   Activity,
@@ -14,6 +14,12 @@ import {
   Search,
   Copy,
   X,
+  Trash2,
+  Scissors,
+  Ruler,
+  Save,
+  Undo2,
+  Plug,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useGoogleMaps } from "@/hooks/use-google-maps";
@@ -35,6 +41,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -68,10 +75,13 @@ type Rota = {
   coordenadas: LatLng[];
   cor_cabo?: string | null;
   fibras_qtd?: number | null;
+  fibras_usadas?: number | null;
+  comprimento_m?: number | null;
+  observacoes?: string | null;
 };
 type Cliente = { id: string; nome: string; latitude: number | null; longitude: number | null; status: string; plano: string | null };
 
-type Mode = "none" | "cto" | "ceo" | "rota" | "locate";
+type Mode = "none" | "cto" | "ceo" | "rota" | "locate" | "split";
 
 const statusColor: Record<InfraStatus, string> = {
   planejado: "#f59e0b",
@@ -100,18 +110,33 @@ const CORES_CABO = [
   "#ffffff", // branco
 ];
 
+function computePathLengthMeters(path: LatLng[]): number {
+  if (!path || path.length < 2) return 0;
+  const g = (window as unknown as { google?: typeof google }).google;
+  if (!g?.maps?.geometry?.spherical) return 0;
+  const latlngs = path.map((p) => new g.maps.LatLng(p.lat, p.lng));
+  return g.maps.geometry.spherical.computeLength(latlngs);
+}
+
+function formatMeters(m: number): string {
+  if (!Number.isFinite(m) || m <= 0) return "0 m";
+  if (m >= 1000) return `${(m / 1000).toFixed(2)} km`;
+  return `${Math.round(m)} m`;
+}
+
 function MapaPage() {
   const { ready, error } = useGoogleMaps();
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<google.maps.Map | null>(null);
   const markersRef = useRef<google.maps.Marker[]>([]);
-  const polylinesRef = useRef<google.maps.Polyline[]>([]);
+  const polylinesRef = useRef<Array<{ id: string; pl: google.maps.Polyline }>>([]);
   const locateMarkerRef = useRef<google.maps.Marker | null>(null);
   const drawingRef = useRef<{ points: LatLng[]; markers: google.maps.Marker[]; polyline: google.maps.Polyline | null }>({
     points: [],
     markers: [],
     polyline: null,
   });
+  const [drawingLen, setDrawingLen] = useState(0);
 
   const [mapStyle, setMapStyle] = useState<"roadmap" | "hybrid">("roadmap");
   const [mode, setMode] = useState<Mode>("none");
@@ -123,6 +148,9 @@ function MapaPage() {
   const [pendingRoute, setPendingRoute] = useState<LatLng[] | null>(null);
   const [locatedPoint, setLocatedPoint] = useState<LatLng | null>(null);
   const [search, setSearch] = useState("");
+  const [editRota, setEditRota] = useState<Rota | null>(null);
+  const [editCto, setEditCto] = useState<Cto | null>(null);
+  const [splitRota, setSplitRota] = useState<Rota | null>(null);
 
   const ctosQ = useQuery({
     queryKey: ["map", "ctos"],
@@ -161,7 +189,7 @@ function MapaPage() {
     },
   });
 
-  // Init map
+  // Init map (only when ready + not initialized yet)
   useEffect(() => {
     if (!ready || !containerRef.current || mapRef.current) return;
     mapRef.current = new google.maps.Map(containerRef.current, {
@@ -171,6 +199,7 @@ function MapaPage() {
       disableDefaultUI: true,
       zoomControl: true,
       gestureHandling: "greedy",
+      clickableIcons: false,
     });
 
     mapRef.current.addListener("click", (e: google.maps.MapMouseEvent) => {
@@ -207,11 +236,11 @@ function MapaPage() {
           map: mapRef.current!,
           icon: {
             path: google.maps.SymbolPath.CIRCLE,
-            scale: 4,
+            scale: 4.5,
             fillColor: "#f59e0b",
             fillOpacity: 1,
             strokeColor: "#fff",
-            strokeWeight: 1,
+            strokeWeight: 1.5,
           },
         });
         d.markers.push(m);
@@ -225,6 +254,7 @@ function MapaPage() {
             strokeOpacity: 0.9,
           });
         }
+        setDrawingLen(computePathLengthMeters(d.points));
       }
     });
   }, [ready, mapStyle]);
@@ -233,10 +263,11 @@ function MapaPage() {
     if (mapRef.current) mapRef.current.setMapTypeId(mapStyle);
   }, [mapStyle]);
 
+  // Render layers
   useEffect(() => {
     if (!mapRef.current || !ready) return;
     markersRef.current.forEach((m) => m.setMap(null));
-    polylinesRef.current.forEach((p) => p.setMap(null));
+    polylinesRef.current.forEach((p) => p.pl.setMap(null));
     markersRef.current = [];
     polylinesRef.current = [];
 
@@ -246,24 +277,23 @@ function MapaPage() {
       const marker = new google.maps.Marker({
         position: { lat: Number(c.latitude), lng: Number(c.longitude) },
         map,
-        title: `CTO ${c.nome}`,
+        title: `CTO ${c.nome} — ${c.portas_livres}/${c.portas_totais} livres`,
         icon: {
-          path: "M -8 -8 L 8 -8 L 8 8 L -8 8 z",
+          path: "M -9 -9 L 9 -9 L 9 9 L -9 9 z",
           fillColor: statusColor[c.status],
           fillOpacity: 1,
           strokeColor: "#0A1628",
           strokeWeight: 2,
           scale: 1,
         },
+        label: {
+          text: `${c.portas_totais - c.portas_livres}/${c.portas_totais}`,
+          color: "#fff",
+          fontSize: "9px",
+          fontWeight: "700",
+        },
       });
-      const info = new google.maps.InfoWindow({
-        content: `<div style="color:#0A1628;font-family:system-ui;font-size:12px">
-          <b>CTO ${c.nome}</b><br/>
-          Status: ${statusLabel[c.status]}<br/>
-          Portas livres: ${c.portas_livres}/${c.portas_totais}
-        </div>`,
-      });
-      marker.addListener("click", () => info.open({ map, anchor: marker }));
+      marker.addListener("click", () => setEditCto(c));
       markersRef.current.push(marker);
     });
 
@@ -273,7 +303,7 @@ function MapaPage() {
         map,
         title: `CEO ${c.nome}`,
         icon: {
-          path: "M 0 -9 L 9 0 L 0 9 L -9 0 z",
+          path: "M 0 -10 L 10 0 L 0 10 L -10 0 z",
           fillColor: "#a855f7",
           fillOpacity: 1,
           strokeColor: "#0A1628",
@@ -318,19 +348,42 @@ function MapaPage() {
         path,
         map,
         strokeColor: color,
-        strokeWeight: 3,
-        strokeOpacity: r.status === "desativado" ? 0.4 : 0.9,
-        icons: r.status === "planejado" ? [{ icon: { path: "M 0,-1 0,1", strokeOpacity: 1, scale: 3 }, offset: "0", repeat: "10px" }] : undefined,
+        strokeWeight: 4,
+        strokeOpacity: r.status === "desativado" ? 0.4 : 0.95,
+        icons: r.status === "planejado"
+          ? [{ icon: { path: "M 0,-1 0,1", strokeOpacity: 1, scale: 3 }, offset: "0", repeat: "10px" }]
+          : undefined,
+        clickable: true,
+        zIndex: 20,
       });
-      polylinesRef.current.push(pl);
+      pl.addListener("click", (e: google.maps.PolyMouseEvent) => {
+        const cur = modeRef.current;
+        if (cur === "split") {
+          performSplit(r, e);
+        } else {
+          setEditRota(r);
+        }
+      });
+      polylinesRef.current.push({ id: r.id, pl });
     });
   }, [ready, ctosQ.data, ceosQ.data, rotasQ.data, clientesQ.data]);
 
-  function cancelDrawing() {
+  const cancelDrawing = useCallback(() => {
     const d = drawingRef.current;
     d.markers.forEach((m) => m.setMap(null));
     if (d.polyline) d.polyline.setMap(null);
     drawingRef.current = { points: [], markers: [], polyline: null };
+    setDrawingLen(0);
+  }, []);
+
+  function undoLastPoint() {
+    const d = drawingRef.current;
+    if (d.points.length === 0) return;
+    d.points.pop();
+    const m = d.markers.pop();
+    if (m) m.setMap(null);
+    if (d.polyline) d.polyline.setPath(d.points);
+    setDrawingLen(computePathLengthMeters(d.points));
   }
 
   function finishRoute() {
@@ -349,7 +402,69 @@ function MapaPage() {
       if (locateMarkerRef.current) { locateMarkerRef.current.setMap(null); locateMarkerRef.current = null; }
       setLocatedPoint(null);
     }
+    if (m === "split" && !splitRota) {
+      toast.info("Abra uma rota primeiro e clique em 'Dividir'.");
+      return;
+    }
     setMode(mode === m ? "none" : m);
+  }
+
+  const qc = useQueryClient();
+  async function performSplit(r: Rota, e: google.maps.PolyMouseEvent) {
+    const path = Array.isArray(r.coordenadas) ? r.coordenadas : [];
+    if (!e.latLng || path.length < 3) {
+      toast.error("Rota muito curta para dividir");
+      return;
+    }
+    const click = { lat: e.latLng.lat(), lng: e.latLng.lng() };
+    // Find nearest vertex index (not endpoints)
+    let bestIdx = 1;
+    let bestDist = Infinity;
+    for (let i = 1; i < path.length - 1; i++) {
+      const d = Math.hypot(path[i].lat - click.lat, path[i].lng - click.lng);
+      if (d < bestDist) { bestDist = d; bestIdx = i; }
+    }
+    const partA = path.slice(0, bestIdx + 1);
+    const partB = path.slice(bestIdx);
+    const lenA = computePathLengthMeters(partA);
+    const lenB = computePathLengthMeters(partB);
+    const baseCor = r.cor_cabo ?? "#f59e0b";
+    const baseFibras = r.fibras_qtd ?? 12;
+    try {
+      const { error: e1 } = await db.from("rotas_fibra").insert([
+        {
+          nome: `${r.nome} A`,
+          tipo: r.tipo,
+          status: r.status,
+          coordenadas: partA,
+          cor_cabo: baseCor,
+          fibras_qtd: baseFibras,
+          fibras_usadas: r.fibras_usadas ?? 0,
+          comprimento_m: lenA,
+          observacoes: r.observacoes ?? null,
+        },
+        {
+          nome: `${r.nome} B`,
+          tipo: r.tipo,
+          status: r.status,
+          coordenadas: partB,
+          cor_cabo: baseCor,
+          fibras_qtd: baseFibras,
+          fibras_usadas: r.fibras_usadas ?? 0,
+          comprimento_m: lenB,
+          observacoes: r.observacoes ?? null,
+        },
+      ]);
+      if (e1) throw e1;
+      const { error: e2 } = await db.from("rotas_fibra").delete().eq("id", r.id);
+      if (e2) throw e2;
+      toast.success("Rota dividida em 2 partes");
+      setSplitRota(null);
+      setMode("none");
+      qc.invalidateQueries({ queryKey: ["map"] });
+    } catch (err) {
+      toast.error((err as Error).message);
+    }
   }
 
   const kpis = useMemo(() => {
@@ -359,11 +474,11 @@ function MapaPage() {
       clientes: (clientesQ.data ?? []).length,
       ctos: ctos.length,
       rotas: rotas.length,
+      metros: Math.round(rotas.reduce((s, r) => s + (Number(r.comprimento_m) || computePathLengthMeters(r.coordenadas ?? [])), 0)),
       fibras: rotas.reduce((s, r) => s + (r.fibras_qtd ?? 0), 0),
       livres: ctos.reduce((s, c) => s + (c.portas_livres ?? 0), 0),
       pdas: ctos.reduce((s, c) => s + (c.portas_totais - c.portas_livres), 0),
       ativas: ctos.filter((c) => c.status === "ativo").length,
-      planejadas: ctos.filter((c) => c.status === "planejado").length,
     };
   }, [rotasQ.data, ctosQ.data, clientesQ.data]);
 
@@ -395,7 +510,10 @@ function MapaPage() {
 
   return (
     <div className="relative h-screen w-full">
-      <div ref={containerRef} className={cn("absolute inset-0", mode === "locate" && "cursor-crosshair")} />
+      <div ref={containerRef} className={cn(
+        "absolute inset-0",
+        (mode === "locate" || mode === "cto" || mode === "ceo" || mode === "rota" || mode === "split") && "cursor-crosshair",
+      )} />
       {!ready && (
         <div className="absolute inset-0 flex items-center justify-center bg-background/70 text-muted-foreground">
           Carregando mapa...
@@ -434,7 +552,7 @@ function MapaPage() {
           />
           <ToolBtn
             active={mode === "cto"}
-            iconBg="#1E88E5"
+            iconBg="#8B5A2B"
             icon={<Box className="h-3.5 w-3.5" />}
             label="CTO"
             onClick={() => toggleMode("cto")}
@@ -442,7 +560,7 @@ function MapaPage() {
           <ToolBtn
             active={mode === "ceo"}
             iconBg="#a855f7"
-            icon={<Package className="h-3.5 w-3.5" />}
+            icon={<Wrench className="h-3.5 w-3.5" />}
             label="Caixa (CEO)"
             onClick={() => toggleMode("ceo")}
           />
@@ -453,18 +571,48 @@ function MapaPage() {
             label="Localizar Cliente"
             onClick={() => toggleMode("locate")}
           />
-          {mode === "rota" && drawingRef.current.points.length > 0 && (
-            <button
-              onClick={() => { cancelDrawing(); setMode("none"); }}
-              className="w-full text-xs text-muted-foreground hover:text-foreground py-1"
-            >
-              Cancelar desenho
-            </button>
+          {mode === "rota" && (
+            <div className="mt-1 rounded-md bg-muted/40 px-2 py-1.5 space-y-1">
+              <div className="flex items-center justify-between text-[11px]">
+                <span className="text-muted-foreground">Pontos:</span>
+                <span className="font-mono font-semibold">{drawingRef.current.points.length}</span>
+              </div>
+              <div className="flex items-center justify-between text-[11px]">
+                <span className="text-muted-foreground">Metragem:</span>
+                <span className="font-mono font-semibold">{formatMeters(drawingLen)}</span>
+              </div>
+              <div className="flex gap-1 pt-1">
+                <button
+                  onClick={undoLastPoint}
+                  className="flex-1 flex items-center justify-center gap-1 rounded bg-background border border-border px-2 py-1 text-[11px] hover:bg-muted"
+                >
+                  <Undo2 className="h-3 w-3" /> Desfazer
+                </button>
+                <button
+                  onClick={() => { cancelDrawing(); setMode("none"); }}
+                  className="flex-1 rounded bg-background border border-border px-2 py-1 text-[11px] hover:bg-muted text-muted-foreground"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
           )}
           {mode === "locate" && (
             <p className="text-[10px] text-muted-foreground px-2 pt-1">
               Clique no mapa para capturar a coordenada.
             </p>
+          )}
+          {mode === "split" && splitRota && (
+            <div className="mt-1 rounded-md bg-orange-500/10 border border-orange-500/30 px-2 py-1.5 text-[11px]">
+              <div className="font-semibold text-orange-500 mb-0.5">Modo Dividir</div>
+              <div className="text-muted-foreground">Clique num vértice de <b>{splitRota.nome}</b> para dividir.</div>
+              <button
+                onClick={() => { setSplitRota(null); setMode("none"); }}
+                className="mt-1 w-full rounded bg-background border border-border px-2 py-0.5 hover:bg-muted text-muted-foreground"
+              >
+                Cancelar
+              </button>
+            </div>
           )}
         </Panel>
 
@@ -498,7 +646,7 @@ function MapaPage() {
           <LegendRow color={statusColor.ativo} label="Ativo" />
           <LegendRow color={statusColor.desativado} label="Desativado" dashed />
           <div className="mt-2 pt-2 border-t border-border/50 space-y-1.5">
-            <LegendMarker shape="square" color="#f59e0b" label="CTO" />
+            <LegendMarker shape="square" color="#8B5A2B" label="CTO" />
             <LegendMarker shape="diamond" color="#a855f7" label="CEO/Emenda" />
             <LegendMarker shape="circle" color="#10b981" label="Cliente" />
           </div>
@@ -556,13 +704,13 @@ function MapaPage() {
       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 rounded-lg border border-border bg-background/95 backdrop-blur shadow-xl px-2 py-1.5">
         <div className="flex items-stretch divide-x divide-border/60">
           <Kpi icon={<Users />} value={kpis.clientes} label="Clientes" tone="text-cyan-400" />
-          <Kpi icon={<Box />} value={kpis.ctos} label="CTOs" tone="text-blue-400" />
+          <Kpi icon={<Box />} value={kpis.ctos} label="CTOs" tone="text-amber-600" />
           <Kpi icon={<RouteIcon />} value={kpis.rotas} label="Rotas" tone="text-orange-400" />
+          <Kpi icon={<Ruler />} value={formatMeters(kpis.metros)} label="Metragem" tone="text-sky-400" />
           <Kpi icon={<Zap />} value={kpis.fibras} label="Fibras" tone="text-yellow-400" />
           <Kpi icon={<Activity />} value={kpis.livres} label="P. Livres" tone="text-emerald-400" />
-          <Kpi icon={<Zap />} value={kpis.pdas} label="P. Usadas" tone="text-rose-400" />
-          <Kpi icon={<Activity />} value={kpis.ativas} label="Ativa" tone="text-emerald-400" />
-          <Kpi icon={<Package />} value={kpis.planejadas} label="Planejadas" tone="text-amber-400" />
+          <Kpi icon={<Plug />} value={kpis.pdas} label="P. Usadas" tone="text-rose-400" />
+          <Kpi icon={<Activity />} value={kpis.ativas} label="Ativas" tone="text-emerald-400" />
         </div>
       </div>
 
@@ -578,6 +726,15 @@ function MapaPage() {
           setPendingRoute(null);
           if (saved) { cancelDrawing(); setMode("none"); }
         }}
+      />
+      <EditRotaDialog
+        rota={editRota}
+        onClose={() => setEditRota(null)}
+        onSplit={(r) => { setEditRota(null); setSplitRota(r); setMode("split"); }}
+      />
+      <EditCtoDialog
+        cto={editCto}
+        onClose={() => setEditCto(null)}
       />
     </div>
   );
@@ -653,11 +810,11 @@ function LegendMarker({ shape, color, label }: { shape: "square" | "diamond" | "
   );
 }
 
-function Kpi({ icon, value, label, tone }: { icon: React.ReactNode; value: number; label: string; tone: string }) {
+function Kpi({ icon, value, label, tone }: { icon: React.ReactNode; value: number | string; label: string; tone: string }) {
   return (
     <div className="flex flex-col items-center px-3 py-1 min-w-[60px]">
       <span className={cn("h-4 w-4 mb-0.5", tone)}>{icon}</span>
-      <span className="text-lg font-bold leading-none">{value}</span>
+      <span className="text-lg font-bold leading-none whitespace-nowrap">{value}</span>
       <span className="text-[9px] text-muted-foreground leading-tight text-center mt-0.5">{label}</span>
     </div>
   );
@@ -708,7 +865,14 @@ function CtoCeoDialog({ open, kind, point, onClose }: { open: boolean; kind: "ct
           {kind === "cto" && (
             <div className="space-y-1.5">
               <Label className="text-xs">Portas</Label>
-              <Input type="number" min={1} value={portas} onChange={(e) => setPortas(e.target.value)} />
+              <Select value={portas} onValueChange={setPortas}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {[4, 8, 16, 24, 32].map((n) => (
+                    <SelectItem key={n} value={String(n)}>{n} portas</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           )}
           <div className="space-y-1.5">
@@ -745,13 +909,16 @@ function RotaDialog({ points, onClose }: { points: LatLng[] | null; onClose: (sa
   const [nome, setNome] = useState("");
   const [tipo, setTipo] = useState<RotaTipo>("fibra");
   const [fibrasQtd, setFibrasQtd] = useState("12");
+  const [fibrasUsadas, setFibrasUsadas] = useState("0");
   const [corCabo, setCorCabo] = useState("#f59e0b");
   const [status, setStatus] = useState<InfraStatus>("planejado");
   const [observacoes, setObservacoes] = useState("");
 
+  const comprimento = useMemo(() => (points ? computePathLengthMeters(points) : 0), [points]);
+
   useEffect(() => {
     if (points) {
-      setNome(""); setTipo("fibra"); setFibrasQtd("12");
+      setNome(""); setTipo("fibra"); setFibrasQtd("12"); setFibrasUsadas("0");
       setCorCabo("#f59e0b"); setStatus("planejado"); setObservacoes("");
     }
   }, [points]);
@@ -765,7 +932,9 @@ function RotaDialog({ points, onClose }: { points: LatLng[] | null; onClose: (sa
         status,
         coordenadas: points,
         fibras_qtd: parseInt(fibrasQtd) || 12,
+        fibras_usadas: Math.max(0, parseInt(fibrasUsadas) || 0),
         cor_cabo: corCabo,
+        comprimento_m: Math.round(comprimento * 100) / 100,
         observacoes: observacoes || null,
       });
       if (error) throw error;
@@ -785,6 +954,11 @@ function RotaDialog({ points, onClose }: { points: LatLng[] | null; onClose: (sa
           <DialogTitle>Nova Rota de Fibra</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
+          <div className="rounded-md bg-primary/5 border border-primary/20 px-3 py-2 flex items-center justify-between text-xs">
+            <span className="text-muted-foreground">Metragem calculada:</span>
+            <span className="font-mono font-bold text-primary">{formatMeters(comprimento)}</span>
+          </div>
+
           <div className="space-y-1.5">
             <Label className="text-xs">Nome da Rota *</Label>
             <Input value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Ex: Cabo Rua Goiás" />
@@ -792,7 +966,7 @@ function RotaDialog({ points, onClose }: { points: LatLng[] | null; onClose: (sa
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <Label className="text-xs">Fibras Qtd.</Label>
+              <Label className="text-xs">Fibras Total</Label>
               <Select value={fibrasQtd} onValueChange={setFibrasQtd}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -803,23 +977,20 @@ function RotaDialog({ points, onClose }: { points: LatLng[] | null; onClose: (sa
               </Select>
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">Cor do Cabo</Label>
-              <div className="flex items-center gap-1.5 flex-wrap rounded-md border border-input bg-background p-1.5 h-10">
-                {CORES_CABO.map((c) => (
-                  <button
-                    key={c}
-                    type="button"
-                    onClick={() => setCorCabo(c)}
-                    className={cn(
-                      "h-5 w-5 rounded-full border transition-transform",
-                      corCabo === c ? "ring-2 ring-offset-1 ring-offset-background ring-primary scale-110" : "border-border/60",
-                    )}
-                    style={{ background: c }}
-                    aria-label={c}
-                  />
-                ))}
-              </div>
+              <Label className="text-xs">Fibras Usadas</Label>
+              <Input
+                type="number"
+                min={0}
+                max={parseInt(fibrasQtd) || 12}
+                value={fibrasUsadas}
+                onChange={(e) => setFibrasUsadas(e.target.value)}
+              />
             </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <Label className="text-xs">Cor do Cabo</Label>
+            <ColorPicker value={corCabo} onChange={setCorCabo} />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
@@ -872,5 +1043,465 @@ function RotaDialog({ points, onClose }: { points: LatLng[] | null; onClose: (sa
         </DialogFooter>
       </DialogContent>
     </Dialog>
+  );
+}
+
+function ColorPicker({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  return (
+    <div className="flex items-center gap-1.5 flex-wrap rounded-md border border-input bg-background p-1.5">
+      {CORES_CABO.map((c) => (
+        <button
+          key={c}
+          type="button"
+          onClick={() => onChange(c)}
+          className={cn(
+            "h-6 w-6 rounded-full border transition-transform",
+            value === c ? "ring-2 ring-offset-1 ring-offset-background ring-primary scale-110" : "border-border/60",
+          )}
+          style={{ background: c }}
+          aria-label={c}
+        />
+      ))}
+    </div>
+  );
+}
+
+function EditRotaDialog({ rota, onClose, onSplit }: { rota: Rota | null; onClose: () => void; onSplit: (r: Rota) => void }) {
+  const qc = useQueryClient();
+  const [nome, setNome] = useState("");
+  const [tipo, setTipo] = useState<RotaTipo>("fibra");
+  const [fibrasQtd, setFibrasQtd] = useState("12");
+  const [fibrasUsadas, setFibrasUsadas] = useState("0");
+  const [corCabo, setCorCabo] = useState("#f59e0b");
+  const [status, setStatus] = useState<InfraStatus>("ativo");
+  const [observacoes, setObservacoes] = useState("");
+
+  useEffect(() => {
+    if (rota) {
+      setNome(rota.nome);
+      setTipo(rota.tipo);
+      setFibrasQtd(String(rota.fibras_qtd ?? 12));
+      setFibrasUsadas(String(rota.fibras_usadas ?? 0));
+      setCorCabo(rota.cor_cabo ?? "#f59e0b");
+      setStatus(rota.status);
+      setObservacoes(rota.observacoes ?? "");
+    }
+  }, [rota]);
+
+  const comprimento = useMemo(() => (rota ? Number(rota.comprimento_m) || computePathLengthMeters(rota.coordenadas ?? []) : 0), [rota]);
+  const total = parseInt(fibrasQtd) || 0;
+  const usadas = Math.min(total, Math.max(0, parseInt(fibrasUsadas) || 0));
+  const livres = Math.max(0, total - usadas);
+
+  const save = useMutation({
+    mutationFn: async () => {
+      if (!rota) return;
+      const { error } = await db.from("rotas_fibra").update({
+        nome,
+        tipo,
+        status,
+        cor_cabo: corCabo,
+        fibras_qtd: total,
+        fibras_usadas: usadas,
+        comprimento_m: Math.round(comprimento * 100) / 100,
+        observacoes: observacoes || null,
+      }).eq("id", rota.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Rota atualizada");
+      qc.invalidateQueries({ queryKey: ["map"] });
+      onClose();
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const del = useMutation({
+    mutationFn: async () => {
+      if (!rota) return;
+      const { error } = await db.from("rotas_fibra").delete().eq("id", rota.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Rota removida");
+      qc.invalidateQueries({ queryKey: ["map"] });
+      onClose();
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  if (!rota) return null;
+
+  return (
+    <Dialog open={!!rota} onOpenChange={(v) => !v && onClose()}>
+      <DialogContent className="max-w-lg">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <RouteIcon className="h-5 w-5" style={{ color: corCabo }} />
+            Editar Rota
+          </DialogTitle>
+        </DialogHeader>
+        <div className="space-y-3">
+          <div className="grid grid-cols-3 gap-2">
+            <StatBox label="Metragem" value={formatMeters(comprimento)} tone="text-sky-500" />
+            <StatBox label="Fibras livres" value={`${livres}/${total}`} tone="text-emerald-500" />
+            <StatBox label="Fibras usadas" value={`${usadas}`} tone="text-rose-500" />
+          </div>
+
+          <div className="space-y-1.5">
+            <Label className="text-xs">Nome</Label>
+            <Input value={nome} onChange={(e) => setNome(e.target.value)} />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label className="text-xs">Fibras Total</Label>
+              <Select value={fibrasQtd} onValueChange={setFibrasQtd}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {[6, 12, 24, 36, 48, 72, 96, 144].map((n) => (
+                    <SelectItem key={n} value={String(n)}>{n} fibras</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs">Fibras Usadas</Label>
+              <Input
+                type="number"
+                min={0}
+                max={total}
+                value={fibrasUsadas}
+                onChange={(e) => setFibrasUsadas(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <Label className="text-xs">Cor do Cabo</Label>
+            <ColorPicker value={corCabo} onChange={setCorCabo} />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label className="text-xs">Tipo</Label>
+              <Select value={tipo} onValueChange={(v) => setTipo(v as RotaTipo)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="fibra">Fibra</SelectItem>
+                  <SelectItem value="colibri">Colibri</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs">Status</Label>
+              <Select value={status} onValueChange={(v) => setStatus(v as InfraStatus)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="planejado">Planejado</SelectItem>
+                  <SelectItem value="implantacao">Em Implantação</SelectItem>
+                  <SelectItem value="ativo">Ativo</SelectItem>
+                  <SelectItem value="desativado">Desativado</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <Label className="text-xs">Observações</Label>
+            <Textarea rows={2} value={observacoes} onChange={(e) => setObservacoes(e.target.value)} />
+          </div>
+        </div>
+        <DialogFooter className="flex-wrap gap-2">
+          <Button
+            variant="outline"
+            className="mr-auto"
+            onClick={() => onSplit(rota)}
+          >
+            <Scissors className="h-4 w-4" /> Dividir
+          </Button>
+          <Button
+            variant="destructive"
+            onClick={() => { if (confirm(`Excluir rota "${rota.nome}"?`)) del.mutate(); }}
+          >
+            <Trash2 className="h-4 w-4" /> Excluir
+          </Button>
+          <Button variant="outline" onClick={onClose}>Cancelar</Button>
+          <Button onClick={() => save.mutate()} disabled={save.isPending}>
+            <Save className="h-4 w-4" /> Salvar
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function StatBox({ label, value, tone }: { label: string; value: string; tone: string }) {
+  return (
+    <div className="rounded-md border border-border bg-muted/30 px-2 py-1.5">
+      <div className="text-[9px] uppercase tracking-wider text-muted-foreground">{label}</div>
+      <div className={cn("font-bold text-sm", tone)}>{value}</div>
+    </div>
+  );
+}
+
+type Porta = {
+  id: string;
+  cto_id: string;
+  porta_numero: number;
+  cliente_id: string | null;
+  observacao: string | null;
+};
+
+function EditCtoDialog({ cto, onClose }: { cto: Cto | null; onClose: () => void }) {
+  const qc = useQueryClient();
+  const [nome, setNome] = useState("");
+  const [status, setStatus] = useState<InfraStatus>("ativo");
+  const [portasTotais, setPortasTotais] = useState("8");
+
+  useEffect(() => {
+    if (cto) {
+      setNome(cto.nome);
+      setStatus(cto.status);
+      setPortasTotais(String(cto.portas_totais));
+    }
+  }, [cto]);
+
+  const portasQ = useQuery({
+    queryKey: ["cto_portas", cto?.id],
+    enabled: !!cto,
+    queryFn: async () => {
+      const { data, error } = await db
+        .from("cto_portas")
+        .select("*")
+        .eq("cto_id", cto!.id)
+        .order("porta_numero");
+      if (error) throw error;
+      return (data ?? []) as Porta[];
+    },
+  });
+
+  const clientesQ = useQuery({
+    queryKey: ["all-clientes-select"],
+    queryFn: async () => {
+      const { data, error } = await db.from("clientes").select("id,nome").order("nome");
+      if (error) throw error;
+      return (data ?? []) as { id: string; nome: string }[];
+    },
+  });
+
+  const saveDados = useMutation({
+    mutationFn: async () => {
+      if (!cto) return;
+      const { error } = await db.from("ctos").update({
+        nome,
+        status,
+        portas_totais: parseInt(portasTotais) || cto.portas_totais,
+      }).eq("id", cto.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("CTO atualizada");
+      qc.invalidateQueries({ queryKey: ["map"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const savePorta = useMutation({
+    mutationFn: async (p: { id: string; cliente_id: string | null; observacao: string | null }) => {
+      const { error } = await db.from("cto_portas").update({
+        cliente_id: p.cliente_id,
+        observacao: p.observacao,
+      }).eq("id", p.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["cto_portas", cto?.id] });
+      qc.invalidateQueries({ queryKey: ["map"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const del = useMutation({
+    mutationFn: async () => {
+      if (!cto) return;
+      const { error } = await db.from("ctos").delete().eq("id", cto.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("CTO removida");
+      qc.invalidateQueries({ queryKey: ["map"] });
+      onClose();
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  if (!cto) return null;
+
+  return (
+    <Dialog open={!!cto} onOpenChange={(v) => !v && onClose()}>
+      <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <Box className="h-5 w-5 text-amber-700" />
+            CTO {cto.nome}
+          </DialogTitle>
+        </DialogHeader>
+
+        <Tabs defaultValue="portas">
+          <TabsList>
+            <TabsTrigger value="portas"><Plug className="h-4 w-4" /> Portas</TabsTrigger>
+            <TabsTrigger value="dados">Dados</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="portas" className="space-y-2">
+            <div className="text-xs text-muted-foreground">
+              Vincule cada porta a um cliente. As portas livres são recalculadas automaticamente.
+            </div>
+            <div className="rounded-lg border border-border overflow-hidden">
+              <table className="w-full text-sm">
+                <thead className="bg-muted/40 text-xs uppercase text-muted-foreground">
+                  <tr>
+                    <th className="text-left p-2 w-14">#</th>
+                    <th className="text-left p-2">Cliente</th>
+                    <th className="text-left p-2">Observação</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(portasQ.data ?? []).map((p) => (
+                    <PortaRow
+                      key={p.id}
+                      porta={p}
+                      clientes={clientesQ.data ?? []}
+                      onSave={(patch) => savePorta.mutate({ id: p.id, ...patch })}
+                    />
+                  ))}
+                  {(!portasQ.data || portasQ.data.length === 0) && (
+                    <tr><td colSpan={3} className="p-4 text-center text-muted-foreground text-xs">
+                      {portasQ.isLoading ? "Carregando..." : "Sem portas configuradas."}
+                    </td></tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="dados" className="space-y-3">
+            <div className="space-y-1.5">
+              <Label className="text-xs">Nome</Label>
+              <Input value={nome} onChange={(e) => setNome(e.target.value)} />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label className="text-xs">Status</Label>
+                <Select value={status} onValueChange={(v) => setStatus(v as InfraStatus)}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="planejado">Planejado</SelectItem>
+                    <SelectItem value="implantacao">Em Implantação</SelectItem>
+                    <SelectItem value="ativo">Ativo</SelectItem>
+                    <SelectItem value="desativado">Desativado</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs">Portas Totais</Label>
+                <Input
+                  type="number"
+                  min={1}
+                  value={portasTotais}
+                  onChange={(e) => setPortasTotais(e.target.value)}
+                  disabled
+                  title="Alterar portas totais é feito recriando a CTO"
+                />
+              </div>
+            </div>
+            <div className="text-xs text-muted-foreground">
+              Lat: {Number(cto.latitude).toFixed(6)} · Lng: {Number(cto.longitude).toFixed(6)}
+            </div>
+            <div className="flex justify-between pt-2">
+              <Button
+                variant="destructive"
+                onClick={() => { if (confirm(`Excluir CTO ${cto.nome}?`)) del.mutate(); }}
+              >
+                <Trash2 className="h-4 w-4" /> Excluir CTO
+              </Button>
+              <Button onClick={() => saveDados.mutate()} disabled={saveDados.isPending}>
+                <Save className="h-4 w-4" /> Salvar dados
+              </Button>
+            </div>
+          </TabsContent>
+        </Tabs>
+
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose}>Fechar</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function PortaRow({
+  porta,
+  clientes,
+  onSave,
+}: {
+  porta: Porta;
+  clientes: { id: string; nome: string }[];
+  onSave: (patch: { cliente_id: string | null; observacao: string | null }) => void;
+}) {
+  const [clienteId, setClienteId] = useState<string>(porta.cliente_id ?? "__none");
+  const [obs, setObs] = useState<string>(porta.observacao ?? "");
+  const occupied = clienteId !== "__none";
+
+  useEffect(() => {
+    setClienteId(porta.cliente_id ?? "__none");
+    setObs(porta.observacao ?? "");
+  }, [porta.id, porta.cliente_id, porta.observacao]);
+
+  const dirty = (clienteId === "__none" ? null : clienteId) !== porta.cliente_id
+    || (obs || null) !== (porta.observacao || null);
+
+  return (
+    <tr className="border-t border-border/50">
+      <td className="p-2">
+        <span className={cn(
+          "inline-flex h-7 w-7 items-center justify-center rounded-full font-mono text-xs font-bold",
+          occupied ? "bg-rose-500/15 text-rose-500 ring-1 ring-rose-500/30" : "bg-emerald-500/15 text-emerald-500 ring-1 ring-emerald-500/30",
+        )}>
+          {porta.porta_numero}
+        </span>
+      </td>
+      <td className="p-2">
+        <Select value={clienteId} onValueChange={setClienteId}>
+          <SelectTrigger className="h-8"><SelectValue placeholder="Livre" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="__none">— Livre —</SelectItem>
+            {clientes.map((c) => (
+              <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </td>
+      <td className="p-2">
+        <div className="flex gap-1.5">
+          <Input
+            className="h-8"
+            value={obs}
+            onChange={(e) => setObs(e.target.value)}
+            placeholder="Notas..."
+          />
+          {dirty && (
+            <Button
+              size="sm"
+              className="h-8 px-2 shrink-0"
+              onClick={() => onSave({ cliente_id: clienteId === "__none" ? null : clienteId, observacao: obs || null })}
+            >
+              <Save className="h-3.5 w-3.5" />
+            </Button>
+          )}
+        </div>
+      </td>
+    </tr>
   );
 }
