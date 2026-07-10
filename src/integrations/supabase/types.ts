@@ -173,6 +173,51 @@ export type Database = {
         }
         Relationships: []
       }
+      cto_portas: {
+        Row: {
+          cliente_id: string | null
+          created_at: string
+          cto_id: string
+          id: string
+          observacao: string | null
+          porta_numero: number
+          updated_at: string
+        }
+        Insert: {
+          cliente_id?: string | null
+          created_at?: string
+          cto_id: string
+          id?: string
+          observacao?: string | null
+          porta_numero: number
+          updated_at?: string
+        }
+        Update: {
+          cliente_id?: string | null
+          created_at?: string
+          cto_id?: string
+          id?: string
+          observacao?: string | null
+          porta_numero?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cto_portas_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "clientes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cto_portas_cto_id_fkey"
+            columns: ["cto_id"]
+            isOneToOne: false
+            referencedRelation: "ctos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ctos: {
         Row: {
           created_at: string
@@ -276,10 +321,12 @@ export type Database = {
       }
       rotas_fibra: {
         Row: {
+          comprimento_m: number | null
           coordenadas: Json
           cor_cabo: string
           created_at: string
           fibras_qtd: number
+          fibras_usadas: number
           id: string
           nome: string
           observacoes: string | null
@@ -288,10 +335,12 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          comprimento_m?: number | null
           coordenadas?: Json
           cor_cabo?: string
           created_at?: string
           fibras_qtd?: number
+          fibras_usadas?: number
           id?: string
           nome: string
           observacoes?: string | null
@@ -300,10 +349,12 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          comprimento_m?: number | null
           coordenadas?: Json
           cor_cabo?: string
           created_at?: string
           fibras_qtd?: number
+          fibras_usadas?: number
           id?: string
           nome?: string
           observacoes?: string | null
