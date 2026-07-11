@@ -153,15 +153,6 @@ function ClientesPage() {
     </div>
   );
 }
-        </div>
-      ) : (
-        <Card className="p-12 text-center">
-          <p className="text-muted-foreground">Nenhum cliente encontrado.</p>
-        </Card>
-      )}
-    </div>
-  );
-}
 
 function NovoClienteDialog() {
   const qc = useQueryClient();
