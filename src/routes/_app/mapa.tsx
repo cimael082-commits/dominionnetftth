@@ -79,7 +79,7 @@ type Rota = {
   comprimento_m?: number | null;
   observacoes?: string | null;
 };
-type Cliente = { id: string; nome: string; latitude: number | null; longitude: number | null; status: string; plano: string | null };
+type Cliente = { id: string; nome: string; latitude: number | null; longitude: number | null; status: string; plano: string | null; online: boolean; ip_atual: string | null; uptime_atual: string | null; ultima_sincronizacao: string | null; login_pppoe: string | null };
 
 type Mode = "none" | "cto" | "ceo" | "rota" | "locate" | "split";
 
@@ -181,7 +181,7 @@ function MapaPage() {
     queryFn: async () => {
       const { data, error } = await db
         .from("clientes")
-        .select("id,nome,latitude,longitude,status,plano")
+        .select("id,nome,latitude,longitude,status,plano,online,ip_atual,uptime_atual,ultima_sincronizacao,login_pppoe")
         .not("latitude", "is", null)
         .not("longitude", "is", null);
       if (error) throw error;
@@ -320,21 +320,26 @@ function MapaPage() {
 
     (clientesQ.data ?? []).forEach((cl) => {
       if (cl.latitude == null || cl.longitude == null) return;
+      const cor = cl.online ? "#10b981" : "#ef4444";
       const marker = new google.maps.Marker({
         position: { lat: Number(cl.latitude), lng: Number(cl.longitude) },
         map,
-        title: cl.nome,
+        title: `${cl.nome} — ${cl.online ? "ONLINE" : "OFFLINE"}`,
         icon: {
           path: google.maps.SymbolPath.CIRCLE,
-          scale: 6,
-          fillColor: cl.status === "ativo" ? "#10b981" : "#6b7280",
+          scale: 7,
+          fillColor: cor,
           fillOpacity: 1,
           strokeColor: "#fff",
-          strokeWeight: 1.5,
+          strokeWeight: 2,
         },
+        zIndex: cl.online ? 30 : 25,
       });
+      const ultSync = cl.ultima_sincronizacao
+        ? new Date(cl.ultima_sincronizacao).toLocaleString("pt-BR")
+        : "—";
       const info = new google.maps.InfoWindow({
-        content: `<div style="color:#0A1628;font-family:system-ui;font-size:12px"><b>${cl.nome}</b><br/>${cl.plano ?? ""}<br/>Status: ${cl.status}</div>`,
+        content: `<div style="color:#0A1628;font-family:system-ui;font-size:12px;min-width:200px"><b>${cl.nome}</b><br/>${cl.plano ?? ""}<br/><b style="color:${cor}">${cl.online ? "● ONLINE" : "● OFFLINE"}</b><br/>PPPoE: ${cl.login_pppoe ?? "—"}<br/>IP: ${cl.ip_atual ?? "—"}<br/>Uptime: ${cl.uptime_atual ?? "—"}<br/>Última sync: ${ultSync}</div>`,
       });
       marker.addListener("click", () => info.open({ map, anchor: marker }));
       markersRef.current.push(marker);
