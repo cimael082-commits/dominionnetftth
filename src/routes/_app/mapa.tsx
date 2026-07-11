@@ -79,7 +79,7 @@ type Rota = {
   comprimento_m?: number | null;
   observacoes?: string | null;
 };
-type Cliente = { id: string; nome: string; latitude: number | null; longitude: number | null; status: string; plano: string | null };
+type Cliente = { id: string; nome: string; latitude: number | null; longitude: number | null; status: string; plano: string | null; online: boolean; ip_atual: string | null; uptime_atual: string | null; ultima_sincronizacao: string | null; login_pppoe: string | null };
 
 type Mode = "none" | "cto" | "ceo" | "rota" | "locate" | "split";
 
@@ -181,13 +181,31 @@ function MapaPage() {
     queryFn: async () => {
       const { data, error } = await db
         .from("clientes")
-        .select("id,nome,latitude,longitude,status,plano")
+        .select("id,nome,latitude,longitude,status,plano,online,ip_atual,uptime_atual,ultima_sincronizacao,login_pppoe")
         .not("latitude", "is", null)
         .not("longitude", "is", null);
       if (error) throw error;
       return (data ?? []) as Cliente[];
     },
   });
+
+  // Realtime: refresh client markers whenever clientes change (MikroTik sync)
+  useEffect(() => {
+    const ch = db
+      .channel("clientes-online-map")
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "clientes" },
+        () => {
+          clientesQ.refetch();
+        },
+      )
+      .subscribe();
+    return () => {
+      db.removeChannel(ch);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Init map (only when ready + not initialized yet)
   useEffect(() => {
@@ -320,21 +338,26 @@ function MapaPage() {
 
     (clientesQ.data ?? []).forEach((cl) => {
       if (cl.latitude == null || cl.longitude == null) return;
+      const cor = cl.online ? "#10b981" : "#ef4444";
       const marker = new google.maps.Marker({
         position: { lat: Number(cl.latitude), lng: Number(cl.longitude) },
         map,
-        title: cl.nome,
+        title: `${cl.nome} — ${cl.online ? "ONLINE" : "OFFLINE"}`,
         icon: {
           path: google.maps.SymbolPath.CIRCLE,
-          scale: 6,
-          fillColor: cl.status === "ativo" ? "#10b981" : "#6b7280",
+          scale: 7,
+          fillColor: cor,
           fillOpacity: 1,
           strokeColor: "#fff",
-          strokeWeight: 1.5,
+          strokeWeight: 2,
         },
+        zIndex: cl.online ? 30 : 25,
       });
+      const ultSync = cl.ultima_sincronizacao
+        ? new Date(cl.ultima_sincronizacao).toLocaleString("pt-BR")
+        : "—";
       const info = new google.maps.InfoWindow({
-        content: `<div style="color:#0A1628;font-family:system-ui;font-size:12px"><b>${cl.nome}</b><br/>${cl.plano ?? ""}<br/>Status: ${cl.status}</div>`,
+        content: `<div style="color:#0A1628;font-family:system-ui;font-size:12px;min-width:200px"><b>${cl.nome}</b><br/>${cl.plano ?? ""}<br/><b style="color:${cor}">${cl.online ? "● ONLINE" : "● OFFLINE"}</b><br/>PPPoE: ${cl.login_pppoe ?? "—"}<br/>IP: ${cl.ip_atual ?? "—"}<br/>Uptime: ${cl.uptime_atual ?? "—"}<br/>Última sync: ${ultSync}</div>`,
       });
       marker.addListener("click", () => info.open({ map, anchor: marker }));
       markersRef.current.push(marker);
@@ -470,8 +493,12 @@ function MapaPage() {
   const kpis = useMemo(() => {
     const rotas = rotasQ.data ?? [];
     const ctos = ctosQ.data ?? [];
+    const clientes = clientesQ.data ?? [];
+    const online = clientes.filter((c) => c.online).length;
     return {
-      clientes: (clientesQ.data ?? []).length,
+      clientes: clientes.length,
+      online,
+      offline: clientes.length - online,
       ctos: ctos.length,
       rotas: rotas.length,
       metros: Math.round(rotas.reduce((s, r) => s + (Number(r.comprimento_m) || computePathLengthMeters(r.coordenadas ?? [])), 0)),
@@ -648,7 +675,8 @@ function MapaPage() {
           <div className="mt-2 pt-2 border-t border-border/50 space-y-1.5">
             <LegendMarker shape="square" color="#8B5A2B" label="CTO" />
             <LegendMarker shape="diamond" color="#a855f7" label="CEO/Emenda" />
-            <LegendMarker shape="circle" color="#10b981" label="Cliente" />
+            <LegendMarker shape="circle" color="#10b981" label="Cliente ONLINE" />
+            <LegendMarker shape="circle" color="#ef4444" label="Cliente OFFLINE" />
           </div>
         </Panel>
       </div>
@@ -704,6 +732,8 @@ function MapaPage() {
       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 rounded-lg border border-border bg-background/95 backdrop-blur shadow-xl px-2 py-1.5">
         <div className="flex items-stretch divide-x divide-border/60">
           <Kpi icon={<Users />} value={kpis.clientes} label="Clientes" tone="text-cyan-400" />
+          <Kpi icon={<Activity />} value={kpis.online} label="Online" tone="text-emerald-400" />
+          <Kpi icon={<Activity />} value={kpis.offline} label="Offline" tone="text-rose-500" />
           <Kpi icon={<Box />} value={kpis.ctos} label="CTOs" tone="text-amber-600" />
           <Kpi icon={<RouteIcon />} value={kpis.rotas} label="Rotas" tone="text-orange-400" />
           <Kpi icon={<Ruler />} value={formatMeters(kpis.metros)} label="Metragem" tone="text-sky-400" />

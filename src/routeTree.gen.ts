@@ -20,6 +20,8 @@ import { Route as AppConfiguracoesRouteImport } from './routes/_app/configuracoe
 import { Route as AppClientesRouteImport } from './routes/_app/clientes'
 import { Route as AppCarnesRouteImport } from './routes/_app/carnes'
 import { Route as AppClientesIdRouteImport } from './routes/_app/clientes.$id'
+import { Route as ApiPublicMikrotikSyncRouteImport } from './routes/api/public/mikrotik/sync'
+import { Route as ApiPublicMikrotikStatusRouteImport } from './routes/api/public/mikrotik/status'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -75,6 +77,16 @@ const AppClientesIdRoute = AppClientesIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => AppClientesRoute,
 } as any)
+const ApiPublicMikrotikSyncRoute = ApiPublicMikrotikSyncRouteImport.update({
+  id: '/api/public/mikrotik/sync',
+  path: '/api/public/mikrotik/sync',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicMikrotikStatusRoute = ApiPublicMikrotikStatusRouteImport.update({
+  id: '/api/public/mikrotik/status',
+  path: '/api/public/mikrotik/status',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -87,6 +99,8 @@ export interface FileRoutesByFullPath {
   '/mapa': typeof AppMapaRoute
   '/pesquisa': typeof AppPesquisaRoute
   '/clientes/$id': typeof AppClientesIdRoute
+  '/api/public/mikrotik/status': typeof ApiPublicMikrotikStatusRoute
+  '/api/public/mikrotik/sync': typeof ApiPublicMikrotikSyncRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -99,6 +113,8 @@ export interface FileRoutesByTo {
   '/mapa': typeof AppMapaRoute
   '/pesquisa': typeof AppPesquisaRoute
   '/clientes/$id': typeof AppClientesIdRoute
+  '/api/public/mikrotik/status': typeof ApiPublicMikrotikStatusRoute
+  '/api/public/mikrotik/sync': typeof ApiPublicMikrotikSyncRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -113,6 +129,8 @@ export interface FileRoutesById {
   '/_app/mapa': typeof AppMapaRoute
   '/_app/pesquisa': typeof AppPesquisaRoute
   '/_app/clientes/$id': typeof AppClientesIdRoute
+  '/api/public/mikrotik/status': typeof ApiPublicMikrotikStatusRoute
+  '/api/public/mikrotik/sync': typeof ApiPublicMikrotikSyncRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -127,6 +145,8 @@ export interface FileRouteTypes {
     | '/mapa'
     | '/pesquisa'
     | '/clientes/$id'
+    | '/api/public/mikrotik/status'
+    | '/api/public/mikrotik/sync'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -139,6 +159,8 @@ export interface FileRouteTypes {
     | '/mapa'
     | '/pesquisa'
     | '/clientes/$id'
+    | '/api/public/mikrotik/status'
+    | '/api/public/mikrotik/sync'
   id:
     | '__root__'
     | '/'
@@ -152,12 +174,16 @@ export interface FileRouteTypes {
     | '/_app/mapa'
     | '/_app/pesquisa'
     | '/_app/clientes/$id'
+    | '/api/public/mikrotik/status'
+    | '/api/public/mikrotik/sync'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ApiPublicMikrotikStatusRoute: typeof ApiPublicMikrotikStatusRoute
+  ApiPublicMikrotikSyncRoute: typeof ApiPublicMikrotikSyncRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -239,6 +265,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppClientesIdRouteImport
       parentRoute: typeof AppClientesRoute
     }
+    '/api/public/mikrotik/sync': {
+      id: '/api/public/mikrotik/sync'
+      path: '/api/public/mikrotik/sync'
+      fullPath: '/api/public/mikrotik/sync'
+      preLoaderRoute: typeof ApiPublicMikrotikSyncRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/mikrotik/status': {
+      id: '/api/public/mikrotik/status'
+      path: '/api/public/mikrotik/status'
+      fullPath: '/api/public/mikrotik/status'
+      preLoaderRoute: typeof ApiPublicMikrotikStatusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -280,6 +320,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
   AuthRoute: AuthRoute,
+  ApiPublicMikrotikStatusRoute: ApiPublicMikrotikStatusRoute,
+  ApiPublicMikrotikSyncRoute: ApiPublicMikrotikSyncRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
