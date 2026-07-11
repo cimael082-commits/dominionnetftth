@@ -54,6 +54,7 @@ function useClientes(search: string) {
 
 function ClientesPage() {
   const [search, setSearch] = useState("");
+  const navigate = useNavigate();
   const { data, isLoading } = useClientes(search);
 
   return (
