@@ -1,5 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { useState } from "react";
 import {
   ArrowLeft,
@@ -40,11 +41,13 @@ import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/clientes/$id")({
   head: () => ({ meta: [{ title: "Cliente — Dominion Net" }] }),
+  validateSearch: (s: Record<string, unknown>) => ({ edit: s.edit === 1 || s.edit === "1" ? 1 : undefined }),
   component: ClienteDetail,
 });
 
 function ClienteDetail() {
   const { id } = Route.useParams();
+  const { edit: editParam } = Route.useSearch();
   const navigate = useNavigate();
   const qc = useQueryClient();
 
@@ -71,6 +74,14 @@ function ClienteDetail() {
   });
 
   const [edit, setEdit] = useState<Record<string, string> | null>(null);
+
+  useEffect(() => {
+    if (editParam === 1 && edit === null) {
+      setEdit({});
+      navigate({ to: "/clientes/$id", params: { id }, search: {}, replace: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editParam]);
 
   const save = useMutation({
     mutationFn: async () => {

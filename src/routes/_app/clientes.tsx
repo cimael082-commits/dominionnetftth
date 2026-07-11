@@ -1,8 +1,8 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
-import { Plus, Search, MapPin, Phone } from "lucide-react";
+import { Plus, Search, MapPin, Phone, Pencil } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { geocodeAddress } from "@/lib/geocode.functions";
 import { Button } from "@/components/ui/button";
@@ -54,6 +54,7 @@ function useClientes(search: string) {
 
 function ClientesPage() {
   const [search, setSearch] = useState("");
+  const navigate = useNavigate();
   const { data, isLoading } = useClientes(search);
 
   return (
@@ -85,11 +86,10 @@ function ClientesPage() {
           {data.map((c) => {
             const meta = clienteStatusMeta[c.status as ClienteStatus];
             return (
-              <Link
+              <div
                 key={c.id}
-                to="/clientes/$id"
-                params={{ id: c.id }}
-                className="block"
+                onClick={() => navigate({ to: "/clientes/$id", params: { id: c.id } })}
+                className="block cursor-pointer"
               >
                 <Card className="p-4 hover:border-primary/60 hover:bg-accent/30 transition-colors">
                   <div className="flex items-start justify-between gap-3">
@@ -121,16 +121,28 @@ function ClientesPage() {
                       </div>
                     )}
                   </div>
-                  <div className="mt-3 flex items-center justify-between">
+                  <div className="mt-3 flex items-center justify-between gap-2">
                     <span className="text-xs text-muted-foreground">
                       Venc. dia {c.dia_vencimento}
                     </span>
-                    <span className="font-semibold text-primary">
-                      {formatBRL(c.valor_mensalidade)}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold text-primary">
+                        {formatBRL(c.valor_mensalidade)}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate({ to: "/clientes/$id", params: { id: c.id }, search: { edit: 1 } });
+                        }}
+                        className="inline-flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs hover:bg-accent"
+                      >
+                        <Pencil className="h-3 w-3" /> Editar
+                      </button>
+                    </div>
                   </div>
                 </Card>
-              </Link>
+              </div>
             );
           })}
         </div>
