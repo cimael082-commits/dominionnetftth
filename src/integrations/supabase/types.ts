@@ -59,18 +59,22 @@ export type Database = {
           email: string | null
           endereco: string | null
           id: string
+          ip_atual: string | null
           latitude: number | null
           login_pppoe: string | null
           longitude: number | null
           nome: string
           observacoes: string | null
+          online: boolean
           plano: string | null
           senha_pppoe: string | null
           senha_wifi: string | null
           ssid_wifi: string | null
           status: Database["public"]["Enums"]["cliente_status"]
           telefone: string | null
+          ultima_sincronizacao: string | null
           updated_at: string
+          uptime_atual: string | null
           valor_mensalidade: number
           whatsapp: string | null
         }
@@ -85,18 +89,22 @@ export type Database = {
           email?: string | null
           endereco?: string | null
           id?: string
+          ip_atual?: string | null
           latitude?: number | null
           login_pppoe?: string | null
           longitude?: number | null
           nome: string
           observacoes?: string | null
+          online?: boolean
           plano?: string | null
           senha_pppoe?: string | null
           senha_wifi?: string | null
           ssid_wifi?: string | null
           status?: Database["public"]["Enums"]["cliente_status"]
           telefone?: string | null
+          ultima_sincronizacao?: string | null
           updated_at?: string
+          uptime_atual?: string | null
           valor_mensalidade?: number
           whatsapp?: string | null
         }
@@ -111,18 +119,22 @@ export type Database = {
           email?: string | null
           endereco?: string | null
           id?: string
+          ip_atual?: string | null
           latitude?: number | null
           login_pppoe?: string | null
           longitude?: number | null
           nome?: string
           observacoes?: string | null
+          online?: boolean
           plano?: string | null
           senha_pppoe?: string | null
           senha_wifi?: string | null
           ssid_wifi?: string | null
           status?: Database["public"]["Enums"]["cliente_status"]
           telefone?: string | null
+          ultima_sincronizacao?: string | null
           updated_at?: string
+          uptime_atual?: string | null
           valor_mensalidade?: number
           whatsapp?: string | null
         }
@@ -256,6 +268,44 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      eventos_conexao: {
+        Row: {
+          cliente_id: string | null
+          created_at: string
+          id: string
+          ip: string | null
+          login_pppoe: string
+          tipo: string
+          uptime: string | null
+        }
+        Insert: {
+          cliente_id?: string | null
+          created_at?: string
+          id?: string
+          ip?: string | null
+          login_pppoe: string
+          tipo: string
+          uptime?: string | null
+        }
+        Update: {
+          cliente_id?: string | null
+          created_at?: string
+          id?: string
+          ip?: string | null
+          login_pppoe?: string
+          tipo?: string
+          uptime?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "eventos_conexao_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "clientes"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       parcelas: {
         Row: {
