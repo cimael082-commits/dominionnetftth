@@ -121,18 +121,38 @@ function ClientesPage() {
                       </div>
                     )}
                   </div>
-                  <div className="mt-3 flex items-center justify-between">
+                  <div className="mt-3 flex items-center justify-between gap-2">
                     <span className="text-xs text-muted-foreground">
                       Venc. dia {c.dia_vencimento}
                     </span>
-                    <span className="font-semibold text-primary">
-                      {formatBRL(c.valor_mensalidade)}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold text-primary">
+                        {formatBRL(c.valor_mensalidade)}
+                      </span>
+                      <Link
+                        to="/clientes/$id"
+                        params={{ id: c.id }}
+                        search={{ edit: 1 }}
+                        onClick={(e) => e.stopPropagation()}
+                        className="inline-flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs hover:bg-accent"
+                      >
+                        <Pencil className="h-3 w-3" /> Editar
+                      </Link>
+                    </div>
                   </div>
                 </Card>
               </Link>
             );
           })}
+        </div>
+      ) : (
+        <Card className="p-12 text-center">
+          <p className="text-muted-foreground">Nenhum cliente encontrado.</p>
+        </Card>
+      )}
+    </div>
+  );
+}
         </div>
       ) : (
         <Card className="p-12 text-center">
