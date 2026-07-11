@@ -41,11 +41,13 @@ import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/clientes/$id")({
   head: () => ({ meta: [{ title: "Cliente — Dominion Net" }] }),
+  validateSearch: (s: Record<string, unknown>) => ({ edit: s.edit === 1 || s.edit === "1" ? 1 : undefined }),
   component: ClienteDetail,
 });
 
 function ClienteDetail() {
   const { id } = Route.useParams();
+  const { edit: editParam } = Route.useSearch();
   const navigate = useNavigate();
   const qc = useQueryClient();
 
