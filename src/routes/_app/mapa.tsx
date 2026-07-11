@@ -189,6 +189,24 @@ function MapaPage() {
     },
   });
 
+  // Realtime: refresh client markers whenever clientes change (MikroTik sync)
+  useEffect(() => {
+    const ch = db
+      .channel("clientes-online-map")
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "clientes" },
+        () => {
+          clientesQ.refetch();
+        },
+      )
+      .subscribe();
+    return () => {
+      db.removeChannel(ch);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Init map (only when ready + not initialized yet)
   useEffect(() => {
     if (!ready || !containerRef.current || mapRef.current) return;
@@ -475,8 +493,12 @@ function MapaPage() {
   const kpis = useMemo(() => {
     const rotas = rotasQ.data ?? [];
     const ctos = ctosQ.data ?? [];
+    const clientes = clientesQ.data ?? [];
+    const online = clientes.filter((c) => c.online).length;
     return {
-      clientes: (clientesQ.data ?? []).length,
+      clientes: clientes.length,
+      online,
+      offline: clientes.length - online,
       ctos: ctos.length,
       rotas: rotas.length,
       metros: Math.round(rotas.reduce((s, r) => s + (Number(r.comprimento_m) || computePathLengthMeters(r.coordenadas ?? [])), 0)),
