@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
-import { Plus, Search, MapPin, Phone } from "lucide-react";
+import { Plus, Search, MapPin, Phone, Pencil } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { geocodeAddress } from "@/lib/geocode.functions";
 import { Button } from "@/components/ui/button";
