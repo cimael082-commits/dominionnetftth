@@ -75,6 +75,14 @@ function ClienteDetail() {
 
   const [edit, setEdit] = useState<Record<string, string> | null>(null);
 
+  useEffect(() => {
+    if (editParam === 1 && edit === null) {
+      setEdit({});
+      navigate({ to: "/clientes/$id", params: { id }, search: {}, replace: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editParam]);
+
   const save = useMutation({
     mutationFn: async () => {
       if (!edit) return;
