@@ -732,6 +732,8 @@ function MapaPage() {
       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 rounded-lg border border-border bg-background/95 backdrop-blur shadow-xl px-2 py-1.5">
         <div className="flex items-stretch divide-x divide-border/60">
           <Kpi icon={<Users />} value={kpis.clientes} label="Clientes" tone="text-cyan-400" />
+          <Kpi icon={<Activity />} value={kpis.online} label="Online" tone="text-emerald-400" />
+          <Kpi icon={<Activity />} value={kpis.offline} label="Offline" tone="text-rose-500" />
           <Kpi icon={<Box />} value={kpis.ctos} label="CTOs" tone="text-amber-600" />
           <Kpi icon={<RouteIcon />} value={kpis.rotas} label="Rotas" tone="text-orange-400" />
           <Kpi icon={<Ruler />} value={formatMeters(kpis.metros)} label="Metragem" tone="text-sky-400" />
