@@ -150,6 +150,7 @@ function MapaPage() {
   const [search, setSearch] = useState("");
   const [editRota, setEditRota] = useState<Rota | null>(null);
   const [editCto, setEditCto] = useState<Cto | null>(null);
+  const [editCeo, setEditCeo] = useState<Ceo | null>(null);
   const [splitRota, setSplitRota] = useState<Rota | null>(null);
 
   const ctosQ = useQuery({
