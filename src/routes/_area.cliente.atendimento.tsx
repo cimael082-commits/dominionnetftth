@@ -11,29 +11,28 @@ export const Route = createFileRoute("/_area/cliente/atendimento")({
 });
 
 type Cliente = { nome: string };
-type Config = { telefone_suporte: string | null; whatsapp_suporte: string | null };
 
 function AtendimentoPage() {
   const [cli, setCli] = useState<Cliente | null>(null);
-  const [cfg, setCfg] = useState<Config>({ telefone_suporte: null, whatsapp_suporte: null });
+  const [telefone, setTelefone] = useState<string | null>(null);
 
   useEffect(() => {
     clienteFetch<{ cliente: Cliente }>("/api/public/cliente/me").then((r) => setCli(r.cliente));
     supabase
       .from("configuracoes_empresa")
-      .select("telefone_suporte, whatsapp_suporte")
+      .select("telefone")
       .limit(1)
       .maybeSingle()
       .then(({ data }) => {
-        if (data) setCfg(data as Config);
+        if (data?.telefone) setTelefone(data.telefone);
       });
   }, []);
 
-  const wa = (cfg.whatsapp_suporte || cfg.telefone_suporte || "").replace(/\D/g, "");
+  const wa = (telefone || "").replace(/\D/g, "");
   const nome = cli?.nome || "cliente";
   const msg = encodeURIComponent(`Olá! Sou ${nome} e preciso de suporte.`);
   const waLink = wa ? `https://wa.me/55${wa}?text=${msg}` : "";
-  const telLink = cfg.telefone_suporte ? `tel:${cfg.telefone_suporte.replace(/\D/g, "")}` : "";
+  const telLink = telefone ? `tel:${telefone.replace(/\D/g, "")}` : "";
 
   return (
     <div className="space-y-4">
