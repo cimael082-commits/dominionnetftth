@@ -14,7 +14,11 @@ import {
   Save,
   Plus,
   FileText,
+  KeyRound,
+  RotateCcw,
 } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { setClientePortalPassword } from "@/lib/cliente-senha.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
