@@ -329,10 +329,7 @@ function MapaPage() {
           scale: 1,
         },
       });
-      const info = new google.maps.InfoWindow({
-        content: `<div style="color:#0A1628;font-family:system-ui;font-size:12px"><b>CEO/Emenda ${c.nome}</b><br/>Status: ${statusLabel[c.status]}</div>`,
-      });
-      marker.addListener("click", () => info.open({ map, anchor: marker }));
+      marker.addListener("click", () => setEditCeo(c));
       markersRef.current.push(marker);
     });
 
