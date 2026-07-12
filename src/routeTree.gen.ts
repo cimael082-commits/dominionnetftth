@@ -10,8 +10,10 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AreaRouteImport } from './routes/_area'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ClienteLoginRouteImport } from './routes/cliente.login'
 import { Route as AppPesquisaRouteImport } from './routes/_app/pesquisa'
 import { Route as AppMapaRouteImport } from './routes/_app/mapa'
 import { Route as AppFinanceiroRouteImport } from './routes/_app/financeiro'
@@ -19,13 +21,30 @@ import { Route as AppDashboardRouteImport } from './routes/_app/dashboard'
 import { Route as AppConfiguracoesRouteImport } from './routes/_app/configuracoes'
 import { Route as AppClientesRouteImport } from './routes/_app/clientes'
 import { Route as AppCarnesRouteImport } from './routes/_app/carnes'
+import { Route as AppAvisosRouteImport } from './routes/_app/avisos'
+import { Route as AreaClienteIndexRouteImport } from './routes/_area.cliente.index'
+import { Route as AreaClienteWifiRouteImport } from './routes/_area.cliente.wifi'
+import { Route as AreaClientePerfilRouteImport } from './routes/_area.cliente.perfil'
+import { Route as AreaClienteFinanceiroRouteImport } from './routes/_area.cliente.financeiro'
+import { Route as AreaClienteConexaoRouteImport } from './routes/_area.cliente.conexao'
+import { Route as AreaClienteAvisosRouteImport } from './routes/_area.cliente.avisos'
+import { Route as AreaClienteAtendimentoRouteImport } from './routes/_area.cliente.atendimento'
 import { Route as AppClientesIdRouteImport } from './routes/_app/clientes.$id'
 import { Route as ApiPublicMikrotikSyncRouteImport } from './routes/api/public/mikrotik/sync'
 import { Route as ApiPublicMikrotikStatusRouteImport } from './routes/api/public/mikrotik/status'
+import { Route as ApiPublicClienteNotificacoesRouteImport } from './routes/api/public/cliente/notificacoes'
+import { Route as ApiPublicClienteMeRouteImport } from './routes/api/public/cliente/me'
+import { Route as ApiPublicClienteFinanceiroRouteImport } from './routes/api/public/cliente/financeiro'
+import { Route as ApiPublicClienteAvisosRouteImport } from './routes/api/public/cliente/avisos'
+import { Route as ApiPublicClienteAuthLoginRouteImport } from './routes/api/public/cliente/auth/login'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AreaRoute = AreaRouteImport.update({
+  id: '/_area',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppRoute = AppRouteImport.update({
@@ -35,6 +54,11 @@ const AppRoute = AppRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ClienteLoginRoute = ClienteLoginRouteImport.update({
+  id: '/cliente/login',
+  path: '/cliente/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppPesquisaRoute = AppPesquisaRouteImport.update({
@@ -72,6 +96,46 @@ const AppCarnesRoute = AppCarnesRouteImport.update({
   path: '/carnes',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAvisosRoute = AppAvisosRouteImport.update({
+  id: '/avisos',
+  path: '/avisos',
+  getParentRoute: () => AppRoute,
+} as any)
+const AreaClienteIndexRoute = AreaClienteIndexRouteImport.update({
+  id: '/cliente/',
+  path: '/cliente/',
+  getParentRoute: () => AreaRoute,
+} as any)
+const AreaClienteWifiRoute = AreaClienteWifiRouteImport.update({
+  id: '/cliente/wifi',
+  path: '/cliente/wifi',
+  getParentRoute: () => AreaRoute,
+} as any)
+const AreaClientePerfilRoute = AreaClientePerfilRouteImport.update({
+  id: '/cliente/perfil',
+  path: '/cliente/perfil',
+  getParentRoute: () => AreaRoute,
+} as any)
+const AreaClienteFinanceiroRoute = AreaClienteFinanceiroRouteImport.update({
+  id: '/cliente/financeiro',
+  path: '/cliente/financeiro',
+  getParentRoute: () => AreaRoute,
+} as any)
+const AreaClienteConexaoRoute = AreaClienteConexaoRouteImport.update({
+  id: '/cliente/conexao',
+  path: '/cliente/conexao',
+  getParentRoute: () => AreaRoute,
+} as any)
+const AreaClienteAvisosRoute = AreaClienteAvisosRouteImport.update({
+  id: '/cliente/avisos',
+  path: '/cliente/avisos',
+  getParentRoute: () => AreaRoute,
+} as any)
+const AreaClienteAtendimentoRoute = AreaClienteAtendimentoRouteImport.update({
+  id: '/cliente/atendimento',
+  path: '/cliente/atendimento',
+  getParentRoute: () => AreaRoute,
+} as any)
 const AppClientesIdRoute = AppClientesIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -87,10 +151,39 @@ const ApiPublicMikrotikStatusRoute = ApiPublicMikrotikStatusRouteImport.update({
   path: '/api/public/mikrotik/status',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicClienteNotificacoesRoute =
+  ApiPublicClienteNotificacoesRouteImport.update({
+    id: '/api/public/cliente/notificacoes',
+    path: '/api/public/cliente/notificacoes',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicClienteMeRoute = ApiPublicClienteMeRouteImport.update({
+  id: '/api/public/cliente/me',
+  path: '/api/public/cliente/me',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicClienteFinanceiroRoute =
+  ApiPublicClienteFinanceiroRouteImport.update({
+    id: '/api/public/cliente/financeiro',
+    path: '/api/public/cliente/financeiro',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicClienteAvisosRoute = ApiPublicClienteAvisosRouteImport.update({
+  id: '/api/public/cliente/avisos',
+  path: '/api/public/cliente/avisos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicClienteAuthLoginRoute =
+  ApiPublicClienteAuthLoginRouteImport.update({
+    id: '/api/public/cliente/auth/login',
+    path: '/api/public/cliente/auth/login',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/avisos': typeof AppAvisosRoute
   '/carnes': typeof AppCarnesRoute
   '/clientes': typeof AppClientesRouteWithChildren
   '/configuracoes': typeof AppConfiguracoesRoute
@@ -98,13 +191,27 @@ export interface FileRoutesByFullPath {
   '/financeiro': typeof AppFinanceiroRoute
   '/mapa': typeof AppMapaRoute
   '/pesquisa': typeof AppPesquisaRoute
+  '/cliente/login': typeof ClienteLoginRoute
   '/clientes/$id': typeof AppClientesIdRoute
+  '/cliente/atendimento': typeof AreaClienteAtendimentoRoute
+  '/cliente/avisos': typeof AreaClienteAvisosRoute
+  '/cliente/conexao': typeof AreaClienteConexaoRoute
+  '/cliente/financeiro': typeof AreaClienteFinanceiroRoute
+  '/cliente/perfil': typeof AreaClientePerfilRoute
+  '/cliente/wifi': typeof AreaClienteWifiRoute
+  '/cliente/': typeof AreaClienteIndexRoute
+  '/api/public/cliente/avisos': typeof ApiPublicClienteAvisosRoute
+  '/api/public/cliente/financeiro': typeof ApiPublicClienteFinanceiroRoute
+  '/api/public/cliente/me': typeof ApiPublicClienteMeRoute
+  '/api/public/cliente/notificacoes': typeof ApiPublicClienteNotificacoesRoute
   '/api/public/mikrotik/status': typeof ApiPublicMikrotikStatusRoute
   '/api/public/mikrotik/sync': typeof ApiPublicMikrotikSyncRoute
+  '/api/public/cliente/auth/login': typeof ApiPublicClienteAuthLoginRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/avisos': typeof AppAvisosRoute
   '/carnes': typeof AppCarnesRoute
   '/clientes': typeof AppClientesRouteWithChildren
   '/configuracoes': typeof AppConfiguracoesRoute
@@ -112,15 +219,30 @@ export interface FileRoutesByTo {
   '/financeiro': typeof AppFinanceiroRoute
   '/mapa': typeof AppMapaRoute
   '/pesquisa': typeof AppPesquisaRoute
+  '/cliente/login': typeof ClienteLoginRoute
   '/clientes/$id': typeof AppClientesIdRoute
+  '/cliente/atendimento': typeof AreaClienteAtendimentoRoute
+  '/cliente/avisos': typeof AreaClienteAvisosRoute
+  '/cliente/conexao': typeof AreaClienteConexaoRoute
+  '/cliente/financeiro': typeof AreaClienteFinanceiroRoute
+  '/cliente/perfil': typeof AreaClientePerfilRoute
+  '/cliente/wifi': typeof AreaClienteWifiRoute
+  '/cliente': typeof AreaClienteIndexRoute
+  '/api/public/cliente/avisos': typeof ApiPublicClienteAvisosRoute
+  '/api/public/cliente/financeiro': typeof ApiPublicClienteFinanceiroRoute
+  '/api/public/cliente/me': typeof ApiPublicClienteMeRoute
+  '/api/public/cliente/notificacoes': typeof ApiPublicClienteNotificacoesRoute
   '/api/public/mikrotik/status': typeof ApiPublicMikrotikStatusRoute
   '/api/public/mikrotik/sync': typeof ApiPublicMikrotikSyncRoute
+  '/api/public/cliente/auth/login': typeof ApiPublicClienteAuthLoginRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_app': typeof AppRouteWithChildren
+  '/_area': typeof AreaRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_app/avisos': typeof AppAvisosRoute
   '/_app/carnes': typeof AppCarnesRoute
   '/_app/clientes': typeof AppClientesRouteWithChildren
   '/_app/configuracoes': typeof AppConfiguracoesRoute
@@ -128,15 +250,29 @@ export interface FileRoutesById {
   '/_app/financeiro': typeof AppFinanceiroRoute
   '/_app/mapa': typeof AppMapaRoute
   '/_app/pesquisa': typeof AppPesquisaRoute
+  '/cliente/login': typeof ClienteLoginRoute
   '/_app/clientes/$id': typeof AppClientesIdRoute
+  '/_area/cliente/atendimento': typeof AreaClienteAtendimentoRoute
+  '/_area/cliente/avisos': typeof AreaClienteAvisosRoute
+  '/_area/cliente/conexao': typeof AreaClienteConexaoRoute
+  '/_area/cliente/financeiro': typeof AreaClienteFinanceiroRoute
+  '/_area/cliente/perfil': typeof AreaClientePerfilRoute
+  '/_area/cliente/wifi': typeof AreaClienteWifiRoute
+  '/_area/cliente/': typeof AreaClienteIndexRoute
+  '/api/public/cliente/avisos': typeof ApiPublicClienteAvisosRoute
+  '/api/public/cliente/financeiro': typeof ApiPublicClienteFinanceiroRoute
+  '/api/public/cliente/me': typeof ApiPublicClienteMeRoute
+  '/api/public/cliente/notificacoes': typeof ApiPublicClienteNotificacoesRoute
   '/api/public/mikrotik/status': typeof ApiPublicMikrotikStatusRoute
   '/api/public/mikrotik/sync': typeof ApiPublicMikrotikSyncRoute
+  '/api/public/cliente/auth/login': typeof ApiPublicClienteAuthLoginRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/auth'
+    | '/avisos'
     | '/carnes'
     | '/clientes'
     | '/configuracoes'
@@ -144,13 +280,27 @@ export interface FileRouteTypes {
     | '/financeiro'
     | '/mapa'
     | '/pesquisa'
+    | '/cliente/login'
     | '/clientes/$id'
+    | '/cliente/atendimento'
+    | '/cliente/avisos'
+    | '/cliente/conexao'
+    | '/cliente/financeiro'
+    | '/cliente/perfil'
+    | '/cliente/wifi'
+    | '/cliente/'
+    | '/api/public/cliente/avisos'
+    | '/api/public/cliente/financeiro'
+    | '/api/public/cliente/me'
+    | '/api/public/cliente/notificacoes'
     | '/api/public/mikrotik/status'
     | '/api/public/mikrotik/sync'
+    | '/api/public/cliente/auth/login'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
+    | '/avisos'
     | '/carnes'
     | '/clientes'
     | '/configuracoes'
@@ -158,14 +308,29 @@ export interface FileRouteTypes {
     | '/financeiro'
     | '/mapa'
     | '/pesquisa'
+    | '/cliente/login'
     | '/clientes/$id'
+    | '/cliente/atendimento'
+    | '/cliente/avisos'
+    | '/cliente/conexao'
+    | '/cliente/financeiro'
+    | '/cliente/perfil'
+    | '/cliente/wifi'
+    | '/cliente'
+    | '/api/public/cliente/avisos'
+    | '/api/public/cliente/financeiro'
+    | '/api/public/cliente/me'
+    | '/api/public/cliente/notificacoes'
     | '/api/public/mikrotik/status'
     | '/api/public/mikrotik/sync'
+    | '/api/public/cliente/auth/login'
   id:
     | '__root__'
     | '/'
     | '/_app'
+    | '/_area'
     | '/auth'
+    | '/_app/avisos'
     | '/_app/carnes'
     | '/_app/clientes'
     | '/_app/configuracoes'
@@ -173,17 +338,37 @@ export interface FileRouteTypes {
     | '/_app/financeiro'
     | '/_app/mapa'
     | '/_app/pesquisa'
+    | '/cliente/login'
     | '/_app/clientes/$id'
+    | '/_area/cliente/atendimento'
+    | '/_area/cliente/avisos'
+    | '/_area/cliente/conexao'
+    | '/_area/cliente/financeiro'
+    | '/_area/cliente/perfil'
+    | '/_area/cliente/wifi'
+    | '/_area/cliente/'
+    | '/api/public/cliente/avisos'
+    | '/api/public/cliente/financeiro'
+    | '/api/public/cliente/me'
+    | '/api/public/cliente/notificacoes'
     | '/api/public/mikrotik/status'
     | '/api/public/mikrotik/sync'
+    | '/api/public/cliente/auth/login'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
+  AreaRoute: typeof AreaRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ClienteLoginRoute: typeof ClienteLoginRoute
+  ApiPublicClienteAvisosRoute: typeof ApiPublicClienteAvisosRoute
+  ApiPublicClienteFinanceiroRoute: typeof ApiPublicClienteFinanceiroRoute
+  ApiPublicClienteMeRoute: typeof ApiPublicClienteMeRoute
+  ApiPublicClienteNotificacoesRoute: typeof ApiPublicClienteNotificacoesRoute
   ApiPublicMikrotikStatusRoute: typeof ApiPublicMikrotikStatusRoute
   ApiPublicMikrotikSyncRoute: typeof ApiPublicMikrotikSyncRoute
+  ApiPublicClienteAuthLoginRoute: typeof ApiPublicClienteAuthLoginRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -193,6 +378,13 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_area': {
+      id: '/_area'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AreaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_app': {
@@ -207,6 +399,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cliente/login': {
+      id: '/cliente/login'
+      path: '/cliente/login'
+      fullPath: '/cliente/login'
+      preLoaderRoute: typeof ClienteLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_app/pesquisa': {
@@ -258,6 +457,62 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppCarnesRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/avisos': {
+      id: '/_app/avisos'
+      path: '/avisos'
+      fullPath: '/avisos'
+      preLoaderRoute: typeof AppAvisosRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_area/cliente/': {
+      id: '/_area/cliente/'
+      path: '/cliente'
+      fullPath: '/cliente/'
+      preLoaderRoute: typeof AreaClienteIndexRouteImport
+      parentRoute: typeof AreaRoute
+    }
+    '/_area/cliente/wifi': {
+      id: '/_area/cliente/wifi'
+      path: '/cliente/wifi'
+      fullPath: '/cliente/wifi'
+      preLoaderRoute: typeof AreaClienteWifiRouteImport
+      parentRoute: typeof AreaRoute
+    }
+    '/_area/cliente/perfil': {
+      id: '/_area/cliente/perfil'
+      path: '/cliente/perfil'
+      fullPath: '/cliente/perfil'
+      preLoaderRoute: typeof AreaClientePerfilRouteImport
+      parentRoute: typeof AreaRoute
+    }
+    '/_area/cliente/financeiro': {
+      id: '/_area/cliente/financeiro'
+      path: '/cliente/financeiro'
+      fullPath: '/cliente/financeiro'
+      preLoaderRoute: typeof AreaClienteFinanceiroRouteImport
+      parentRoute: typeof AreaRoute
+    }
+    '/_area/cliente/conexao': {
+      id: '/_area/cliente/conexao'
+      path: '/cliente/conexao'
+      fullPath: '/cliente/conexao'
+      preLoaderRoute: typeof AreaClienteConexaoRouteImport
+      parentRoute: typeof AreaRoute
+    }
+    '/_area/cliente/avisos': {
+      id: '/_area/cliente/avisos'
+      path: '/cliente/avisos'
+      fullPath: '/cliente/avisos'
+      preLoaderRoute: typeof AreaClienteAvisosRouteImport
+      parentRoute: typeof AreaRoute
+    }
+    '/_area/cliente/atendimento': {
+      id: '/_area/cliente/atendimento'
+      path: '/cliente/atendimento'
+      fullPath: '/cliente/atendimento'
+      preLoaderRoute: typeof AreaClienteAtendimentoRouteImport
+      parentRoute: typeof AreaRoute
+    }
     '/_app/clientes/$id': {
       id: '/_app/clientes/$id'
       path: '/$id'
@@ -279,6 +534,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicMikrotikStatusRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/cliente/notificacoes': {
+      id: '/api/public/cliente/notificacoes'
+      path: '/api/public/cliente/notificacoes'
+      fullPath: '/api/public/cliente/notificacoes'
+      preLoaderRoute: typeof ApiPublicClienteNotificacoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/cliente/me': {
+      id: '/api/public/cliente/me'
+      path: '/api/public/cliente/me'
+      fullPath: '/api/public/cliente/me'
+      preLoaderRoute: typeof ApiPublicClienteMeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/cliente/financeiro': {
+      id: '/api/public/cliente/financeiro'
+      path: '/api/public/cliente/financeiro'
+      fullPath: '/api/public/cliente/financeiro'
+      preLoaderRoute: typeof ApiPublicClienteFinanceiroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/cliente/avisos': {
+      id: '/api/public/cliente/avisos'
+      path: '/api/public/cliente/avisos'
+      fullPath: '/api/public/cliente/avisos'
+      preLoaderRoute: typeof ApiPublicClienteAvisosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/cliente/auth/login': {
+      id: '/api/public/cliente/auth/login'
+      path: '/api/public/cliente/auth/login'
+      fullPath: '/api/public/cliente/auth/login'
+      preLoaderRoute: typeof ApiPublicClienteAuthLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -295,6 +585,7 @@ const AppClientesRouteWithChildren = AppClientesRoute._addFileChildren(
 )
 
 interface AppRouteChildren {
+  AppAvisosRoute: typeof AppAvisosRoute
   AppCarnesRoute: typeof AppCarnesRoute
   AppClientesRoute: typeof AppClientesRouteWithChildren
   AppConfiguracoesRoute: typeof AppConfiguracoesRoute
@@ -305,6 +596,7 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppAvisosRoute: AppAvisosRoute,
   AppCarnesRoute: AppCarnesRoute,
   AppClientesRoute: AppClientesRouteWithChildren,
   AppConfiguracoesRoute: AppConfiguracoesRoute,
@@ -316,12 +608,41 @@ const AppRouteChildren: AppRouteChildren = {
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
+interface AreaRouteChildren {
+  AreaClienteAtendimentoRoute: typeof AreaClienteAtendimentoRoute
+  AreaClienteAvisosRoute: typeof AreaClienteAvisosRoute
+  AreaClienteConexaoRoute: typeof AreaClienteConexaoRoute
+  AreaClienteFinanceiroRoute: typeof AreaClienteFinanceiroRoute
+  AreaClientePerfilRoute: typeof AreaClientePerfilRoute
+  AreaClienteWifiRoute: typeof AreaClienteWifiRoute
+  AreaClienteIndexRoute: typeof AreaClienteIndexRoute
+}
+
+const AreaRouteChildren: AreaRouteChildren = {
+  AreaClienteAtendimentoRoute: AreaClienteAtendimentoRoute,
+  AreaClienteAvisosRoute: AreaClienteAvisosRoute,
+  AreaClienteConexaoRoute: AreaClienteConexaoRoute,
+  AreaClienteFinanceiroRoute: AreaClienteFinanceiroRoute,
+  AreaClientePerfilRoute: AreaClientePerfilRoute,
+  AreaClienteWifiRoute: AreaClienteWifiRoute,
+  AreaClienteIndexRoute: AreaClienteIndexRoute,
+}
+
+const AreaRouteWithChildren = AreaRoute._addFileChildren(AreaRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
+  AreaRoute: AreaRouteWithChildren,
   AuthRoute: AuthRoute,
+  ClienteLoginRoute: ClienteLoginRoute,
+  ApiPublicClienteAvisosRoute: ApiPublicClienteAvisosRoute,
+  ApiPublicClienteFinanceiroRoute: ApiPublicClienteFinanceiroRoute,
+  ApiPublicClienteMeRoute: ApiPublicClienteMeRoute,
+  ApiPublicClienteNotificacoesRoute: ApiPublicClienteNotificacoesRoute,
   ApiPublicMikrotikStatusRoute: ApiPublicMikrotikStatusRoute,
   ApiPublicMikrotikSyncRoute: ApiPublicMikrotikSyncRoute,
+  ApiPublicClienteAuthLoginRoute: ApiPublicClienteAuthLoginRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
