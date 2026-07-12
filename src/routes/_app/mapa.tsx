@@ -1549,3 +1549,109 @@ function PortaRow({
     </tr>
   );
 }
+
+function EditCeoDialog({ ceo, onClose }: { ceo: Ceo | null; onClose: () => void }) {
+  const qc = useQueryClient();
+  const [nome, setNome] = useState("");
+  const [status, setStatus] = useState<InfraStatus>("ativo");
+  const [lat, setLat] = useState("");
+  const [lng, setLng] = useState("");
+
+  useEffect(() => {
+    if (ceo) {
+      setNome(ceo.nome);
+      setStatus(ceo.status);
+      setLat(String(ceo.latitude));
+      setLng(String(ceo.longitude));
+    }
+  }, [ceo]);
+
+  const save = useMutation({
+    mutationFn: async () => {
+      if (!ceo) return;
+      const patch: Record<string, unknown> = { nome, status };
+      const nLat = parseFloat(lat);
+      const nLng = parseFloat(lng);
+      if (!Number.isNaN(nLat)) patch.latitude = nLat;
+      if (!Number.isNaN(nLng)) patch.longitude = nLng;
+      const { error } = await db.from("ceo_emendas").update(patch).eq("id", ceo.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("CEO atualizada");
+      qc.invalidateQueries({ queryKey: ["map"] });
+      onClose();
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const del = useMutation({
+    mutationFn: async () => {
+      if (!ceo) return;
+      const { error } = await db.from("ceo_emendas").delete().eq("id", ceo.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("CEO removida");
+      qc.invalidateQueries({ queryKey: ["map"] });
+      onClose();
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  if (!ceo) return null;
+
+  return (
+    <Dialog open={!!ceo} onOpenChange={(v) => !v && onClose()}>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <Wrench className="h-5 w-5 text-purple-500" />
+            Editar CEO/Emenda
+          </DialogTitle>
+        </DialogHeader>
+        <div className="space-y-3">
+          <div className="space-y-1.5">
+            <Label className="text-xs">Nome / Identificação</Label>
+            <Input value={nome} onChange={(e) => setNome(e.target.value)} />
+          </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs">Status</Label>
+            <Select value={status} onValueChange={(v) => setStatus(v as InfraStatus)}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="planejado">Planejado</SelectItem>
+                <SelectItem value="implantacao">Em Implantação</SelectItem>
+                <SelectItem value="ativo">Ativo</SelectItem>
+                <SelectItem value="desativado">Desativado</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label className="text-xs">Latitude</Label>
+              <Input value={lat} onChange={(e) => setLat(e.target.value)} />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs">Longitude</Label>
+              <Input value={lng} onChange={(e) => setLng(e.target.value)} />
+            </div>
+          </div>
+        </div>
+        <DialogFooter className="flex-wrap gap-2">
+          <Button
+            variant="destructive"
+            className="mr-auto"
+            onClick={() => { if (confirm(`Excluir CEO "${ceo.nome}"?`)) del.mutate(); }}
+          >
+            <Trash2 className="h-4 w-4" /> Excluir
+          </Button>
+          <Button variant="outline" onClick={onClose}>Cancelar</Button>
+          <Button onClick={() => nome.trim() ? save.mutate() : toast.error("Informe o nome")} disabled={save.isPending}>
+            <Save className="h-4 w-4" /> Salvar
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
