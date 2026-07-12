@@ -14,6 +14,83 @@ export type Database = {
   }
   public: {
     Tables: {
+      aviso_leituras: {
+        Row: {
+          aviso_id: string
+          cliente_id: string
+          id: string
+          lido_em: string
+        }
+        Insert: {
+          aviso_id: string
+          cliente_id: string
+          id?: string
+          lido_em?: string
+        }
+        Update: {
+          aviso_id?: string
+          cliente_id?: string
+          id?: string
+          lido_em?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "aviso_leituras_aviso_id_fkey"
+            columns: ["aviso_id"]
+            isOneToOne: false
+            referencedRelation: "avisos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "aviso_leituras_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "clientes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      avisos: {
+        Row: {
+          cliente_id: string | null
+          created_at: string
+          destino: string
+          id: string
+          mensagem: string
+          tipo: string
+          titulo: string
+          updated_at: string
+        }
+        Insert: {
+          cliente_id?: string | null
+          created_at?: string
+          destino?: string
+          id?: string
+          mensagem: string
+          tipo?: string
+          titulo: string
+          updated_at?: string
+        }
+        Update: {
+          cliente_id?: string | null
+          created_at?: string
+          destino?: string
+          id?: string
+          mensagem?: string
+          tipo?: string
+          titulo?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "avisos_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "clientes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ceo_emendas: {
         Row: {
           created_at: string
@@ -53,20 +130,25 @@ export type Database = {
           cep: string | null
           cidade: string | null
           cpf_cnpj: string | null
+          cpf_cnpj_norm: string | null
           created_at: string
           data_ativacao: string | null
           dia_vencimento: number
           email: string | null
           endereco: string | null
+          facebook_id: string | null
+          google_sub: string | null
           id: string
           ip_atual: string | null
           latitude: number | null
+          linked_at: string | null
           login_pppoe: string | null
           longitude: number | null
           nome: string
           observacoes: string | null
           online: boolean
           plano: string | null
+          senha_cliente_hash: string | null
           senha_pppoe: string | null
           senha_wifi: string | null
           ssid_wifi: string | null
@@ -77,26 +159,33 @@ export type Database = {
           uptime_atual: string | null
           valor_mensalidade: number
           whatsapp: string | null
+          wifi_senha: string | null
+          wifi_ssid: string | null
         }
         Insert: {
           bairro?: string | null
           cep?: string | null
           cidade?: string | null
           cpf_cnpj?: string | null
+          cpf_cnpj_norm?: string | null
           created_at?: string
           data_ativacao?: string | null
           dia_vencimento?: number
           email?: string | null
           endereco?: string | null
+          facebook_id?: string | null
+          google_sub?: string | null
           id?: string
           ip_atual?: string | null
           latitude?: number | null
+          linked_at?: string | null
           login_pppoe?: string | null
           longitude?: number | null
           nome: string
           observacoes?: string | null
           online?: boolean
           plano?: string | null
+          senha_cliente_hash?: string | null
           senha_pppoe?: string | null
           senha_wifi?: string | null
           ssid_wifi?: string | null
@@ -107,26 +196,33 @@ export type Database = {
           uptime_atual?: string | null
           valor_mensalidade?: number
           whatsapp?: string | null
+          wifi_senha?: string | null
+          wifi_ssid?: string | null
         }
         Update: {
           bairro?: string | null
           cep?: string | null
           cidade?: string | null
           cpf_cnpj?: string | null
+          cpf_cnpj_norm?: string | null
           created_at?: string
           data_ativacao?: string | null
           dia_vencimento?: number
           email?: string | null
           endereco?: string | null
+          facebook_id?: string | null
+          google_sub?: string | null
           id?: string
           ip_atual?: string | null
           latitude?: number | null
+          linked_at?: string | null
           login_pppoe?: string | null
           longitude?: number | null
           nome?: string
           observacoes?: string | null
           online?: boolean
           plano?: string | null
+          senha_cliente_hash?: string | null
           senha_pppoe?: string | null
           senha_wifi?: string | null
           ssid_wifi?: string | null
@@ -137,6 +233,8 @@ export type Database = {
           uptime_atual?: string | null
           valor_mensalidade?: number
           whatsapp?: string | null
+          wifi_senha?: string | null
+          wifi_ssid?: string | null
         }
         Relationships: []
       }
@@ -307,6 +405,64 @@ export type Database = {
           },
         ]
       }
+      notificacoes: {
+        Row: {
+          aviso_id: string | null
+          cliente_id: string
+          corpo: string
+          created_at: string
+          id: string
+          lido: boolean
+          parcela_id: string | null
+          tipo: string
+          titulo: string
+        }
+        Insert: {
+          aviso_id?: string | null
+          cliente_id: string
+          corpo: string
+          created_at?: string
+          id?: string
+          lido?: boolean
+          parcela_id?: string | null
+          tipo: string
+          titulo: string
+        }
+        Update: {
+          aviso_id?: string | null
+          cliente_id?: string
+          corpo?: string
+          created_at?: string
+          id?: string
+          lido?: boolean
+          parcela_id?: string | null
+          tipo?: string
+          titulo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notificacoes_aviso_id_fkey"
+            columns: ["aviso_id"]
+            isOneToOne: false
+            referencedRelation: "avisos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notificacoes_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "clientes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notificacoes_parcela_id_fkey"
+            columns: ["parcela_id"]
+            isOneToOne: false
+            referencedRelation: "parcelas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       parcelas: {
         Row: {
           cliente_id: string
@@ -420,6 +576,7 @@ export type Database = {
     }
     Functions: {
       atualizar_status_vencidos: { Args: never; Returns: undefined }
+      gerar_lembretes_vencimento: { Args: never; Returns: number }
     }
     Enums: {
       cliente_status: "ativo" | "bloqueado" | "cancelado" | "inadimplente"
