@@ -266,7 +266,7 @@ function ClienteDetail() {
                 Senha padrão inicial: <code className="bg-muted px-1 rounded">123</code>.
               </p>
               <PortalSenhaBox
-                onSet={(s) => senhaPortal.mutate(s)}
+                onSet={(s: string) => senhaPortal.mutate(s)}
                 onReset={() => { if (confirm("Resetar senha do portal para '123'?")) senhaPortal.mutate(null); }}
                 pending={senhaPortal.isPending}
               />
