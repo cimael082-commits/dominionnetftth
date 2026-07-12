@@ -258,6 +258,21 @@ function ClienteDetail() {
             </Card>
 
             <Card className="p-5 space-y-3 md:col-span-2">
+              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide flex items-center gap-2">
+                <KeyRound className="h-4 w-4" /> Portal do Cliente (App / Web)
+              </h3>
+              <p className="text-xs text-muted-foreground">
+                O cliente entra em <code className="bg-muted px-1 rounded">/cliente/login</code> usando CPF ou Login PPPoE.
+                Senha padrão inicial: <code className="bg-muted px-1 rounded">123</code>.
+              </p>
+              <PortalSenhaBox
+                onSet={(s) => senhaPortal.mutate(s)}
+                onReset={() => { if (confirm("Resetar senha do portal para '123'?")) senhaPortal.mutate(null); }}
+                pending={senhaPortal.isPending}
+              />
+            </Card>
+
+            <Card className="p-5 space-y-3 md:col-span-2">
               <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Observações</h3>
               {editing ? (
                 <Textarea rows={3} value={val("observacoes")} onChange={(e) => setEdit((s) => ({ ...(s ?? {}), observacoes: e.target.value }))} />
