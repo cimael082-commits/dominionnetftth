@@ -766,6 +766,10 @@ function MapaPage() {
         cto={editCto}
         onClose={() => setEditCto(null)}
       />
+      <EditCeoDialog
+        ceo={editCeo}
+        onClose={() => setEditCeo(null)}
+      />
     </div>
   );
 }
