@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AreaRouteImport } from './routes/_area'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ClienteLoginRouteImport } from './routes/cliente.login'
@@ -20,6 +21,7 @@ import { Route as AppDashboardRouteImport } from './routes/_app/dashboard'
 import { Route as AppConfiguracoesRouteImport } from './routes/_app/configuracoes'
 import { Route as AppClientesRouteImport } from './routes/_app/clientes'
 import { Route as AppCarnesRouteImport } from './routes/_app/carnes'
+import { Route as AreaClienteIndexRouteImport } from './routes/_area.cliente.index'
 import { Route as AppClientesIdRouteImport } from './routes/_app/clientes.$id'
 import { Route as ApiPublicMikrotikSyncRouteImport } from './routes/api/public/mikrotik/sync'
 import { Route as ApiPublicMikrotikStatusRouteImport } from './routes/api/public/mikrotik/status'
@@ -32,6 +34,10 @@ import { Route as ApiPublicClienteAuthLoginRouteImport } from './routes/api/publ
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AreaRoute = AreaRouteImport.update({
+  id: '/_area',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppRoute = AppRouteImport.update({
@@ -82,6 +88,11 @@ const AppCarnesRoute = AppCarnesRouteImport.update({
   id: '/carnes',
   path: '/carnes',
   getParentRoute: () => AppRoute,
+} as any)
+const AreaClienteIndexRoute = AreaClienteIndexRouteImport.update({
+  id: '/cliente/',
+  path: '/cliente/',
+  getParentRoute: () => AreaRoute,
 } as any)
 const AppClientesIdRoute = AppClientesIdRouteImport.update({
   id: '/$id',
@@ -139,6 +150,7 @@ export interface FileRoutesByFullPath {
   '/pesquisa': typeof AppPesquisaRoute
   '/cliente/login': typeof ClienteLoginRoute
   '/clientes/$id': typeof AppClientesIdRoute
+  '/cliente/': typeof AreaClienteIndexRoute
   '/api/public/cliente/avisos': typeof ApiPublicClienteAvisosRoute
   '/api/public/cliente/financeiro': typeof ApiPublicClienteFinanceiroRoute
   '/api/public/cliente/me': typeof ApiPublicClienteMeRoute
@@ -159,6 +171,7 @@ export interface FileRoutesByTo {
   '/pesquisa': typeof AppPesquisaRoute
   '/cliente/login': typeof ClienteLoginRoute
   '/clientes/$id': typeof AppClientesIdRoute
+  '/cliente': typeof AreaClienteIndexRoute
   '/api/public/cliente/avisos': typeof ApiPublicClienteAvisosRoute
   '/api/public/cliente/financeiro': typeof ApiPublicClienteFinanceiroRoute
   '/api/public/cliente/me': typeof ApiPublicClienteMeRoute
@@ -171,6 +184,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_app': typeof AppRouteWithChildren
+  '/_area': typeof AreaRouteWithChildren
   '/auth': typeof AuthRoute
   '/_app/carnes': typeof AppCarnesRoute
   '/_app/clientes': typeof AppClientesRouteWithChildren
@@ -181,6 +195,7 @@ export interface FileRoutesById {
   '/_app/pesquisa': typeof AppPesquisaRoute
   '/cliente/login': typeof ClienteLoginRoute
   '/_app/clientes/$id': typeof AppClientesIdRoute
+  '/_area/cliente/': typeof AreaClienteIndexRoute
   '/api/public/cliente/avisos': typeof ApiPublicClienteAvisosRoute
   '/api/public/cliente/financeiro': typeof ApiPublicClienteFinanceiroRoute
   '/api/public/cliente/me': typeof ApiPublicClienteMeRoute
@@ -203,6 +218,7 @@ export interface FileRouteTypes {
     | '/pesquisa'
     | '/cliente/login'
     | '/clientes/$id'
+    | '/cliente/'
     | '/api/public/cliente/avisos'
     | '/api/public/cliente/financeiro'
     | '/api/public/cliente/me'
@@ -223,6 +239,7 @@ export interface FileRouteTypes {
     | '/pesquisa'
     | '/cliente/login'
     | '/clientes/$id'
+    | '/cliente'
     | '/api/public/cliente/avisos'
     | '/api/public/cliente/financeiro'
     | '/api/public/cliente/me'
@@ -234,6 +251,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_app'
+    | '/_area'
     | '/auth'
     | '/_app/carnes'
     | '/_app/clientes'
@@ -244,6 +262,7 @@ export interface FileRouteTypes {
     | '/_app/pesquisa'
     | '/cliente/login'
     | '/_app/clientes/$id'
+    | '/_area/cliente/'
     | '/api/public/cliente/avisos'
     | '/api/public/cliente/financeiro'
     | '/api/public/cliente/me'
@@ -256,6 +275,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
+  AreaRoute: typeof AreaRouteWithChildren
   AuthRoute: typeof AuthRoute
   ClienteLoginRoute: typeof ClienteLoginRoute
   ApiPublicClienteAvisosRoute: typeof ApiPublicClienteAvisosRoute
@@ -274,6 +294,13 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_area': {
+      id: '/_area'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AreaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_app': {
@@ -345,6 +372,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/carnes'
       preLoaderRoute: typeof AppCarnesRouteImport
       parentRoute: typeof AppRoute
+    }
+    '/_area/cliente/': {
+      id: '/_area/cliente/'
+      path: '/cliente'
+      fullPath: '/cliente/'
+      preLoaderRoute: typeof AreaClienteIndexRouteImport
+      parentRoute: typeof AreaRoute
     }
     '/_app/clientes/$id': {
       id: '/_app/clientes/$id'
@@ -439,9 +473,20 @@ const AppRouteChildren: AppRouteChildren = {
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
+interface AreaRouteChildren {
+  AreaClienteIndexRoute: typeof AreaClienteIndexRoute
+}
+
+const AreaRouteChildren: AreaRouteChildren = {
+  AreaClienteIndexRoute: AreaClienteIndexRoute,
+}
+
+const AreaRouteWithChildren = AreaRoute._addFileChildren(AreaRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
+  AreaRoute: AreaRouteWithChildren,
   AuthRoute: AuthRoute,
   ClienteLoginRoute: ClienteLoginRoute,
   ApiPublicClienteAvisosRoute: ApiPublicClienteAvisosRoute,
