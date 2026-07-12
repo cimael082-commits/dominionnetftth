@@ -57,6 +57,7 @@ function ClientesPage() {
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
   const { data, isLoading } = useClientes(search);
+  const [editing, setEditing] = useState<null | Parameters<typeof EditClienteDialog>[0]["cliente"]>(null);
 
   return (
     <div className="p-8 space-y-6">
