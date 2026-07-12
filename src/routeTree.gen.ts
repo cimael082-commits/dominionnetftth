@@ -23,6 +23,7 @@ import { Route as AppClientesRouteImport } from './routes/_app/clientes'
 import { Route as AppCarnesRouteImport } from './routes/_app/carnes'
 import { Route as AreaClienteIndexRouteImport } from './routes/_area.cliente.index'
 import { Route as AreaClienteWifiRouteImport } from './routes/_area.cliente.wifi'
+import { Route as AreaClientePerfilRouteImport } from './routes/_area.cliente.perfil'
 import { Route as AreaClienteFinanceiroRouteImport } from './routes/_area.cliente.financeiro'
 import { Route as AreaClienteConexaoRouteImport } from './routes/_area.cliente.conexao'
 import { Route as AreaClienteAvisosRouteImport } from './routes/_area.cliente.avisos'
@@ -102,6 +103,11 @@ const AreaClienteIndexRoute = AreaClienteIndexRouteImport.update({
 const AreaClienteWifiRoute = AreaClienteWifiRouteImport.update({
   id: '/cliente/wifi',
   path: '/cliente/wifi',
+  getParentRoute: () => AreaRoute,
+} as any)
+const AreaClientePerfilRoute = AreaClientePerfilRouteImport.update({
+  id: '/cliente/perfil',
+  path: '/cliente/perfil',
   getParentRoute: () => AreaRoute,
 } as any)
 const AreaClienteFinanceiroRoute = AreaClienteFinanceiroRouteImport.update({
@@ -184,6 +190,7 @@ export interface FileRoutesByFullPath {
   '/cliente/avisos': typeof AreaClienteAvisosRoute
   '/cliente/conexao': typeof AreaClienteConexaoRoute
   '/cliente/financeiro': typeof AreaClienteFinanceiroRoute
+  '/cliente/perfil': typeof AreaClientePerfilRoute
   '/cliente/wifi': typeof AreaClienteWifiRoute
   '/cliente/': typeof AreaClienteIndexRoute
   '/api/public/cliente/avisos': typeof ApiPublicClienteAvisosRoute
@@ -210,6 +217,7 @@ export interface FileRoutesByTo {
   '/cliente/avisos': typeof AreaClienteAvisosRoute
   '/cliente/conexao': typeof AreaClienteConexaoRoute
   '/cliente/financeiro': typeof AreaClienteFinanceiroRoute
+  '/cliente/perfil': typeof AreaClientePerfilRoute
   '/cliente/wifi': typeof AreaClienteWifiRoute
   '/cliente': typeof AreaClienteIndexRoute
   '/api/public/cliente/avisos': typeof ApiPublicClienteAvisosRoute
@@ -239,6 +247,7 @@ export interface FileRoutesById {
   '/_area/cliente/avisos': typeof AreaClienteAvisosRoute
   '/_area/cliente/conexao': typeof AreaClienteConexaoRoute
   '/_area/cliente/financeiro': typeof AreaClienteFinanceiroRoute
+  '/_area/cliente/perfil': typeof AreaClientePerfilRoute
   '/_area/cliente/wifi': typeof AreaClienteWifiRoute
   '/_area/cliente/': typeof AreaClienteIndexRoute
   '/api/public/cliente/avisos': typeof ApiPublicClienteAvisosRoute
@@ -267,6 +276,7 @@ export interface FileRouteTypes {
     | '/cliente/avisos'
     | '/cliente/conexao'
     | '/cliente/financeiro'
+    | '/cliente/perfil'
     | '/cliente/wifi'
     | '/cliente/'
     | '/api/public/cliente/avisos'
@@ -293,6 +303,7 @@ export interface FileRouteTypes {
     | '/cliente/avisos'
     | '/cliente/conexao'
     | '/cliente/financeiro'
+    | '/cliente/perfil'
     | '/cliente/wifi'
     | '/cliente'
     | '/api/public/cliente/avisos'
@@ -321,6 +332,7 @@ export interface FileRouteTypes {
     | '/_area/cliente/avisos'
     | '/_area/cliente/conexao'
     | '/_area/cliente/financeiro'
+    | '/_area/cliente/perfil'
     | '/_area/cliente/wifi'
     | '/_area/cliente/'
     | '/api/public/cliente/avisos'
@@ -445,6 +457,13 @@ declare module '@tanstack/react-router' {
       path: '/cliente/wifi'
       fullPath: '/cliente/wifi'
       preLoaderRoute: typeof AreaClienteWifiRouteImport
+      parentRoute: typeof AreaRoute
+    }
+    '/_area/cliente/perfil': {
+      id: '/_area/cliente/perfil'
+      path: '/cliente/perfil'
+      fullPath: '/cliente/perfil'
+      preLoaderRoute: typeof AreaClientePerfilRouteImport
       parentRoute: typeof AreaRoute
     }
     '/_area/cliente/financeiro': {
@@ -573,6 +592,7 @@ interface AreaRouteChildren {
   AreaClienteAvisosRoute: typeof AreaClienteAvisosRoute
   AreaClienteConexaoRoute: typeof AreaClienteConexaoRoute
   AreaClienteFinanceiroRoute: typeof AreaClienteFinanceiroRoute
+  AreaClientePerfilRoute: typeof AreaClientePerfilRoute
   AreaClienteWifiRoute: typeof AreaClienteWifiRoute
   AreaClienteIndexRoute: typeof AreaClienteIndexRoute
 }
@@ -582,6 +602,7 @@ const AreaRouteChildren: AreaRouteChildren = {
   AreaClienteAvisosRoute: AreaClienteAvisosRoute,
   AreaClienteConexaoRoute: AreaClienteConexaoRoute,
   AreaClienteFinanceiroRoute: AreaClienteFinanceiroRoute,
+  AreaClientePerfilRoute: AreaClientePerfilRoute,
   AreaClienteWifiRoute: AreaClienteWifiRoute,
   AreaClienteIndexRoute: AreaClienteIndexRoute,
 }
