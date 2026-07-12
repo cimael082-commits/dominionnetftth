@@ -150,6 +150,7 @@ function MapaPage() {
   const [search, setSearch] = useState("");
   const [editRota, setEditRota] = useState<Rota | null>(null);
   const [editCto, setEditCto] = useState<Cto | null>(null);
+  const [editCeo, setEditCeo] = useState<Ceo | null>(null);
   const [splitRota, setSplitRota] = useState<Rota | null>(null);
 
   const ctosQ = useQuery({
@@ -329,10 +330,7 @@ function MapaPage() {
           scale: 1,
         },
       });
-      const info = new google.maps.InfoWindow({
-        content: `<div style="color:#0A1628;font-family:system-ui;font-size:12px"><b>CEO/Emenda ${c.nome}</b><br/>Status: ${statusLabel[c.status]}</div>`,
-      });
-      marker.addListener("click", () => info.open({ map, anchor: marker }));
+      marker.addListener("click", () => setEditCeo(c));
       markersRef.current.push(marker);
     });
 
@@ -344,12 +342,14 @@ function MapaPage() {
         map,
         title: `${cl.nome} — ${cl.online ? "ONLINE" : "OFFLINE"}`,
         icon: {
-          path: google.maps.SymbolPath.CIRCLE,
-          scale: 7,
+          // House / home shape
+          path: "M 0 -9 L 9 -1 L 9 8 L 3 8 L 3 2 L -3 2 L -3 8 L -9 8 L -9 -1 Z",
           fillColor: cor,
           fillOpacity: 1,
-          strokeColor: "#fff",
+          strokeColor: "#ffffff",
           strokeWeight: 2,
+          scale: 1,
+          anchor: new google.maps.Point(0, 4),
         },
         zIndex: cl.online ? 30 : 25,
       });
@@ -675,8 +675,8 @@ function MapaPage() {
           <div className="mt-2 pt-2 border-t border-border/50 space-y-1.5">
             <LegendMarker shape="square" color="#8B5A2B" label="CTO" />
             <LegendMarker shape="diamond" color="#a855f7" label="CEO/Emenda" />
-            <LegendMarker shape="circle" color="#10b981" label="Cliente ONLINE" />
-            <LegendMarker shape="circle" color="#ef4444" label="Cliente OFFLINE" />
+            <LegendMarker shape="house" color="#10b981" label="Cliente ONLINE" />
+            <LegendMarker shape="house" color="#ef4444" label="Cliente OFFLINE" />
           </div>
         </Panel>
       </div>
@@ -766,6 +766,10 @@ function MapaPage() {
         cto={editCto}
         onClose={() => setEditCto(null)}
       />
+      <EditCeoDialog
+        ceo={editCeo}
+        onClose={() => setEditCeo(null)}
+      />
     </div>
   );
 }
@@ -825,7 +829,17 @@ function LegendRow({ color, label, dashed }: { color: string; label: string; das
   );
 }
 
-function LegendMarker({ shape, color, label }: { shape: "square" | "diamond" | "circle" | "line"; color: string; label: string }) {
+function LegendMarker({ shape, color, label }: { shape: "square" | "diamond" | "circle" | "line" | "house"; color: string; label: string }) {
+  if (shape === "house") {
+    return (
+      <div className="flex items-center gap-2 text-xs">
+        <svg width="14" height="14" viewBox="-10 -10 20 20" aria-hidden>
+          <path d="M 0 -9 L 9 -1 L 9 8 L 3 8 L 3 2 L -3 2 L -3 8 L -9 8 L -9 -1 Z" fill={color} stroke="#fff" strokeWidth="1.5" />
+        </svg>
+        <span>{label}</span>
+      </div>
+    );
+  }
   const style: React.CSSProperties = { background: color };
   const cls =
     shape === "square" ? "h-3 w-3 rounded-sm" :
@@ -1030,7 +1044,7 @@ function RotaDialog({ points, onClose }: { points: LatLng[] | null; onClose: (sa
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="fibra">Fibra</SelectItem>
-                  <SelectItem value="colibri">Colibri</SelectItem>
+                  <SelectItem value="colibri">Cabo</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -1219,7 +1233,7 @@ function EditRotaDialog({ rota, onClose, onSplit }: { rota: Rota | null; onClose
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="fibra">Fibra</SelectItem>
-                  <SelectItem value="colibri">Colibri</SelectItem>
+                  <SelectItem value="colibri">Cabo</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -1533,5 +1547,111 @@ function PortaRow({
         </div>
       </td>
     </tr>
+  );
+}
+
+function EditCeoDialog({ ceo, onClose }: { ceo: Ceo | null; onClose: () => void }) {
+  const qc = useQueryClient();
+  const [nome, setNome] = useState("");
+  const [status, setStatus] = useState<InfraStatus>("ativo");
+  const [lat, setLat] = useState("");
+  const [lng, setLng] = useState("");
+
+  useEffect(() => {
+    if (ceo) {
+      setNome(ceo.nome);
+      setStatus(ceo.status);
+      setLat(String(ceo.latitude));
+      setLng(String(ceo.longitude));
+    }
+  }, [ceo]);
+
+  const save = useMutation({
+    mutationFn: async () => {
+      if (!ceo) return;
+      const patch: Record<string, unknown> = { nome, status };
+      const nLat = parseFloat(lat);
+      const nLng = parseFloat(lng);
+      if (!Number.isNaN(nLat)) patch.latitude = nLat;
+      if (!Number.isNaN(nLng)) patch.longitude = nLng;
+      const { error } = await db.from("ceo_emendas").update(patch).eq("id", ceo.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("CEO atualizada");
+      qc.invalidateQueries({ queryKey: ["map"] });
+      onClose();
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const del = useMutation({
+    mutationFn: async () => {
+      if (!ceo) return;
+      const { error } = await db.from("ceo_emendas").delete().eq("id", ceo.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("CEO removida");
+      qc.invalidateQueries({ queryKey: ["map"] });
+      onClose();
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  if (!ceo) return null;
+
+  return (
+    <Dialog open={!!ceo} onOpenChange={(v) => !v && onClose()}>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <Wrench className="h-5 w-5 text-purple-500" />
+            Editar CEO/Emenda
+          </DialogTitle>
+        </DialogHeader>
+        <div className="space-y-3">
+          <div className="space-y-1.5">
+            <Label className="text-xs">Nome / Identificação</Label>
+            <Input value={nome} onChange={(e) => setNome(e.target.value)} />
+          </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs">Status</Label>
+            <Select value={status} onValueChange={(v) => setStatus(v as InfraStatus)}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="planejado">Planejado</SelectItem>
+                <SelectItem value="implantacao">Em Implantação</SelectItem>
+                <SelectItem value="ativo">Ativo</SelectItem>
+                <SelectItem value="desativado">Desativado</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label className="text-xs">Latitude</Label>
+              <Input value={lat} onChange={(e) => setLat(e.target.value)} />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs">Longitude</Label>
+              <Input value={lng} onChange={(e) => setLng(e.target.value)} />
+            </div>
+          </div>
+        </div>
+        <DialogFooter className="flex-wrap gap-2">
+          <Button
+            variant="destructive"
+            className="mr-auto"
+            onClick={() => { if (confirm(`Excluir CEO "${ceo.nome}"?`)) del.mutate(); }}
+          >
+            <Trash2 className="h-4 w-4" /> Excluir
+          </Button>
+          <Button variant="outline" onClick={onClose}>Cancelar</Button>
+          <Button onClick={() => nome.trim() ? save.mutate() : toast.error("Informe o nome")} disabled={save.isPending}>
+            <Save className="h-4 w-4" /> Salvar
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
