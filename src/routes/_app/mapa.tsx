@@ -344,12 +344,14 @@ function MapaPage() {
         map,
         title: `${cl.nome} — ${cl.online ? "ONLINE" : "OFFLINE"}`,
         icon: {
-          path: google.maps.SymbolPath.CIRCLE,
-          scale: 7,
+          // House / home shape
+          path: "M 0 -9 L 9 -1 L 9 8 L 3 8 L 3 2 L -3 2 L -3 8 L -9 8 L -9 -1 Z",
           fillColor: cor,
           fillOpacity: 1,
-          strokeColor: "#fff",
+          strokeColor: "#ffffff",
           strokeWeight: 2,
+          scale: 1,
+          anchor: new google.maps.Point(0, 4),
         },
         zIndex: cl.online ? 30 : 25,
       });
