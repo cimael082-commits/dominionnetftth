@@ -14,7 +14,11 @@ import {
   Save,
   Plus,
   FileText,
+  KeyRound,
+  RotateCcw,
 } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { setClientePortalPassword } from "@/lib/cliente-senha.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -138,6 +142,15 @@ function ClienteDetail() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["parcelas", id] }),
   });
 
+  const setSenhaFn = useServerFn(setClientePortalPassword);
+  const senhaPortal = useMutation({
+    mutationFn: async (senha: string | null) => {
+      return await setSenhaFn({ data: { clienteId: id, senha } });
+    },
+    onSuccess: (r) => toast.success(r.reset ? "Senha resetada para 123" : "Senha do portal atualizada"),
+    onError: (e: Error) => toast.error(e.message),
+  });
+
   if (cliente.isLoading) return <div className="p-8 text-muted-foreground">Carregando...</div>;
   if (cliente.error || !cliente.data) return <div className="p-8">Cliente não encontrado.</div>;
 
@@ -242,6 +255,21 @@ function ClienteDetail() {
               <Row label="Senha PPPoE" k="senha_pppoe" v={val("senha_pppoe")} edit={editing} onChange={(v) => setEdit((e) => ({ ...(e ?? {}), senha_pppoe: v }))} />
               <Row label="SSID Wi-Fi" k="ssid_wifi" v={val("ssid_wifi")} edit={editing} onChange={(v) => setEdit((e) => ({ ...(e ?? {}), ssid_wifi: v }))} />
               <Row label="Senha Wi-Fi" k="senha_wifi" v={val("senha_wifi")} edit={editing} onChange={(v) => setEdit((e) => ({ ...(e ?? {}), senha_wifi: v }))} />
+            </Card>
+
+            <Card className="p-5 space-y-3 md:col-span-2">
+              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide flex items-center gap-2">
+                <KeyRound className="h-4 w-4" /> Portal do Cliente (App / Web)
+              </h3>
+              <p className="text-xs text-muted-foreground">
+                O cliente entra em <code className="bg-muted px-1 rounded">/cliente/login</code> usando CPF ou Login PPPoE.
+                Senha padrão inicial: <code className="bg-muted px-1 rounded">123</code>.
+              </p>
+              <PortalSenhaBox
+                onSet={(s: string) => senhaPortal.mutate(s)}
+                onReset={() => { if (confirm("Resetar senha do portal para '123'?")) senhaPortal.mutate(null); }}
+                pending={senhaPortal.isPending}
+              />
             </Card>
 
             <Card className="p-5 space-y-3 md:col-span-2">
@@ -362,5 +390,39 @@ function NovaMensalidadeBtn({ clienteId, valorPadrao, diaVenc }: { clienteId: st
     <Button onClick={() => mut.mutate()} disabled={mut.isPending}>
       <Plus className="h-4 w-4" /> Nova mensalidade
     </Button>
+  );
+}
+
+function PortalSenhaBox({
+  onSet,
+  onReset,
+  pending,
+}: {
+  onSet: (senha: string) => void;
+  onReset: () => void;
+  pending: boolean;
+}) {
+  const [senha, setSenha] = useState("");
+  return (
+    <div className="flex flex-wrap items-end gap-2">
+      <div className="flex-1 min-w-[180px] space-y-1.5">
+        <Label className="text-xs">Nova senha do portal</Label>
+        <Input
+          type="text"
+          placeholder="ex.: cliente@2025"
+          value={senha}
+          onChange={(e) => setSenha(e.target.value)}
+        />
+      </div>
+      <Button
+        onClick={() => { if (senha.length >= 3) { onSet(senha); setSenha(""); } }}
+        disabled={pending || senha.length < 3}
+      >
+        <KeyRound className="h-4 w-4" /> Definir senha
+      </Button>
+      <Button variant="outline" onClick={onReset} disabled={pending}>
+        <RotateCcw className="h-4 w-4" /> Resetar para 123
+      </Button>
+    </div>
   );
 }

@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Waves, Wallet, AlertTriangle, CheckCircle2, Wifi, Info } from "lucide-react";
+import { Waves, Wallet, AlertTriangle, CheckCircle2, Wifi, Info, Radio } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { clienteFetch } from "@/lib/cliente-auth";
@@ -123,6 +123,15 @@ function HomeCliente() {
               <Wifi className="h-5 w-5 text-primary mb-2" />
               <div className="text-[11px] text-muted-foreground">Wi-Fi</div>
               <div className="text-sm font-semibold">Ver SSID e senha</div>
+            </CardContent>
+          </Card>
+        </Link>
+        <Link to="/cliente/plano">
+          <Card>
+            <CardContent className="p-4">
+              <Radio className="h-5 w-5 text-primary mb-2" />
+              <div className="text-[11px] text-muted-foreground">Meu Plano</div>
+              <div className="text-sm font-semibold">{cli.plano || "Ver detalhes"}</div>
             </CardContent>
           </Card>
         </Link>
