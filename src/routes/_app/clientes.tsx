@@ -27,6 +27,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { clienteStatusMeta, formatBRL, type ClienteStatus } from "@/lib/status-utils";
+import { EditClienteDialog } from "@/components/EditClienteDialog";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/clientes")({
@@ -56,6 +57,7 @@ function ClientesPage() {
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
   const { data, isLoading } = useClientes(search);
+  const [editing, setEditing] = useState<null | Parameters<typeof EditClienteDialog>[0]["cliente"]>(null);
 
   return (
     <div className="p-8 space-y-6">
@@ -133,7 +135,7 @@ function ClientesPage() {
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation();
-                          navigate({ to: "/clientes/$id", params: { id: c.id }, search: { edit: 1 } });
+                          setEditing(c as never);
                         }}
                         className="inline-flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs hover:bg-accent"
                       >
@@ -151,6 +153,12 @@ function ClientesPage() {
           <p className="text-muted-foreground">Nenhum cliente encontrado.</p>
         </Card>
       )}
+
+      <EditClienteDialog
+        cliente={editing}
+        open={editing !== null}
+        onOpenChange={(v) => { if (!v) setEditing(null); }}
+      />
     </div>
   );
 }
