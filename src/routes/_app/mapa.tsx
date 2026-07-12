@@ -1030,7 +1030,7 @@ function RotaDialog({ points, onClose }: { points: LatLng[] | null; onClose: (sa
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="fibra">Fibra</SelectItem>
-                  <SelectItem value="colibri">Colibri</SelectItem>
+                  <SelectItem value="colibri">Cabo</SelectItem>
                 </SelectContent>
               </Select>
             </div>
