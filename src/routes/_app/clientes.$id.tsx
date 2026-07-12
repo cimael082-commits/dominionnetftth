@@ -142,6 +142,15 @@ function ClienteDetail() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["parcelas", id] }),
   });
 
+  const setSenhaFn = useServerFn(setClientePortalPassword);
+  const senhaPortal = useMutation({
+    mutationFn: async (senha: string | null) => {
+      return await setSenhaFn({ data: { clienteId: id, senha } });
+    },
+    onSuccess: (r) => toast.success(r.reset ? "Senha resetada para 123" : "Senha do portal atualizada"),
+    onError: (e: Error) => toast.error(e.message),
+  });
+
   if (cliente.isLoading) return <div className="p-8 text-muted-foreground">Carregando...</div>;
   if (cliente.error || !cliente.data) return <div className="p-8">Cliente não encontrado.</div>;
 
