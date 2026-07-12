@@ -22,6 +22,7 @@ import { Route as AppCarnesRouteImport } from './routes/_app/carnes'
 import { Route as AppClientesIdRouteImport } from './routes/_app/clientes.$id'
 import { Route as ApiPublicMikrotikSyncRouteImport } from './routes/api/public/mikrotik/sync'
 import { Route as ApiPublicMikrotikStatusRouteImport } from './routes/api/public/mikrotik/status'
+import { Route as ApiPublicClienteAuthLoginRouteImport } from './routes/api/public/cliente/auth/login'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -87,6 +88,12 @@ const ApiPublicMikrotikStatusRoute = ApiPublicMikrotikStatusRouteImport.update({
   path: '/api/public/mikrotik/status',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicClienteAuthLoginRoute =
+  ApiPublicClienteAuthLoginRouteImport.update({
+    id: '/api/public/cliente/auth/login',
+    path: '/api/public/cliente/auth/login',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -101,6 +108,7 @@ export interface FileRoutesByFullPath {
   '/clientes/$id': typeof AppClientesIdRoute
   '/api/public/mikrotik/status': typeof ApiPublicMikrotikStatusRoute
   '/api/public/mikrotik/sync': typeof ApiPublicMikrotikSyncRoute
+  '/api/public/cliente/auth/login': typeof ApiPublicClienteAuthLoginRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -115,6 +123,7 @@ export interface FileRoutesByTo {
   '/clientes/$id': typeof AppClientesIdRoute
   '/api/public/mikrotik/status': typeof ApiPublicMikrotikStatusRoute
   '/api/public/mikrotik/sync': typeof ApiPublicMikrotikSyncRoute
+  '/api/public/cliente/auth/login': typeof ApiPublicClienteAuthLoginRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -131,6 +140,7 @@ export interface FileRoutesById {
   '/_app/clientes/$id': typeof AppClientesIdRoute
   '/api/public/mikrotik/status': typeof ApiPublicMikrotikStatusRoute
   '/api/public/mikrotik/sync': typeof ApiPublicMikrotikSyncRoute
+  '/api/public/cliente/auth/login': typeof ApiPublicClienteAuthLoginRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -147,6 +157,7 @@ export interface FileRouteTypes {
     | '/clientes/$id'
     | '/api/public/mikrotik/status'
     | '/api/public/mikrotik/sync'
+    | '/api/public/cliente/auth/login'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -161,6 +172,7 @@ export interface FileRouteTypes {
     | '/clientes/$id'
     | '/api/public/mikrotik/status'
     | '/api/public/mikrotik/sync'
+    | '/api/public/cliente/auth/login'
   id:
     | '__root__'
     | '/'
@@ -176,6 +188,7 @@ export interface FileRouteTypes {
     | '/_app/clientes/$id'
     | '/api/public/mikrotik/status'
     | '/api/public/mikrotik/sync'
+    | '/api/public/cliente/auth/login'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -184,6 +197,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   ApiPublicMikrotikStatusRoute: typeof ApiPublicMikrotikStatusRoute
   ApiPublicMikrotikSyncRoute: typeof ApiPublicMikrotikSyncRoute
+  ApiPublicClienteAuthLoginRoute: typeof ApiPublicClienteAuthLoginRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -279,6 +293,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicMikrotikStatusRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/cliente/auth/login': {
+      id: '/api/public/cliente/auth/login'
+      path: '/api/public/cliente/auth/login'
+      fullPath: '/api/public/cliente/auth/login'
+      preLoaderRoute: typeof ApiPublicClienteAuthLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -322,6 +343,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   ApiPublicMikrotikStatusRoute: ApiPublicMikrotikStatusRoute,
   ApiPublicMikrotikSyncRoute: ApiPublicMikrotikSyncRoute,
+  ApiPublicClienteAuthLoginRoute: ApiPublicClienteAuthLoginRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
