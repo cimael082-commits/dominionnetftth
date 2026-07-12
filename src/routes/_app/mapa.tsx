@@ -827,7 +827,17 @@ function LegendRow({ color, label, dashed }: { color: string; label: string; das
   );
 }
 
-function LegendMarker({ shape, color, label }: { shape: "square" | "diamond" | "circle" | "line"; color: string; label: string }) {
+function LegendMarker({ shape, color, label }: { shape: "square" | "diamond" | "circle" | "line" | "house"; color: string; label: string }) {
+  if (shape === "house") {
+    return (
+      <div className="flex items-center gap-2 text-xs">
+        <svg width="14" height="14" viewBox="-10 -10 20 20" aria-hidden>
+          <path d="M 0 -9 L 9 -1 L 9 8 L 3 8 L 3 2 L -3 2 L -3 8 L -9 8 L -9 -1 Z" fill={color} stroke="#fff" strokeWidth="1.5" />
+        </svg>
+        <span>{label}</span>
+      </div>
+    );
+  }
   const style: React.CSSProperties = { background: color };
   const cls =
     shape === "square" ? "h-3 w-3 rounded-sm" :
