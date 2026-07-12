@@ -135,7 +135,7 @@ function ClientesPage() {
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation();
-                          navigate({ to: "/clientes/$id", params: { id: c.id }, search: { edit: 1 } });
+                          setEditing(c as never);
                         }}
                         className="inline-flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs hover:bg-accent"
                       >
