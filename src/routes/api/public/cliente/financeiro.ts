@@ -26,14 +26,14 @@ export const Route = createFileRoute("/api/public/cliente/financeiro")({
             .maybeSingle(),
           supabaseAdmin
             .from("configuracoes_empresa")
-            .select("nome_empresa, chave_pix, cidade_pix")
+            .select("pix_chave, pix_beneficiario, pix_cidade")
             .limit(1)
             .maybeSingle(),
         ]);
 
-        const chavePix = cfg?.chave_pix?.trim() || "";
-        const beneficiario = cfg?.nome_empresa || "Dominion Net";
-        const cidade = cfg?.cidade_pix || cliente?.cidade || "Maceio";
+        const chavePix = cfg?.pix_chave?.trim() || "";
+        const beneficiario = cfg?.pix_beneficiario || "Dominion Net";
+        const cidade = cfg?.pix_cidade || cliente?.cidade || "Maceio";
 
         const enriched = (parcelas ?? []).map((p) => {
           const brcode = chavePix
