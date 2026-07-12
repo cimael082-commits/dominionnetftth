@@ -153,6 +153,12 @@ function ClientesPage() {
           <p className="text-muted-foreground">Nenhum cliente encontrado.</p>
         </Card>
       )}
+
+      <EditClienteDialog
+        cliente={editing}
+        open={editing !== null}
+        onOpenChange={(v) => { if (!v) setEditing(null); }}
+      />
     </div>
   );
 }
