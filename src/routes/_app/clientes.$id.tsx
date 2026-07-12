@@ -392,3 +392,37 @@ function NovaMensalidadeBtn({ clienteId, valorPadrao, diaVenc }: { clienteId: st
     </Button>
   );
 }
+
+function PortalSenhaBox({
+  onSet,
+  onReset,
+  pending,
+}: {
+  onSet: (senha: string) => void;
+  onReset: () => void;
+  pending: boolean;
+}) {
+  const [senha, setSenha] = useState("");
+  return (
+    <div className="flex flex-wrap items-end gap-2">
+      <div className="flex-1 min-w-[180px] space-y-1.5">
+        <Label className="text-xs">Nova senha do portal</Label>
+        <Input
+          type="text"
+          placeholder="ex.: cliente@2025"
+          value={senha}
+          onChange={(e) => setSenha(e.target.value)}
+        />
+      </div>
+      <Button
+        onClick={() => { if (senha.length >= 3) { onSet(senha); setSenha(""); } }}
+        disabled={pending || senha.length < 3}
+      >
+        <KeyRound className="h-4 w-4" /> Definir senha
+      </Button>
+      <Button variant="outline" onClick={onReset} disabled={pending}>
+        <RotateCcw className="h-4 w-4" /> Resetar para 123
+      </Button>
+    </div>
+  );
+}
