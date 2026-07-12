@@ -25,6 +25,7 @@ import { Route as AreaClienteIndexRouteImport } from './routes/_area.cliente.ind
 import { Route as AreaClienteWifiRouteImport } from './routes/_area.cliente.wifi'
 import { Route as AreaClienteFinanceiroRouteImport } from './routes/_area.cliente.financeiro'
 import { Route as AreaClienteConexaoRouteImport } from './routes/_area.cliente.conexao'
+import { Route as AreaClienteAvisosRouteImport } from './routes/_area.cliente.avisos'
 import { Route as AppClientesIdRouteImport } from './routes/_app/clientes.$id'
 import { Route as ApiPublicMikrotikSyncRouteImport } from './routes/api/public/mikrotik/sync'
 import { Route as ApiPublicMikrotikStatusRouteImport } from './routes/api/public/mikrotik/status'
@@ -112,6 +113,11 @@ const AreaClienteConexaoRoute = AreaClienteConexaoRouteImport.update({
   path: '/cliente/conexao',
   getParentRoute: () => AreaRoute,
 } as any)
+const AreaClienteAvisosRoute = AreaClienteAvisosRouteImport.update({
+  id: '/cliente/avisos',
+  path: '/cliente/avisos',
+  getParentRoute: () => AreaRoute,
+} as any)
 const AppClientesIdRoute = AppClientesIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -168,6 +174,7 @@ export interface FileRoutesByFullPath {
   '/pesquisa': typeof AppPesquisaRoute
   '/cliente/login': typeof ClienteLoginRoute
   '/clientes/$id': typeof AppClientesIdRoute
+  '/cliente/avisos': typeof AreaClienteAvisosRoute
   '/cliente/conexao': typeof AreaClienteConexaoRoute
   '/cliente/financeiro': typeof AreaClienteFinanceiroRoute
   '/cliente/wifi': typeof AreaClienteWifiRoute
@@ -192,6 +199,7 @@ export interface FileRoutesByTo {
   '/pesquisa': typeof AppPesquisaRoute
   '/cliente/login': typeof ClienteLoginRoute
   '/clientes/$id': typeof AppClientesIdRoute
+  '/cliente/avisos': typeof AreaClienteAvisosRoute
   '/cliente/conexao': typeof AreaClienteConexaoRoute
   '/cliente/financeiro': typeof AreaClienteFinanceiroRoute
   '/cliente/wifi': typeof AreaClienteWifiRoute
@@ -219,6 +227,7 @@ export interface FileRoutesById {
   '/_app/pesquisa': typeof AppPesquisaRoute
   '/cliente/login': typeof ClienteLoginRoute
   '/_app/clientes/$id': typeof AppClientesIdRoute
+  '/_area/cliente/avisos': typeof AreaClienteAvisosRoute
   '/_area/cliente/conexao': typeof AreaClienteConexaoRoute
   '/_area/cliente/financeiro': typeof AreaClienteFinanceiroRoute
   '/_area/cliente/wifi': typeof AreaClienteWifiRoute
@@ -245,6 +254,7 @@ export interface FileRouteTypes {
     | '/pesquisa'
     | '/cliente/login'
     | '/clientes/$id'
+    | '/cliente/avisos'
     | '/cliente/conexao'
     | '/cliente/financeiro'
     | '/cliente/wifi'
@@ -269,6 +279,7 @@ export interface FileRouteTypes {
     | '/pesquisa'
     | '/cliente/login'
     | '/clientes/$id'
+    | '/cliente/avisos'
     | '/cliente/conexao'
     | '/cliente/financeiro'
     | '/cliente/wifi'
@@ -295,6 +306,7 @@ export interface FileRouteTypes {
     | '/_app/pesquisa'
     | '/cliente/login'
     | '/_app/clientes/$id'
+    | '/_area/cliente/avisos'
     | '/_area/cliente/conexao'
     | '/_area/cliente/financeiro'
     | '/_area/cliente/wifi'
@@ -437,6 +449,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AreaClienteConexaoRouteImport
       parentRoute: typeof AreaRoute
     }
+    '/_area/cliente/avisos': {
+      id: '/_area/cliente/avisos'
+      path: '/cliente/avisos'
+      fullPath: '/cliente/avisos'
+      preLoaderRoute: typeof AreaClienteAvisosRouteImport
+      parentRoute: typeof AreaRoute
+    }
     '/_app/clientes/$id': {
       id: '/_app/clientes/$id'
       path: '/$id'
@@ -531,6 +550,7 @@ const AppRouteChildren: AppRouteChildren = {
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
 interface AreaRouteChildren {
+  AreaClienteAvisosRoute: typeof AreaClienteAvisosRoute
   AreaClienteConexaoRoute: typeof AreaClienteConexaoRoute
   AreaClienteFinanceiroRoute: typeof AreaClienteFinanceiroRoute
   AreaClienteWifiRoute: typeof AreaClienteWifiRoute
@@ -538,6 +558,7 @@ interface AreaRouteChildren {
 }
 
 const AreaRouteChildren: AreaRouteChildren = {
+  AreaClienteAvisosRoute: AreaClienteAvisosRoute,
   AreaClienteConexaoRoute: AreaClienteConexaoRoute,
   AreaClienteFinanceiroRoute: AreaClienteFinanceiroRoute,
   AreaClienteWifiRoute: AreaClienteWifiRoute,
