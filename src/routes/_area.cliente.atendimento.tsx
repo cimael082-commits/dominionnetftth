@@ -44,13 +44,13 @@ function AtendimentoPage() {
           </p>
           <Button asChild disabled={!waLink} className="w-full bg-emerald-500 hover:bg-emerald-500/90 text-white">
             <a href={waLink || "#"} target="_blank" rel="noreferrer">
-              <MessageCircle className="h-4 w-4 mr-2" /> WhatsApp {wa ? `(${cfg.whatsapp_suporte || cfg.telefone_suporte})` : ""}
+              <MessageCircle className="h-4 w-4 mr-2" /> WhatsApp {telefone ? `(${telefone})` : ""}
             </a>
           </Button>
           {telLink && (
             <Button asChild variant="outline" className="w-full">
               <a href={telLink}>
-                <Phone className="h-4 w-4 mr-2" /> Ligar {cfg.telefone_suporte}
+                <Phone className="h-4 w-4 mr-2" /> Ligar {telefone}
               </a>
             </Button>
           )}
