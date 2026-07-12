@@ -22,6 +22,7 @@ import { Route as AppConfiguracoesRouteImport } from './routes/_app/configuracoe
 import { Route as AppClientesRouteImport } from './routes/_app/clientes'
 import { Route as AppCarnesRouteImport } from './routes/_app/carnes'
 import { Route as AreaClienteIndexRouteImport } from './routes/_area.cliente.index'
+import { Route as AreaClienteFinanceiroRouteImport } from './routes/_area.cliente.financeiro'
 import { Route as AppClientesIdRouteImport } from './routes/_app/clientes.$id'
 import { Route as ApiPublicMikrotikSyncRouteImport } from './routes/api/public/mikrotik/sync'
 import { Route as ApiPublicMikrotikStatusRouteImport } from './routes/api/public/mikrotik/status'
@@ -94,6 +95,11 @@ const AreaClienteIndexRoute = AreaClienteIndexRouteImport.update({
   path: '/cliente/',
   getParentRoute: () => AreaRoute,
 } as any)
+const AreaClienteFinanceiroRoute = AreaClienteFinanceiroRouteImport.update({
+  id: '/cliente/financeiro',
+  path: '/cliente/financeiro',
+  getParentRoute: () => AreaRoute,
+} as any)
 const AppClientesIdRoute = AppClientesIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -150,6 +156,7 @@ export interface FileRoutesByFullPath {
   '/pesquisa': typeof AppPesquisaRoute
   '/cliente/login': typeof ClienteLoginRoute
   '/clientes/$id': typeof AppClientesIdRoute
+  '/cliente/financeiro': typeof AreaClienteFinanceiroRoute
   '/cliente/': typeof AreaClienteIndexRoute
   '/api/public/cliente/avisos': typeof ApiPublicClienteAvisosRoute
   '/api/public/cliente/financeiro': typeof ApiPublicClienteFinanceiroRoute
@@ -171,6 +178,7 @@ export interface FileRoutesByTo {
   '/pesquisa': typeof AppPesquisaRoute
   '/cliente/login': typeof ClienteLoginRoute
   '/clientes/$id': typeof AppClientesIdRoute
+  '/cliente/financeiro': typeof AreaClienteFinanceiroRoute
   '/cliente': typeof AreaClienteIndexRoute
   '/api/public/cliente/avisos': typeof ApiPublicClienteAvisosRoute
   '/api/public/cliente/financeiro': typeof ApiPublicClienteFinanceiroRoute
@@ -195,6 +203,7 @@ export interface FileRoutesById {
   '/_app/pesquisa': typeof AppPesquisaRoute
   '/cliente/login': typeof ClienteLoginRoute
   '/_app/clientes/$id': typeof AppClientesIdRoute
+  '/_area/cliente/financeiro': typeof AreaClienteFinanceiroRoute
   '/_area/cliente/': typeof AreaClienteIndexRoute
   '/api/public/cliente/avisos': typeof ApiPublicClienteAvisosRoute
   '/api/public/cliente/financeiro': typeof ApiPublicClienteFinanceiroRoute
@@ -218,6 +227,7 @@ export interface FileRouteTypes {
     | '/pesquisa'
     | '/cliente/login'
     | '/clientes/$id'
+    | '/cliente/financeiro'
     | '/cliente/'
     | '/api/public/cliente/avisos'
     | '/api/public/cliente/financeiro'
@@ -239,6 +249,7 @@ export interface FileRouteTypes {
     | '/pesquisa'
     | '/cliente/login'
     | '/clientes/$id'
+    | '/cliente/financeiro'
     | '/cliente'
     | '/api/public/cliente/avisos'
     | '/api/public/cliente/financeiro'
@@ -262,6 +273,7 @@ export interface FileRouteTypes {
     | '/_app/pesquisa'
     | '/cliente/login'
     | '/_app/clientes/$id'
+    | '/_area/cliente/financeiro'
     | '/_area/cliente/'
     | '/api/public/cliente/avisos'
     | '/api/public/cliente/financeiro'
@@ -380,6 +392,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AreaClienteIndexRouteImport
       parentRoute: typeof AreaRoute
     }
+    '/_area/cliente/financeiro': {
+      id: '/_area/cliente/financeiro'
+      path: '/cliente/financeiro'
+      fullPath: '/cliente/financeiro'
+      preLoaderRoute: typeof AreaClienteFinanceiroRouteImport
+      parentRoute: typeof AreaRoute
+    }
     '/_app/clientes/$id': {
       id: '/_app/clientes/$id'
       path: '/$id'
@@ -474,10 +493,12 @@ const AppRouteChildren: AppRouteChildren = {
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
 interface AreaRouteChildren {
+  AreaClienteFinanceiroRoute: typeof AreaClienteFinanceiroRoute
   AreaClienteIndexRoute: typeof AreaClienteIndexRoute
 }
 
 const AreaRouteChildren: AreaRouteChildren = {
+  AreaClienteFinanceiroRoute: AreaClienteFinanceiroRoute,
   AreaClienteIndexRoute: AreaClienteIndexRoute,
 }
 
