@@ -24,6 +24,7 @@ import { Route as ApiPublicMikrotikSyncRouteImport } from './routes/api/public/m
 import { Route as ApiPublicMikrotikStatusRouteImport } from './routes/api/public/mikrotik/status'
 import { Route as ApiPublicClienteMeRouteImport } from './routes/api/public/cliente/me'
 import { Route as ApiPublicClienteFinanceiroRouteImport } from './routes/api/public/cliente/financeiro'
+import { Route as ApiPublicClienteAvisosRouteImport } from './routes/api/public/cliente/avisos'
 import { Route as ApiPublicClienteAuthLoginRouteImport } from './routes/api/public/cliente/auth/login'
 
 const AuthRoute = AuthRouteImport.update({
@@ -101,6 +102,11 @@ const ApiPublicClienteFinanceiroRoute =
     path: '/api/public/cliente/financeiro',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicClienteAvisosRoute = ApiPublicClienteAvisosRouteImport.update({
+  id: '/api/public/cliente/avisos',
+  path: '/api/public/cliente/avisos',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicClienteAuthLoginRoute =
   ApiPublicClienteAuthLoginRouteImport.update({
     id: '/api/public/cliente/auth/login',
@@ -119,6 +125,7 @@ export interface FileRoutesByFullPath {
   '/mapa': typeof AppMapaRoute
   '/pesquisa': typeof AppPesquisaRoute
   '/clientes/$id': typeof AppClientesIdRoute
+  '/api/public/cliente/avisos': typeof ApiPublicClienteAvisosRoute
   '/api/public/cliente/financeiro': typeof ApiPublicClienteFinanceiroRoute
   '/api/public/cliente/me': typeof ApiPublicClienteMeRoute
   '/api/public/mikrotik/status': typeof ApiPublicMikrotikStatusRoute
@@ -136,6 +143,7 @@ export interface FileRoutesByTo {
   '/mapa': typeof AppMapaRoute
   '/pesquisa': typeof AppPesquisaRoute
   '/clientes/$id': typeof AppClientesIdRoute
+  '/api/public/cliente/avisos': typeof ApiPublicClienteAvisosRoute
   '/api/public/cliente/financeiro': typeof ApiPublicClienteFinanceiroRoute
   '/api/public/cliente/me': typeof ApiPublicClienteMeRoute
   '/api/public/mikrotik/status': typeof ApiPublicMikrotikStatusRoute
@@ -155,6 +163,7 @@ export interface FileRoutesById {
   '/_app/mapa': typeof AppMapaRoute
   '/_app/pesquisa': typeof AppPesquisaRoute
   '/_app/clientes/$id': typeof AppClientesIdRoute
+  '/api/public/cliente/avisos': typeof ApiPublicClienteAvisosRoute
   '/api/public/cliente/financeiro': typeof ApiPublicClienteFinanceiroRoute
   '/api/public/cliente/me': typeof ApiPublicClienteMeRoute
   '/api/public/mikrotik/status': typeof ApiPublicMikrotikStatusRoute
@@ -174,6 +183,7 @@ export interface FileRouteTypes {
     | '/mapa'
     | '/pesquisa'
     | '/clientes/$id'
+    | '/api/public/cliente/avisos'
     | '/api/public/cliente/financeiro'
     | '/api/public/cliente/me'
     | '/api/public/mikrotik/status'
@@ -191,6 +201,7 @@ export interface FileRouteTypes {
     | '/mapa'
     | '/pesquisa'
     | '/clientes/$id'
+    | '/api/public/cliente/avisos'
     | '/api/public/cliente/financeiro'
     | '/api/public/cliente/me'
     | '/api/public/mikrotik/status'
@@ -209,6 +220,7 @@ export interface FileRouteTypes {
     | '/_app/mapa'
     | '/_app/pesquisa'
     | '/_app/clientes/$id'
+    | '/api/public/cliente/avisos'
     | '/api/public/cliente/financeiro'
     | '/api/public/cliente/me'
     | '/api/public/mikrotik/status'
@@ -220,6 +232,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ApiPublicClienteAvisosRoute: typeof ApiPublicClienteAvisosRoute
   ApiPublicClienteFinanceiroRoute: typeof ApiPublicClienteFinanceiroRoute
   ApiPublicClienteMeRoute: typeof ApiPublicClienteMeRoute
   ApiPublicMikrotikStatusRoute: typeof ApiPublicMikrotikStatusRoute
@@ -334,6 +347,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicClienteFinanceiroRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/cliente/avisos': {
+      id: '/api/public/cliente/avisos'
+      path: '/api/public/cliente/avisos'
+      fullPath: '/api/public/cliente/avisos'
+      preLoaderRoute: typeof ApiPublicClienteAvisosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/cliente/auth/login': {
       id: '/api/public/cliente/auth/login'
       path: '/api/public/cliente/auth/login'
@@ -382,6 +402,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
   AuthRoute: AuthRoute,
+  ApiPublicClienteAvisosRoute: ApiPublicClienteAvisosRoute,
   ApiPublicClienteFinanceiroRoute: ApiPublicClienteFinanceiroRoute,
   ApiPublicClienteMeRoute: ApiPublicClienteMeRoute,
   ApiPublicMikrotikStatusRoute: ApiPublicMikrotikStatusRoute,
