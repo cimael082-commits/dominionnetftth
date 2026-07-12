@@ -677,8 +677,8 @@ function MapaPage() {
           <div className="mt-2 pt-2 border-t border-border/50 space-y-1.5">
             <LegendMarker shape="square" color="#8B5A2B" label="CTO" />
             <LegendMarker shape="diamond" color="#a855f7" label="CEO/Emenda" />
-            <LegendMarker shape="circle" color="#10b981" label="Cliente ONLINE" />
-            <LegendMarker shape="circle" color="#ef4444" label="Cliente OFFLINE" />
+            <LegendMarker shape="house" color="#10b981" label="Cliente ONLINE" />
+            <LegendMarker shape="house" color="#ef4444" label="Cliente OFFLINE" />
           </div>
         </Panel>
       </div>
