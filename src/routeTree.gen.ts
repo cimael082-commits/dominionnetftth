@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ClienteLoginRouteImport } from './routes/cliente.login'
 import { Route as AppPesquisaRouteImport } from './routes/_app/pesquisa'
 import { Route as AppMapaRouteImport } from './routes/_app/mapa'
 import { Route as AppFinanceiroRouteImport } from './routes/_app/financeiro'
@@ -40,6 +41,11 @@ const AppRoute = AppRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ClienteLoginRoute = ClienteLoginRouteImport.update({
+  id: '/cliente/login',
+  path: '/cliente/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppPesquisaRoute = AppPesquisaRouteImport.update({
@@ -131,6 +137,7 @@ export interface FileRoutesByFullPath {
   '/financeiro': typeof AppFinanceiroRoute
   '/mapa': typeof AppMapaRoute
   '/pesquisa': typeof AppPesquisaRoute
+  '/cliente/login': typeof ClienteLoginRoute
   '/clientes/$id': typeof AppClientesIdRoute
   '/api/public/cliente/avisos': typeof ApiPublicClienteAvisosRoute
   '/api/public/cliente/financeiro': typeof ApiPublicClienteFinanceiroRoute
@@ -150,6 +157,7 @@ export interface FileRoutesByTo {
   '/financeiro': typeof AppFinanceiroRoute
   '/mapa': typeof AppMapaRoute
   '/pesquisa': typeof AppPesquisaRoute
+  '/cliente/login': typeof ClienteLoginRoute
   '/clientes/$id': typeof AppClientesIdRoute
   '/api/public/cliente/avisos': typeof ApiPublicClienteAvisosRoute
   '/api/public/cliente/financeiro': typeof ApiPublicClienteFinanceiroRoute
@@ -171,6 +179,7 @@ export interface FileRoutesById {
   '/_app/financeiro': typeof AppFinanceiroRoute
   '/_app/mapa': typeof AppMapaRoute
   '/_app/pesquisa': typeof AppPesquisaRoute
+  '/cliente/login': typeof ClienteLoginRoute
   '/_app/clientes/$id': typeof AppClientesIdRoute
   '/api/public/cliente/avisos': typeof ApiPublicClienteAvisosRoute
   '/api/public/cliente/financeiro': typeof ApiPublicClienteFinanceiroRoute
@@ -192,6 +201,7 @@ export interface FileRouteTypes {
     | '/financeiro'
     | '/mapa'
     | '/pesquisa'
+    | '/cliente/login'
     | '/clientes/$id'
     | '/api/public/cliente/avisos'
     | '/api/public/cliente/financeiro'
@@ -211,6 +221,7 @@ export interface FileRouteTypes {
     | '/financeiro'
     | '/mapa'
     | '/pesquisa'
+    | '/cliente/login'
     | '/clientes/$id'
     | '/api/public/cliente/avisos'
     | '/api/public/cliente/financeiro'
@@ -231,6 +242,7 @@ export interface FileRouteTypes {
     | '/_app/financeiro'
     | '/_app/mapa'
     | '/_app/pesquisa'
+    | '/cliente/login'
     | '/_app/clientes/$id'
     | '/api/public/cliente/avisos'
     | '/api/public/cliente/financeiro'
@@ -245,6 +257,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ClienteLoginRoute: typeof ClienteLoginRoute
   ApiPublicClienteAvisosRoute: typeof ApiPublicClienteAvisosRoute
   ApiPublicClienteFinanceiroRoute: typeof ApiPublicClienteFinanceiroRoute
   ApiPublicClienteMeRoute: typeof ApiPublicClienteMeRoute
@@ -275,6 +288,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cliente/login': {
+      id: '/cliente/login'
+      path: '/cliente/login'
+      fullPath: '/cliente/login'
+      preLoaderRoute: typeof ClienteLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_app/pesquisa': {
@@ -423,6 +443,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
   AuthRoute: AuthRoute,
+  ClienteLoginRoute: ClienteLoginRoute,
   ApiPublicClienteAvisosRoute: ApiPublicClienteAvisosRoute,
   ApiPublicClienteFinanceiroRoute: ApiPublicClienteFinanceiroRoute,
   ApiPublicClienteMeRoute: ApiPublicClienteMeRoute,
