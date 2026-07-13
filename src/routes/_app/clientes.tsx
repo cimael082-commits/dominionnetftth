@@ -2,7 +2,17 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
-import { Plus, Search, MapPin, Phone, Pencil } from "lucide-react";
+import { Plus, Search, MapPin, Phone, Pencil, Trash2 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { geocodeAddress } from "@/lib/geocode.functions";
 import { Button } from "@/components/ui/button";
@@ -56,8 +66,24 @@ function useClientes(search: string) {
 function ClientesPage() {
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
+  const qc = useQueryClient();
   const { data, isLoading } = useClientes(search);
   const [editing, setEditing] = useState<null | Parameters<typeof EditClienteDialog>[0]["cliente"]>(null);
+  const [deleting, setDeleting] = useState<{ id: string; nome: string } | null>(null);
+
+  const delMut = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("clientes").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Cliente excluído");
+      qc.invalidateQueries({ queryKey: ["clientes"] });
+      qc.invalidateQueries({ queryKey: ["dashboard"] });
+      setDeleting(null);
+    },
+    onError: (e: Error) => toast.error("Erro ao excluir", { description: e.message }),
+  });
 
   return (
     <div className="p-8 space-y-6">
@@ -141,6 +167,16 @@ function ClientesPage() {
                       >
                         <Pencil className="h-3 w-3" /> Editar
                       </button>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setDeleting({ id: c.id, nome: c.nome });
+                        }}
+                        className="inline-flex items-center gap-1 rounded-md border border-destructive/40 text-destructive px-2 py-1 text-xs hover:bg-destructive/10"
+                      >
+                        <Trash2 className="h-3 w-3" /> Excluir
+                      </button>
                     </div>
                   </div>
                 </Card>
@@ -159,6 +195,27 @@ function ClientesPage() {
         open={editing !== null}
         onOpenChange={(v) => { if (!v) setEditing(null); }}
       />
+
+      <AlertDialog open={deleting !== null} onOpenChange={(v) => { if (!v) setDeleting(null); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Deseja realmente excluir este cliente?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {deleting?.nome ? <>O cliente <strong>{deleting.nome}</strong> e todos os dados relacionados (parcelas, notificações) serão removidos permanentemente. Esta ação não pode ser desfeita.</> : null}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={delMut.isPending}>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={delMut.isPending}
+              onClick={(e) => { e.preventDefault(); if (deleting) delMut.mutate(deleting.id); }}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {delMut.isPending ? "Excluindo..." : "Excluir cliente"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

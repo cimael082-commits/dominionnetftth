@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Megaphone, Send } from "lucide-react";
+import { Megaphone, Send, Trash2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +9,16 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_app/avisos")({
@@ -25,6 +35,19 @@ function AdminAvisos() {
   const [destino, setDestino] = useState("all");
   const [saving, setSaving] = useState(false);
   const [lista, setLista] = useState<Aviso[]>([]);
+  const [deleting, setDeleting] = useState<Aviso | null>(null);
+  const [deletingLoading, setDeletingLoading] = useState(false);
+
+  async function excluir() {
+    if (!deleting) return;
+    setDeletingLoading(true);
+    const { error } = await supabase.from("avisos").delete().eq("id", deleting.id);
+    setDeletingLoading(false);
+    if (error) { toast.error(error.message); return; }
+    toast.success("Aviso excluído");
+    setDeleting(null);
+    load();
+  }
 
   async function load() {
     const { data } = await supabase
@@ -118,6 +141,14 @@ function AdminAvisos() {
                 <span className="text-[11px] text-muted-foreground">
                   {new Date(a.created_at).toLocaleString("pt-BR")}
                 </span>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="ml-auto h-7 px-2 text-destructive hover:text-destructive hover:bg-destructive/10"
+                  onClick={() => setDeleting(a)}
+                >
+                  <Trash2 className="h-3.5 w-3.5 mr-1" /> Excluir
+                </Button>
               </div>
               <div className="text-sm font-semibold">{a.titulo}</div>
               <div className="text-xs text-muted-foreground whitespace-pre-wrap">{a.mensagem}</div>
@@ -125,6 +156,27 @@ function AdminAvisos() {
           ))}
         </CardContent>
       </Card>
+
+      <AlertDialog open={deleting !== null} onOpenChange={(v) => { if (!v && !deletingLoading) setDeleting(null); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Deseja realmente excluir este aviso?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {deleting ? <>O aviso <strong>“{deleting.titulo}”</strong> será removido permanentemente.</> : null}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deletingLoading}>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={deletingLoading}
+              onClick={(e) => { e.preventDefault(); excluir(); }}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deletingLoading ? "Excluindo..." : "Excluir aviso"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
