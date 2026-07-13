@@ -195,6 +195,27 @@ function ClientesPage() {
         open={editing !== null}
         onOpenChange={(v) => { if (!v) setEditing(null); }}
       />
+
+      <AlertDialog open={deleting !== null} onOpenChange={(v) => { if (!v) setDeleting(null); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Deseja realmente excluir este cliente?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {deleting?.nome ? <>O cliente <strong>{deleting.nome}</strong> e todos os dados relacionados (parcelas, notificações) serão removidos permanentemente. Esta ação não pode ser desfeita.</> : null}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={delMut.isPending}>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={delMut.isPending}
+              onClick={(e) => { e.preventDefault(); if (deleting) delMut.mutate(deleting.id); }}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {delMut.isPending ? "Excluindo..." : "Excluir cliente"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
