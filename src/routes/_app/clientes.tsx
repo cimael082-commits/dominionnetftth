@@ -66,8 +66,24 @@ function useClientes(search: string) {
 function ClientesPage() {
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
+  const qc = useQueryClient();
   const { data, isLoading } = useClientes(search);
   const [editing, setEditing] = useState<null | Parameters<typeof EditClienteDialog>[0]["cliente"]>(null);
+  const [deleting, setDeleting] = useState<{ id: string; nome: string } | null>(null);
+
+  const delMut = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("clientes").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Cliente excluído");
+      qc.invalidateQueries({ queryKey: ["clientes"] });
+      qc.invalidateQueries({ queryKey: ["dashboard"] });
+      setDeleting(null);
+    },
+    onError: (e: Error) => toast.error("Erro ao excluir", { description: e.message }),
+  });
 
   return (
     <div className="p-8 space-y-6">
