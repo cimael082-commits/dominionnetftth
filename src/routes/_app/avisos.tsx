@@ -35,6 +35,19 @@ function AdminAvisos() {
   const [destino, setDestino] = useState("all");
   const [saving, setSaving] = useState(false);
   const [lista, setLista] = useState<Aviso[]>([]);
+  const [deleting, setDeleting] = useState<Aviso | null>(null);
+  const [deletingLoading, setDeletingLoading] = useState(false);
+
+  async function excluir() {
+    if (!deleting) return;
+    setDeletingLoading(true);
+    const { error } = await supabase.from("avisos").delete().eq("id", deleting.id);
+    setDeletingLoading(false);
+    if (error) { toast.error(error.message); return; }
+    toast.success("Aviso excluído");
+    setDeleting(null);
+    load();
+  }
 
   async function load() {
     const { data } = await supabase
