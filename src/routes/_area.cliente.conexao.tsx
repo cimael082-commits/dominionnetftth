@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Waves, RefreshCw } from "lucide-react";
+import { RefreshCw } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { clienteFetch } from "@/lib/cliente-auth";
