@@ -47,11 +47,11 @@ function ConexaoPage() {
 
       <Card className={online ? "border-emerald-500/40" : "border-red-500/40"}>
         <CardContent className="p-5 flex flex-col items-center gap-3 text-center">
-          <div className={`h-16 w-16 rounded-2xl flex items-center justify-center ${online ? "bg-emerald-500/15 text-emerald-500" : "bg-red-500/15 text-red-500"}`}>
-            <Waves className="h-8 w-8" />
+          <div className={`h-16 w-16 rounded-full flex items-center justify-center text-3xl ${online ? "bg-emerald-500/15" : "bg-red-500/15"}`}>
+            {online ? "🟢" : "🔴"}
           </div>
           <div>
-            <div className="text-2xl font-bold">{online ? "Online" : "Offline"}</div>
+            <div className="text-2xl font-bold">{online ? "Internet Online" : "Internet Offline"}</div>
             <div className="text-xs text-muted-foreground">
               {cli?.ultima_sincronizacao
                 ? `Última verificação: ${new Date(cli.ultima_sincronizacao).toLocaleString("pt-BR")}`
