@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 const CORS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization, X-API-Key",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization, X-API-Key, X-Router-Id",
   "Access-Control-Max-Age": "86400",
 } as const;
 
@@ -20,6 +20,19 @@ type Entrada = {
   uptime?: unknown;
 };
 
+type Body = {
+  router_id?: unknown;
+  router_nome?: unknown;
+  router_ip?: unknown;
+  identity?: unknown;
+  versao?: unknown;
+  clientes?: Entrada[];
+};
+
+function str(v: unknown): string | null {
+  return typeof v === "string" && v.trim().length > 0 ? v.trim() : null;
+}
+
 export const Route = createFileRoute("/api/public/mikrotik/sync")({
   server: {
     handlers: {
@@ -34,14 +47,19 @@ export const Route = createFileRoute("/api/public/mikrotik/sync")({
           return json(401, { error: "Não autorizado" });
         }
 
-        let body: { clientes?: Entrada[] };
+        let body: Body;
         try {
-          body = (await request.json()) as { clientes?: Entrada[] };
+          body = (await request.json()) as Body;
         } catch {
           return json(400, { error: "JSON inválido" });
         }
         if (!body || !Array.isArray(body.clientes)) {
-          return json(400, { error: "Formato esperado: { clientes: [...] }" });
+          return json(400, { error: "Formato esperado: { router_id, clientes: [...] }" });
+        }
+
+        const routerId = str(body.router_id) ?? str(request.headers.get("x-router-id"));
+        if (!routerId) {
+          return json(400, { error: "Campo obrigatório 'router_id' ausente" });
         }
 
         const recebidos = body.clientes
@@ -55,14 +73,32 @@ export const Route = createFileRoute("/api/public/mikrotik/sync")({
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const now = new Date().toISOString();
 
-        // Carrega todos os clientes com login_pppoe
+        // Registra/atualiza o roteador
+        await supabaseAdmin.from("roteadores").upsert(
+          {
+            router_id: routerId,
+            nome: str(body.router_nome) ?? str(body.identity) ?? routerId,
+            ip: str(body.router_ip),
+            identity: str(body.identity),
+            versao: str(body.versao),
+            online: true,
+            ultima_sincronizacao: now,
+          },
+          { onConflict: "router_id" },
+        );
+
+        // Carrega clientes: os que já pertencem a este router + os ainda sem router definido
         const { data: clientesDb, error: errList } = await supabaseAdmin
           .from("clientes")
-          .select("id, login_pppoe, online")
-          .not("login_pppoe", "is", null);
+          .select("id, login_pppoe, online, router_id")
+          .not("login_pppoe", "is", null)
+          .or(`router_id.eq.${routerId},router_id.is.null`);
         if (errList) return json(500, { error: errList.message });
 
-        const porLogin = new Map<string, { id: string; login_pppoe: string; online: boolean }>();
+        const porLogin = new Map<
+          string,
+          { id: string; login_pppoe: string | null; online: boolean; router_id: string | null }
+        >();
         for (const c of clientesDb ?? []) {
           if (c.login_pppoe) porLogin.set(c.login_pppoe.trim(), c as never);
         }
@@ -73,9 +109,10 @@ export const Route = createFileRoute("/api/public/mikrotik/sync")({
           tipo: "conectou" | "desconectou";
           ip: string | null;
           uptime: string | null;
+          router_id: string;
         }[] = [];
 
-        // ONLINE: encontrados na sincronização
+        // ONLINE: encontrados nesta sincronização — pertencem a este router
         const idsOnline: string[] = [];
         let atualizados = 0;
         let naoEncontrados = 0;
@@ -93,6 +130,7 @@ export const Route = createFileRoute("/api/public/mikrotik/sync")({
               ip_atual: r.ip,
               uptime_atual: r.uptime,
               ultima_sincronizacao: now,
+              router_id: routerId,
             })
             .eq("id", cli.id);
           if (!uErr) {
@@ -100,18 +138,20 @@ export const Route = createFileRoute("/api/public/mikrotik/sync")({
             if (!cli.online) {
               eventos.push({
                 cliente_id: cli.id,
-                login_pppoe: cli.login_pppoe,
+                login_pppoe: cli.login_pppoe ?? r.pppoe_user,
                 tipo: "conectou",
                 ip: r.ip,
                 uptime: r.uptime,
+                router_id: routerId,
               });
             }
           }
         }
 
-        // OFFLINE: todos que estavam online e não vieram na sincronização
+        // OFFLINE: SOMENTE clientes deste router que estavam online e não vieram agora.
+        // Clientes de outros MikroTik nunca são tocados.
         const offlineDoAntes = (clientesDb ?? []).filter(
-          (c) => c.online && !idsOnline.includes(c.id),
+          (c) => c.online && c.router_id === routerId && !idsOnline.includes(c.id),
         );
         if (offlineDoAntes.length > 0) {
           const { error: offErr } = await supabaseAdmin
@@ -134,27 +174,46 @@ export const Route = createFileRoute("/api/public/mikrotik/sync")({
                 tipo: "desconectou",
                 ip: null,
                 uptime: null,
+                router_id: routerId,
               });
             }
           }
         }
 
-        // Também garante que clientes já offline sem login algum não gerem ruído — nada a fazer.
         if (eventos.length > 0) {
           await supabaseAdmin.from("eventos_conexao").insert(eventos);
         }
 
-        const totalOnline = idsOnline.length;
-        const totalOffline = (clientesDb ?? []).length - totalOnline;
+        // Estatísticas deste router
+        const { count: totalRouter } = await supabaseAdmin
+          .from("clientes")
+          .select("id", { count: "exact", head: true })
+          .eq("router_id", routerId);
+        const { count: onlineRouter } = await supabaseAdmin
+          .from("clientes")
+          .select("id", { count: "exact", head: true })
+          .eq("router_id", routerId)
+          .eq("online", true);
+
+        await supabaseAdmin
+          .from("roteadores")
+          .update({
+            clientes_total: totalRouter ?? 0,
+            clientes_online: onlineRouter ?? 0,
+            ultima_sincronizacao: now,
+            online: true,
+          })
+          .eq("router_id", routerId);
 
         return json(200, {
           ok: true,
+          router_id: routerId,
           recebidos: recebidos.length,
           atualizados_online: atualizados,
           nao_encontrados: naoEncontrados,
           marcados_offline: offlineDoAntes.length,
           eventos_registrados: eventos.length,
-          totais: { online: totalOnline, offline: totalOffline },
+          totais: { online: onlineRouter ?? 0, total: totalRouter ?? 0 },
           sincronizado_em: now,
         });
       },
