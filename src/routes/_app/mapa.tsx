@@ -79,7 +79,7 @@ type Rota = {
   comprimento_m?: number | null;
   observacoes?: string | null;
 };
-type Cliente = { id: string; nome: string; latitude: number | null; longitude: number | null; status: string; plano: string | null; online: boolean; ip_atual: string | null; uptime_atual: string | null; ultima_sincronizacao: string | null; login_pppoe: string | null };
+type Cliente = { id: string; nome: string; latitude: number | null; longitude: number | null; status: string; plano: string | null; online: boolean; ip_atual: string | null; uptime_atual: string | null; ultima_sincronizacao: string | null; login_pppoe: string | null; router_id: string | null };
 
 type Mode = "none" | "cto" | "ceo" | "rota" | "locate" | "split";
 
@@ -182,11 +182,31 @@ function MapaPage() {
     queryFn: async () => {
       const { data, error } = await db
         .from("clientes")
-        .select("id,nome,latitude,longitude,status,plano,online,ip_atual,uptime_atual,ultima_sincronizacao,login_pppoe")
+        .select("id,nome,latitude,longitude,status,plano,online,ip_atual,uptime_atual,ultima_sincronizacao,login_pppoe,router_id")
         .not("latitude", "is", null)
         .not("longitude", "is", null);
       if (error) throw error;
       return (data ?? []) as Cliente[];
+    },
+  });
+  const roteadoresQ = useQuery({
+    queryKey: ["map", "roteadores"],
+    refetchInterval: 30000,
+    queryFn: async () => {
+      const { data, error } = await db
+        .from("roteadores")
+        .select("id,router_id,nome,ip,clientes_online,clientes_total,ultima_sincronizacao")
+        .order("nome");
+      if (error) throw error;
+      return (data ?? []) as {
+        id: string;
+        router_id: string;
+        nome: string;
+        ip: string | null;
+        clientes_online: number;
+        clientes_total: number;
+        ultima_sincronizacao: string | null;
+      }[];
     },
   });
 
@@ -357,7 +377,7 @@ function MapaPage() {
         ? new Date(cl.ultima_sincronizacao).toLocaleString("pt-BR")
         : "—";
       const info = new google.maps.InfoWindow({
-        content: `<div style="color:#0A1628;font-family:system-ui;font-size:12px;min-width:200px"><b>${cl.nome}</b><br/>${cl.plano ?? ""}<br/><b style="color:${cor}">${cl.online ? "● ONLINE" : "● OFFLINE"}</b><br/>PPPoE: ${cl.login_pppoe ?? "—"}<br/>IP: ${cl.ip_atual ?? "—"}<br/>Uptime: ${cl.uptime_atual ?? "—"}<br/>Última sync: ${ultSync}</div>`,
+        content: `<div style="color:#0A1628;font-family:system-ui;font-size:12px;min-width:200px"><b>${cl.nome}</b><br/>${cl.plano ?? ""}<br/><b style="color:${cor}">${cl.online ? "● ONLINE" : "● OFFLINE"}</b><br/>MikroTik: ${cl.router_id ?? "—"}<br/>PPPoE: ${cl.login_pppoe ?? "—"}<br/>IP: ${cl.ip_atual ?? "—"}<br/>Uptime: ${cl.uptime_atual ?? "—"}<br/>Última sync: ${ultSync}</div>`,
       });
       marker.addListener("click", () => info.open({ map, anchor: marker }));
       markersRef.current.push(marker);
@@ -727,6 +747,37 @@ function MapaPage() {
           </p>
         </div>
       )}
+
+      {/* Painel de MikroTik conectados */}
+      {(roteadoresQ.data?.length ?? 0) > 0 && (
+        <div className="absolute top-4 right-4 z-10 w-60 rounded-lg border border-border bg-background/95 backdrop-blur shadow-xl p-3 space-y-2">
+          <div className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+            MikroTik conectados
+          </div>
+          {(roteadoresQ.data ?? []).map((r) => {
+            const on =
+              !!r.ultima_sincronizacao &&
+              Date.now() - new Date(r.ultima_sincronizacao).getTime() < 3 * 60 * 1000;
+            return (
+              <div key={r.id} className="flex items-start gap-2 text-xs">
+                <span className={on ? "text-emerald-400" : "text-rose-500"}>●</span>
+                <div className="min-w-0 flex-1">
+                  <div className="font-medium truncate">{r.nome}</div>
+                  <div className="text-[10px] text-muted-foreground truncate">
+                    {r.clientes_online ?? 0} online · {r.ip ?? r.router_id}
+                  </div>
+                  <div className="text-[10px] text-muted-foreground">
+                    {r.ultima_sincronizacao
+                      ? new Date(r.ultima_sincronizacao).toLocaleTimeString("pt-BR")
+                      : "sem sync"}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
 
       {/* KPI bar */}
       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 rounded-lg border border-border bg-background/95 backdrop-blur shadow-xl px-2 py-1.5">

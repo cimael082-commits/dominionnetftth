@@ -11,6 +11,7 @@ import {
   Settings,
   Map,
   Megaphone,
+  Router as RouterIcon,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
@@ -20,6 +21,7 @@ const nav = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/clientes", label: "Clientes", icon: Users },
   { to: "/mapa", label: "Mapa da Rede", icon: Map },
+  { to: "/roteadores", label: "Roteadores", icon: RouterIcon },
   { to: "/financeiro", label: "Financeiro", icon: Wallet },
   { to: "/carnes", label: "Carnês", icon: FileText },
   { to: "/avisos", label: "Avisos", icon: Megaphone },

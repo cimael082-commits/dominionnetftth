@@ -14,6 +14,7 @@ import { Route as AreaRouteImport } from './routes/_area'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ClienteLoginRouteImport } from './routes/cliente.login'
+import { Route as AppRoteadoresRouteImport } from './routes/_app/roteadores'
 import { Route as AppPesquisaRouteImport } from './routes/_app/pesquisa'
 import { Route as AppMapaRouteImport } from './routes/_app/mapa'
 import { Route as AppFinanceiroRouteImport } from './routes/_app/financeiro'
@@ -61,6 +62,11 @@ const ClienteLoginRoute = ClienteLoginRouteImport.update({
   id: '/cliente/login',
   path: '/cliente/login',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AppRoteadoresRoute = AppRoteadoresRouteImport.update({
+  id: '/roteadores',
+  path: '/roteadores',
+  getParentRoute: () => AppRoute,
 } as any)
 const AppPesquisaRoute = AppPesquisaRouteImport.update({
   id: '/pesquisa',
@@ -197,6 +203,7 @@ export interface FileRoutesByFullPath {
   '/financeiro': typeof AppFinanceiroRoute
   '/mapa': typeof AppMapaRoute
   '/pesquisa': typeof AppPesquisaRoute
+  '/roteadores': typeof AppRoteadoresRoute
   '/cliente/login': typeof ClienteLoginRoute
   '/clientes/$id': typeof AppClientesIdRoute
   '/cliente/atendimento': typeof AreaClienteAtendimentoRoute
@@ -226,6 +233,7 @@ export interface FileRoutesByTo {
   '/financeiro': typeof AppFinanceiroRoute
   '/mapa': typeof AppMapaRoute
   '/pesquisa': typeof AppPesquisaRoute
+  '/roteadores': typeof AppRoteadoresRoute
   '/cliente/login': typeof ClienteLoginRoute
   '/clientes/$id': typeof AppClientesIdRoute
   '/cliente/atendimento': typeof AreaClienteAtendimentoRoute
@@ -258,6 +266,7 @@ export interface FileRoutesById {
   '/_app/financeiro': typeof AppFinanceiroRoute
   '/_app/mapa': typeof AppMapaRoute
   '/_app/pesquisa': typeof AppPesquisaRoute
+  '/_app/roteadores': typeof AppRoteadoresRoute
   '/cliente/login': typeof ClienteLoginRoute
   '/_app/clientes/$id': typeof AppClientesIdRoute
   '/_area/cliente/atendimento': typeof AreaClienteAtendimentoRoute
@@ -289,6 +298,7 @@ export interface FileRouteTypes {
     | '/financeiro'
     | '/mapa'
     | '/pesquisa'
+    | '/roteadores'
     | '/cliente/login'
     | '/clientes/$id'
     | '/cliente/atendimento'
@@ -318,6 +328,7 @@ export interface FileRouteTypes {
     | '/financeiro'
     | '/mapa'
     | '/pesquisa'
+    | '/roteadores'
     | '/cliente/login'
     | '/clientes/$id'
     | '/cliente/atendimento'
@@ -349,6 +360,7 @@ export interface FileRouteTypes {
     | '/_app/financeiro'
     | '/_app/mapa'
     | '/_app/pesquisa'
+    | '/_app/roteadores'
     | '/cliente/login'
     | '/_app/clientes/$id'
     | '/_area/cliente/atendimento'
@@ -419,6 +431,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/cliente/login'
       preLoaderRoute: typeof ClienteLoginRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_app/roteadores': {
+      id: '/_app/roteadores'
+      path: '/roteadores'
+      fullPath: '/roteadores'
+      preLoaderRoute: typeof AppRoteadoresRouteImport
+      parentRoute: typeof AppRoute
     }
     '/_app/pesquisa': {
       id: '/_app/pesquisa'
@@ -612,6 +631,7 @@ interface AppRouteChildren {
   AppFinanceiroRoute: typeof AppFinanceiroRoute
   AppMapaRoute: typeof AppMapaRoute
   AppPesquisaRoute: typeof AppPesquisaRoute
+  AppRoteadoresRoute: typeof AppRoteadoresRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
@@ -623,6 +643,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppFinanceiroRoute: AppFinanceiroRoute,
   AppMapaRoute: AppMapaRoute,
   AppPesquisaRoute: AppPesquisaRoute,
+  AppRoteadoresRoute: AppRoteadoresRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
