@@ -79,7 +79,7 @@ type Rota = {
   comprimento_m?: number | null;
   observacoes?: string | null;
 };
-type Cliente = { id: string; nome: string; latitude: number | null; longitude: number | null; status: string; plano: string | null; online: boolean; ip_atual: string | null; uptime_atual: string | null; ultima_sincronizacao: string | null; login_pppoe: string | null };
+type Cliente = { id: string; nome: string; latitude: number | null; longitude: number | null; status: string; plano: string | null; online: boolean; ip_atual: string | null; uptime_atual: string | null; ultima_sincronizacao: string | null; login_pppoe: string | null; router_id: string | null };
 
 type Mode = "none" | "cto" | "ceo" | "rota" | "locate" | "split";
 
