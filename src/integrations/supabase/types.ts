@@ -148,6 +148,7 @@ export type Database = {
           observacoes: string | null
           online: boolean
           plano: string | null
+          router_id: string | null
           senha_cliente_hash: string | null
           senha_pppoe: string | null
           senha_wifi: string | null
@@ -185,6 +186,7 @@ export type Database = {
           observacoes?: string | null
           online?: boolean
           plano?: string | null
+          router_id?: string | null
           senha_cliente_hash?: string | null
           senha_pppoe?: string | null
           senha_wifi?: string | null
@@ -222,6 +224,7 @@ export type Database = {
           observacoes?: string | null
           online?: boolean
           plano?: string | null
+          router_id?: string | null
           senha_cliente_hash?: string | null
           senha_pppoe?: string | null
           senha_wifi?: string | null
@@ -338,6 +341,7 @@ export type Database = {
           observacoes: string | null
           portas_livres: number
           portas_totais: number
+          router_id: string | null
           status: Database["public"]["Enums"]["infra_status"]
           updated_at: string
         }
@@ -350,6 +354,7 @@ export type Database = {
           observacoes?: string | null
           portas_livres?: number
           portas_totais?: number
+          router_id?: string | null
           status?: Database["public"]["Enums"]["infra_status"]
           updated_at?: string
         }
@@ -362,6 +367,7 @@ export type Database = {
           observacoes?: string | null
           portas_livres?: number
           portas_totais?: number
+          router_id?: string | null
           status?: Database["public"]["Enums"]["infra_status"]
           updated_at?: string
         }
@@ -374,6 +380,7 @@ export type Database = {
           id: string
           ip: string | null
           login_pppoe: string
+          router_id: string | null
           tipo: string
           uptime: string | null
         }
@@ -383,6 +390,7 @@ export type Database = {
           id?: string
           ip?: string | null
           login_pppoe: string
+          router_id?: string | null
           tipo: string
           uptime?: string | null
         }
@@ -392,6 +400,7 @@ export type Database = {
           id?: string
           ip?: string | null
           login_pppoe?: string
+          router_id?: string | null
           tipo?: string
           uptime?: string | null
         }
@@ -567,6 +576,54 @@ export type Database = {
           status?: Database["public"]["Enums"]["infra_status"]
           tipo?: Database["public"]["Enums"]["rota_tipo"]
           updated_at?: string
+        }
+        Relationships: []
+      }
+      roteadores: {
+        Row: {
+          clientes_online: number
+          clientes_total: number
+          created_at: string
+          id: string
+          identity: string | null
+          ip: string | null
+          nome: string
+          observacoes: string | null
+          online: boolean
+          router_id: string
+          ultima_sincronizacao: string | null
+          updated_at: string
+          versao: string | null
+        }
+        Insert: {
+          clientes_online?: number
+          clientes_total?: number
+          created_at?: string
+          id?: string
+          identity?: string | null
+          ip?: string | null
+          nome: string
+          observacoes?: string | null
+          online?: boolean
+          router_id: string
+          ultima_sincronizacao?: string | null
+          updated_at?: string
+          versao?: string | null
+        }
+        Update: {
+          clientes_online?: number
+          clientes_total?: number
+          created_at?: string
+          id?: string
+          identity?: string | null
+          ip?: string | null
+          nome?: string
+          observacoes?: string | null
+          online?: boolean
+          router_id?: string
+          ultima_sincronizacao?: string | null
+          updated_at?: string
+          versao?: string | null
         }
         Relationships: []
       }
