@@ -748,6 +748,37 @@ function MapaPage() {
         </div>
       )}
 
+      {/* Painel de MikroTik conectados */}
+      {(roteadoresQ.data?.length ?? 0) > 0 && (
+        <div className="absolute top-4 right-4 z-10 w-60 rounded-lg border border-border bg-background/95 backdrop-blur shadow-xl p-3 space-y-2">
+          <div className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+            MikroTik conectados
+          </div>
+          {(roteadoresQ.data ?? []).map((r) => {
+            const on =
+              !!r.ultima_sincronizacao &&
+              Date.now() - new Date(r.ultima_sincronizacao).getTime() < 3 * 60 * 1000;
+            return (
+              <div key={r.id} className="flex items-start gap-2 text-xs">
+                <span className={on ? "text-emerald-400" : "text-rose-500"}>●</span>
+                <div className="min-w-0 flex-1">
+                  <div className="font-medium truncate">{r.nome}</div>
+                  <div className="text-[10px] text-muted-foreground truncate">
+                    {r.clientes_online ?? 0} online · {r.ip ?? r.router_id}
+                  </div>
+                  <div className="text-[10px] text-muted-foreground">
+                    {r.ultima_sincronizacao
+                      ? new Date(r.ultima_sincronizacao).toLocaleTimeString("pt-BR")
+                      : "sem sync"}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+
       {/* KPI bar */}
       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 rounded-lg border border-border bg-background/95 backdrop-blur shadow-xl px-2 py-1.5">
         <div className="flex items-stretch divide-x divide-border/60">
