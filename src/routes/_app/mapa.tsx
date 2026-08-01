@@ -182,11 +182,31 @@ function MapaPage() {
     queryFn: async () => {
       const { data, error } = await db
         .from("clientes")
-        .select("id,nome,latitude,longitude,status,plano,online,ip_atual,uptime_atual,ultima_sincronizacao,login_pppoe")
+        .select("id,nome,latitude,longitude,status,plano,online,ip_atual,uptime_atual,ultima_sincronizacao,login_pppoe,router_id")
         .not("latitude", "is", null)
         .not("longitude", "is", null);
       if (error) throw error;
       return (data ?? []) as Cliente[];
+    },
+  });
+  const roteadoresQ = useQuery({
+    queryKey: ["map", "roteadores"],
+    refetchInterval: 30000,
+    queryFn: async () => {
+      const { data, error } = await db
+        .from("roteadores")
+        .select("id,router_id,nome,ip,clientes_online,clientes_total,ultima_sincronizacao")
+        .order("nome");
+      if (error) throw error;
+      return (data ?? []) as {
+        id: string;
+        router_id: string;
+        nome: string;
+        ip: string | null;
+        clientes_online: number;
+        clientes_total: number;
+        ultima_sincronizacao: string | null;
+      }[];
     },
   });
 
