@@ -252,7 +252,7 @@ function ClienteDetail() {
                 <Wifi className="h-4 w-4" /> Rede
               </h3>
               <Row label="Login PPPoE" k="login_pppoe" v={val("login_pppoe")} edit={editing} onChange={(v) => setEdit((e) => ({ ...(e ?? {}), login_pppoe: v }))} />
-              <Row label="Senha PPPoE" k="senha_pppoe" v={val("senha_pppoe")} edit={editing} onChange={(v) => setEdit((e) => ({ ...(e ?? {}), senha_pppoe: v }))} />
+              
               <Row label="SSID Wi-Fi" k="ssid_wifi" v={val("ssid_wifi")} edit={editing} onChange={(v) => setEdit((e) => ({ ...(e ?? {}), ssid_wifi: v }))} />
               <Row label="Senha Wi-Fi" k="senha_wifi" v={val("senha_wifi")} edit={editing} onChange={(v) => setEdit((e) => ({ ...(e ?? {}), senha_wifi: v }))} />
             </Card>
