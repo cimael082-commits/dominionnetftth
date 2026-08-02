@@ -21,6 +21,7 @@ import { Route as AppFinanceiroRouteImport } from './routes/_app/financeiro'
 import { Route as AppDashboardRouteImport } from './routes/_app/dashboard'
 import { Route as AppConfiguracoesRouteImport } from './routes/_app/configuracoes'
 import { Route as AppClientesRouteImport } from './routes/_app/clientes'
+import { Route as AppChamadosRouteImport } from './routes/_app/chamados'
 import { Route as AppCarnesRouteImport } from './routes/_app/carnes'
 import { Route as AppBannersRouteImport } from './routes/_app/banners'
 import { Route as AppAvisosRouteImport } from './routes/_app/avisos'
@@ -103,6 +104,11 @@ const AppConfiguracoesRoute = AppConfiguracoesRouteImport.update({
 const AppClientesRoute = AppClientesRouteImport.update({
   id: '/clientes',
   path: '/clientes',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppChamadosRoute = AppChamadosRouteImport.update({
+  id: '/chamados',
+  path: '/chamados',
   getParentRoute: () => AppRoute,
 } as any)
 const AppCarnesRoute = AppCarnesRouteImport.update({
@@ -242,6 +248,7 @@ export interface FileRoutesByFullPath {
   '/avisos': typeof AppAvisosRoute
   '/banners': typeof AppBannersRoute
   '/carnes': typeof AppCarnesRoute
+  '/chamados': typeof AppChamadosRoute
   '/clientes': typeof AppClientesRouteWithChildren
   '/configuracoes': typeof AppConfiguracoesRoute
   '/dashboard': typeof AppDashboardRoute
@@ -279,6 +286,7 @@ export interface FileRoutesByTo {
   '/avisos': typeof AppAvisosRoute
   '/banners': typeof AppBannersRoute
   '/carnes': typeof AppCarnesRoute
+  '/chamados': typeof AppChamadosRoute
   '/clientes': typeof AppClientesRouteWithChildren
   '/configuracoes': typeof AppConfiguracoesRoute
   '/dashboard': typeof AppDashboardRoute
@@ -319,6 +327,7 @@ export interface FileRoutesById {
   '/_app/avisos': typeof AppAvisosRoute
   '/_app/banners': typeof AppBannersRoute
   '/_app/carnes': typeof AppCarnesRoute
+  '/_app/chamados': typeof AppChamadosRoute
   '/_app/clientes': typeof AppClientesRouteWithChildren
   '/_app/configuracoes': typeof AppConfiguracoesRoute
   '/_app/dashboard': typeof AppDashboardRoute
@@ -358,6 +367,7 @@ export interface FileRouteTypes {
     | '/avisos'
     | '/banners'
     | '/carnes'
+    | '/chamados'
     | '/clientes'
     | '/configuracoes'
     | '/dashboard'
@@ -395,6 +405,7 @@ export interface FileRouteTypes {
     | '/avisos'
     | '/banners'
     | '/carnes'
+    | '/chamados'
     | '/clientes'
     | '/configuracoes'
     | '/dashboard'
@@ -434,6 +445,7 @@ export interface FileRouteTypes {
     | '/_app/avisos'
     | '/_app/banners'
     | '/_app/carnes'
+    | '/_app/chamados'
     | '/_app/clientes'
     | '/_app/configuracoes'
     | '/_app/dashboard'
@@ -568,6 +580,13 @@ declare module '@tanstack/react-router' {
       path: '/clientes'
       fullPath: '/clientes'
       preLoaderRoute: typeof AppClientesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/chamados': {
+      id: '/_app/chamados'
+      path: '/chamados'
+      fullPath: '/chamados'
+      preLoaderRoute: typeof AppChamadosRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/carnes': {
@@ -764,6 +783,7 @@ interface AppRouteChildren {
   AppAvisosRoute: typeof AppAvisosRoute
   AppBannersRoute: typeof AppBannersRoute
   AppCarnesRoute: typeof AppCarnesRoute
+  AppChamadosRoute: typeof AppChamadosRoute
   AppClientesRoute: typeof AppClientesRouteWithChildren
   AppConfiguracoesRoute: typeof AppConfiguracoesRoute
   AppDashboardRoute: typeof AppDashboardRoute
@@ -777,6 +797,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAvisosRoute: AppAvisosRoute,
   AppBannersRoute: AppBannersRoute,
   AppCarnesRoute: AppCarnesRoute,
+  AppChamadosRoute: AppChamadosRoute,
   AppClientesRoute: AppClientesRouteWithChildren,
   AppConfiguracoesRoute: AppConfiguracoesRoute,
   AppDashboardRoute: AppDashboardRoute,
