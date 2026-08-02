@@ -48,27 +48,67 @@ type Parcela = {
 };
 
 function HomeCliente() {
+  const navigate = useNavigate();
   const [cli, setCli] = useState<Cliente | null>(null);
   const [parcelas, setParcelas] = useState<Parcela[]>([]);
   const [loading, setLoading] = useState(true);
+  const [erro, setErro] = useState<string | null>(null);
+  const [tentativa, setTentativa] = useState(0);
 
   useEffect(() => {
+    let ativo = true;
     (async () => {
+      setLoading(true);
+      setErro(null);
       try {
-        const [me, fin] = await Promise.all([
-          clienteFetch<{ cliente: Cliente }>("/api/public/cliente/me"),
-          clienteFetch<{ parcelas: Parcela[] }>("/api/public/cliente/financeiro"),
-        ]);
+        // O cadastro do cliente é o dado essencial da tela; o financeiro é
+        // secundário e não deve derrubar a página inteira se falhar.
+        const me = await clienteFetch<{ cliente: Cliente }>("/api/public/cliente/me");
+        if (!ativo) return;
         setCli(me.cliente);
-        setParcelas(fin.parcelas);
+        try {
+          const fin = await clienteFetch<{ parcelas: Parcela[] }>(
+            "/api/public/cliente/financeiro",
+          );
+          if (ativo) setParcelas(fin.parcelas ?? []);
+        } catch {
+          if (ativo) setParcelas([]);
+        }
+      } catch (e) {
+        if (!ativo) return;
+        const msg = e instanceof Error ? e.message : "Falha ao carregar seus dados";
+        if (/sess[aã]o expirada/i.test(msg)) {
+          navigate({ to: "/cliente/login", replace: true });
+          return;
+        }
+        setErro(msg);
       } finally {
-        setLoading(false);
+        if (ativo) setLoading(false);
       }
     })();
-  }, []);
+    return () => {
+      ativo = false;
+    };
+  }, [navigate, tentativa]);
 
   if (loading) return <div className="text-sm text-muted-foreground">Carregando...</div>;
-  if (!cli) return <div className="text-sm text-destructive">Erro ao carregar dados</div>;
+  if (!cli)
+    return (
+      <Card className="border-destructive/40">
+        <CardContent className="p-5 space-y-3">
+          <div className="flex items-center gap-2 text-destructive font-semibold">
+            <AlertTriangle className="h-5 w-5" /> Não foi possível carregar seus dados
+          </div>
+          <p className="text-xs text-muted-foreground">
+            {erro ?? "Verifique sua conexão e tente novamente."}
+          </p>
+          <Button size="sm" onClick={() => setTentativa((t) => t + 1)}>
+            Tentar novamente
+          </Button>
+        </CardContent>
+      </Card>
+    );
+
 
   const pendentes = parcelas.filter((p) => p.status !== "pago");
   const proxima = pendentes[0];
