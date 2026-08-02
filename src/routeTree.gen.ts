@@ -29,6 +29,7 @@ import { Route as AreaClientePlanoRouteImport } from './routes/_area.cliente.pla
 import { Route as AreaClientePerfilRouteImport } from './routes/_area.cliente.perfil'
 import { Route as AreaClienteFinanceiroRouteImport } from './routes/_area.cliente.financeiro'
 import { Route as AreaClienteConexaoRouteImport } from './routes/_area.cliente.conexao'
+import { Route as AreaClienteChamadosRouteImport } from './routes/_area.cliente.chamados'
 import { Route as AreaClienteAvisosRouteImport } from './routes/_area.cliente.avisos'
 import { Route as AreaClienteAtendimentoRouteImport } from './routes/_area.cliente.atendimento'
 import { Route as AppClientesIdRouteImport } from './routes/_app/clientes.$id'
@@ -141,6 +142,11 @@ const AreaClienteConexaoRoute = AreaClienteConexaoRouteImport.update({
   path: '/cliente/conexao',
   getParentRoute: () => AreaRoute,
 } as any)
+const AreaClienteChamadosRoute = AreaClienteChamadosRouteImport.update({
+  id: '/cliente/chamados',
+  path: '/cliente/chamados',
+  getParentRoute: () => AreaRoute,
+} as any)
 const AreaClienteAvisosRoute = AreaClienteAvisosRouteImport.update({
   id: '/cliente/avisos',
   path: '/cliente/avisos',
@@ -228,6 +234,7 @@ export interface FileRoutesByFullPath {
   '/clientes/$id': typeof AppClientesIdRoute
   '/cliente/atendimento': typeof AreaClienteAtendimentoRoute
   '/cliente/avisos': typeof AreaClienteAvisosRoute
+  '/cliente/chamados': typeof AreaClienteChamadosRoute
   '/cliente/conexao': typeof AreaClienteConexaoRoute
   '/cliente/financeiro': typeof AreaClienteFinanceiroRoute
   '/cliente/perfil': typeof AreaClientePerfilRoute
@@ -261,6 +268,7 @@ export interface FileRoutesByTo {
   '/clientes/$id': typeof AppClientesIdRoute
   '/cliente/atendimento': typeof AreaClienteAtendimentoRoute
   '/cliente/avisos': typeof AreaClienteAvisosRoute
+  '/cliente/chamados': typeof AreaClienteChamadosRoute
   '/cliente/conexao': typeof AreaClienteConexaoRoute
   '/cliente/financeiro': typeof AreaClienteFinanceiroRoute
   '/cliente/perfil': typeof AreaClientePerfilRoute
@@ -297,6 +305,7 @@ export interface FileRoutesById {
   '/_app/clientes/$id': typeof AppClientesIdRoute
   '/_area/cliente/atendimento': typeof AreaClienteAtendimentoRoute
   '/_area/cliente/avisos': typeof AreaClienteAvisosRoute
+  '/_area/cliente/chamados': typeof AreaClienteChamadosRoute
   '/_area/cliente/conexao': typeof AreaClienteConexaoRoute
   '/_area/cliente/financeiro': typeof AreaClienteFinanceiroRoute
   '/_area/cliente/perfil': typeof AreaClientePerfilRoute
@@ -332,6 +341,7 @@ export interface FileRouteTypes {
     | '/clientes/$id'
     | '/cliente/atendimento'
     | '/cliente/avisos'
+    | '/cliente/chamados'
     | '/cliente/conexao'
     | '/cliente/financeiro'
     | '/cliente/perfil'
@@ -365,6 +375,7 @@ export interface FileRouteTypes {
     | '/clientes/$id'
     | '/cliente/atendimento'
     | '/cliente/avisos'
+    | '/cliente/chamados'
     | '/cliente/conexao'
     | '/cliente/financeiro'
     | '/cliente/perfil'
@@ -400,6 +411,7 @@ export interface FileRouteTypes {
     | '/_app/clientes/$id'
     | '/_area/cliente/atendimento'
     | '/_area/cliente/avisos'
+    | '/_area/cliente/chamados'
     | '/_area/cliente/conexao'
     | '/_area/cliente/financeiro'
     | '/_area/cliente/perfil'
@@ -578,6 +590,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AreaClienteConexaoRouteImport
       parentRoute: typeof AreaRoute
     }
+    '/_area/cliente/chamados': {
+      id: '/_area/cliente/chamados'
+      path: '/cliente/chamados'
+      fullPath: '/cliente/chamados'
+      preLoaderRoute: typeof AreaClienteChamadosRouteImport
+      parentRoute: typeof AreaRoute
+    }
     '/_area/cliente/avisos': {
       id: '/_area/cliente/avisos'
       path: '/cliente/avisos'
@@ -713,6 +732,7 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 interface AreaRouteChildren {
   AreaClienteAtendimentoRoute: typeof AreaClienteAtendimentoRoute
   AreaClienteAvisosRoute: typeof AreaClienteAvisosRoute
+  AreaClienteChamadosRoute: typeof AreaClienteChamadosRoute
   AreaClienteConexaoRoute: typeof AreaClienteConexaoRoute
   AreaClienteFinanceiroRoute: typeof AreaClienteFinanceiroRoute
   AreaClientePerfilRoute: typeof AreaClientePerfilRoute
@@ -724,6 +744,7 @@ interface AreaRouteChildren {
 const AreaRouteChildren: AreaRouteChildren = {
   AreaClienteAtendimentoRoute: AreaClienteAtendimentoRoute,
   AreaClienteAvisosRoute: AreaClienteAvisosRoute,
+  AreaClienteChamadosRoute: AreaClienteChamadosRoute,
   AreaClienteConexaoRoute: AreaClienteConexaoRoute,
   AreaClienteFinanceiroRoute: AreaClienteFinanceiroRoute,
   AreaClientePerfilRoute: AreaClientePerfilRoute,
