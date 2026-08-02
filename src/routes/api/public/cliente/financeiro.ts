@@ -48,7 +48,11 @@ export const Route = createFileRoute("/api/public/cliente/financeiro")({
           return { ...p, pix_brcode: brcode };
         });
 
-        return jsonResp(200, { parcelas: enriched });
+        return jsonResp(200, {
+          parcelas: enriched,
+          cliente: cliente ?? null,
+          empresa: cfg ?? null,
+        });
       },
     },
   },
