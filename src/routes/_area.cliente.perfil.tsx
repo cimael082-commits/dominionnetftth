@@ -21,7 +21,6 @@ type Cliente = {
   estado: string | null;
   cep: string | null;
   plano: string | null;
-  login_pppoe: string | null;
 };
 
 function PerfilPage() {
