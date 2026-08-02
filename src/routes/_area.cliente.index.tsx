@@ -22,10 +22,17 @@ export const Route = createFileRoute("/_area/cliente/")({
   component: HomeCliente,
 });
 
-const SUPORTE_WHATSAPP = "5582993823246";
-const suporteUrl = `https://wa.me/${SUPORTE_WHATSAPP}?text=${encodeURIComponent(
-  "Olá! Preciso de suporte da Dominion Net 5G.",
-)}`;
+const SUPORTE_WHATSAPP_PADRAO = "5582993823246";
+
+/** Conteúdo promocional editável pelo painel administrativo. */
+type Portal = {
+  portal_promo_ativo: boolean | null;
+  portal_promo_titulo: string | null;
+  portal_promo_texto: string | null;
+  portal_suporte_whatsapp: string | null;
+  portal_promo_rodape: string | null;
+};
+
 
 type Cliente = {
   id: string;
