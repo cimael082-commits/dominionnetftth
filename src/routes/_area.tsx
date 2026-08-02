@@ -13,7 +13,6 @@ import {
   Radio,
   Gift,
   Info,
-  MessageCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { clearClienteToken, getClienteToken } from "@/lib/cliente-auth";
