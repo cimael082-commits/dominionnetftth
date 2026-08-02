@@ -39,6 +39,7 @@ import {
 import { clienteStatusMeta, formatBRL, type ClienteStatus } from "@/lib/status-utils";
 import { EditClienteDialog } from "@/components/EditClienteDialog";
 import { WhatsappButton } from "@/components/whatsapp-button";
+import { EquipamentosPicker } from "@/components/equipamentos-picker";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/clientes")({
