@@ -1,4 +1,15 @@
 /// <reference types="google.maps" />
+/** Escapa valores vindos do banco antes de injetá-los em HTML (InfoWindow). */
+const escHtml = (v: unknown): string =>
+  v === null || v === undefined
+    ? ""
+    : String(v)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -377,7 +388,7 @@ function MapaPage() {
         ? new Date(cl.ultima_sincronizacao).toLocaleString("pt-BR")
         : "—";
       const info = new google.maps.InfoWindow({
-        content: `<div style="color:#0A1628;font-family:system-ui;font-size:12px;min-width:200px"><b>${cl.nome}</b><br/>${cl.plano ?? ""}<br/><b style="color:${cor}">${cl.online ? "● ONLINE" : "● OFFLINE"}</b><br/>MikroTik: ${cl.router_id ?? "—"}<br/>PPPoE: ${cl.login_pppoe ?? "—"}<br/>IP: ${cl.ip_atual ?? "—"}<br/>Uptime: ${cl.uptime_atual ?? "—"}<br/>Última sync: ${ultSync}</div>`,
+        content: `<div style="color:#0A1628;font-family:system-ui;font-size:12px;min-width:200px"><b>${escHtml(cl.nome)}</b><br/>${escHtml(cl.plano)}<br/><b style="color:${cor}">${cl.online ? "● ONLINE" : "● OFFLINE"}</b><br/>MikroTik: ${escHtml(cl.router_id) || "—"}<br/>PPPoE: ${escHtml(cl.login_pppoe) || "—"}<br/>IP: ${escHtml(cl.ip_atual) || "—"}<br/>Uptime: ${escHtml(cl.uptime_atual) || "—"}<br/>Última sync: ${escHtml(ultSync)}</div>`,
       });
       marker.addListener("click", () => info.open({ map, anchor: marker }));
       markersRef.current.push(marker);
