@@ -46,6 +46,14 @@ type Parcela = {
   data_vencimento: string;
   status: string;
 };
+type Aviso = {
+  id: string;
+  titulo: string;
+  mensagem: string;
+  tipo: string;
+  created_at: string;
+};
+
 
 function HomeCliente() {
   const navigate = useNavigate();
