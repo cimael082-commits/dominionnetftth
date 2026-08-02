@@ -101,6 +101,13 @@ function HomeCliente() {
         } catch {
           if (ativo) setAvisos([]);
         }
+        try {
+          const pt = await clienteFetch<{ portal: Portal | null }>("/api/public/cliente/portal");
+          if (ativo) setPortal(pt.portal ?? null);
+        } catch {
+          if (ativo) setPortal(null);
+        }
+
 
       } catch (e) {
         if (!ativo) return;
