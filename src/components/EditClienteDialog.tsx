@@ -89,6 +89,7 @@ export function EditClienteDialog({
         latitude: cliente.latitude != null ? String(cliente.latitude) : "",
         longitude: cliente.longitude != null ? String(cliente.longitude) : "",
       });
+      setEquipamentos(cliente.equipamentos ?? []);
     }
   }, [cliente, open]);
 
