@@ -26,6 +26,10 @@ export interface CarneInput {
     pix_cidade: string;
   };
   parcelas: CarneParcela[];
+  /** URL da Central do Cliente impressa nas orientações finais. */
+  centralUrl?: string;
+  /** Senha padrão de primeiro acesso à Central do Cliente. */
+  senhaPadrao?: string;
 }
 
 const fmtBRL = (v: number) =>
