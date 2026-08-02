@@ -319,19 +319,52 @@ function FinanceiroPage() {
       </Card>
 
 
-      <div className="flex items-center gap-3">
-        <span className="text-sm text-muted-foreground">Filtrar:</span>
-        <Select value={filtro} onValueChange={(v) => setFiltro(v as typeof filtro)}>
-          <SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
-          <SelectContent>
-            <SelectItem value="todos">Todos</SelectItem>
-            <SelectItem value="pago">Pagos</SelectItem>
-            <SelectItem value="pendente">Pendentes</SelectItem>
-            <SelectItem value="vencido">Vencidos</SelectItem>
-            <SelectItem value="cancelado">Cancelados</SelectItem>
-          </SelectContent>
-        </Select>
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap gap-1 rounded-lg border border-border/60 bg-muted/30 p-1">
+          {(
+            [
+              ["todos", "Todos"],
+              ["pago", "Pagos"],
+              ["pendente", "Pendentes"],
+              ["vencido", "Vencidos"],
+              ["cancelado", "Cancelados"],
+            ] as const
+          ).map(([valor, rotulo]) => {
+            const ativo = filtro === valor;
+            const qtd =
+              valor === "todos"
+                ? (q.data ?? []).length
+                : (q.data ?? []).filter((r) => r.status === valor).length;
+            return (
+              <button
+                key={valor}
+                type="button"
+                onClick={() => setFiltro(valor)}
+                aria-pressed={ativo}
+                className={cn(
+                  "rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
+                  ativo
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:bg-accent hover:text-foreground",
+                )}
+              >
+                {rotulo}
+                <span className="ml-1.5 text-xs opacity-70">{qtd}</span>
+              </button>
+            );
+          })}
+        </div>
+        <div className="relative ml-auto w-full max-w-xs">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            className="pl-9"
+            placeholder="Pesquisar cliente pelo nome..."
+            value={busca}
+            onChange={(e) => setBusca(e.target.value)}
+          />
+        </div>
       </div>
+
 
       <Card className="overflow-hidden">
         <table className="w-full text-sm">
