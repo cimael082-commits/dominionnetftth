@@ -1,10 +1,22 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Wallet, AlertTriangle, CheckCircle2, Wifi, Info, Radio, MessageCircle } from "lucide-react";
+import {
+  Wallet,
+  AlertTriangle,
+  CheckCircle2,
+  Wifi,
+  Info,
+  Radio,
+  MessageCircle,
+  LifeBuoy,
+  Gift,
+} from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { BannerCarousel } from "@/components/banner-carousel";
 import { clienteFetch } from "@/lib/cliente-auth";
 import { formatBRL } from "@/lib/status-utils";
+
 
 export const Route = createFileRoute("/_area/cliente/")({
   component: HomeCliente,
