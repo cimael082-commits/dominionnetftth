@@ -170,7 +170,7 @@ export function EditClienteDialog({
           <F label="Mensalidade (R$)"><Input type="number" step="0.01" value={form.valor_mensalidade ?? ""} onChange={(e) => set("valor_mensalidade", e.target.value)} /></F>
           <F label="Dia vencimento"><Input type="number" min={1} max={31} value={form.dia_vencimento ?? ""} onChange={(e) => set("dia_vencimento", e.target.value)} /></F>
           <F label="Login PPPoE"><Input value={form.login_pppoe ?? ""} onChange={(e) => set("login_pppoe", e.target.value)} /></F>
-          <F label="Senha PPPoE"><Input value={form.senha_pppoe ?? ""} onChange={(e) => set("senha_pppoe", e.target.value)} /></F>
+          
           <F label="Senha de reset"><Input value={form.senha_reset ?? ""} onChange={(e) => set("senha_reset", e.target.value)} placeholder="senha de reset do equipamento" /></F>
           <F label="SSID Wi-Fi"><Input value={form.ssid_wifi ?? ""} onChange={(e) => set("ssid_wifi", e.target.value)} /></F>
           <F label="Senha Wi-Fi"><Input value={form.senha_wifi ?? ""} onChange={(e) => set("senha_wifi", e.target.value)} /></F>
