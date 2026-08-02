@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import type { ClienteStatus } from "@/lib/status-utils";
+import { EquipamentosPicker } from "@/components/equipamentos-picker";
 
 type Cliente = {
   id: string;
@@ -39,6 +40,9 @@ type Cliente = {
   dia_vencimento: number;
   login_pppoe: string | null;
   senha_pppoe: string | null;
+  senha_reset?: string | null;
+  equipamentos?: string[] | null;
+  equipamentos_obs?: string | null;
   ssid_wifi: string | null;
   senha_wifi: string | null;
   status: string;
@@ -58,6 +62,7 @@ export function EditClienteDialog({
 }) {
   const qc = useQueryClient();
   const [form, setForm] = useState<Record<string, string>>({});
+  const [equipamentos, setEquipamentos] = useState<string[]>([]);
 
   useEffect(() => {
     if (cliente && open) {
@@ -76,6 +81,8 @@ export function EditClienteDialog({
         dia_vencimento: String(cliente.dia_vencimento ?? 10),
         login_pppoe: cliente.login_pppoe ?? "",
         senha_pppoe: cliente.senha_pppoe ?? "",
+        senha_reset: cliente.senha_reset ?? "",
+        equipamentos_obs: cliente.equipamentos_obs ?? "",
         ssid_wifi: cliente.ssid_wifi ?? "",
         senha_wifi: cliente.senha_wifi ?? "",
         status: cliente.status ?? "ativo",
@@ -83,6 +90,7 @@ export function EditClienteDialog({
         latitude: cliente.latitude != null ? String(cliente.latitude) : "",
         longitude: cliente.longitude != null ? String(cliente.longitude) : "",
       });
+      setEquipamentos(cliente.equipamentos ?? []);
     }
   }, [cliente, open]);
 
@@ -104,6 +112,9 @@ export function EditClienteDialog({
         dia_vencimento: parseInt(form.dia_vencimento) || 10,
         login_pppoe: form.login_pppoe || null,
         senha_pppoe: form.senha_pppoe || null,
+        senha_reset: form.senha_reset || null,
+        equipamentos,
+        equipamentos_obs: form.equipamentos_obs || null,
         ssid_wifi: form.ssid_wifi || null,
         senha_wifi: form.senha_wifi || null,
         status: form.status as ClienteStatus,
@@ -160,8 +171,20 @@ export function EditClienteDialog({
           <F label="Dia vencimento"><Input type="number" min={1} max={31} value={form.dia_vencimento ?? ""} onChange={(e) => set("dia_vencimento", e.target.value)} /></F>
           <F label="Login PPPoE"><Input value={form.login_pppoe ?? ""} onChange={(e) => set("login_pppoe", e.target.value)} /></F>
           <F label="Senha PPPoE"><Input value={form.senha_pppoe ?? ""} onChange={(e) => set("senha_pppoe", e.target.value)} /></F>
+          <F label="Senha de reset"><Input value={form.senha_reset ?? ""} onChange={(e) => set("senha_reset", e.target.value)} placeholder="senha de reset do equipamento" /></F>
           <F label="SSID Wi-Fi"><Input value={form.ssid_wifi ?? ""} onChange={(e) => set("ssid_wifi", e.target.value)} /></F>
           <F label="Senha Wi-Fi"><Input value={form.senha_wifi ?? ""} onChange={(e) => set("senha_wifi", e.target.value)} /></F>
+          <F label="Equipamentos na casa do cliente" col={2}>
+            <EquipamentosPicker value={equipamentos} onChange={setEquipamentos} />
+          </F>
+          <F label="Observação dos equipamentos" col={2}>
+            <Textarea
+              rows={2}
+              value={form.equipamentos_obs ?? ""}
+              onChange={(e) => set("equipamentos_obs", e.target.value)}
+              placeholder="Ex.: repetidor Wi-Fi, switch, ONU modelo X..."
+            />
+          </F>
           <F label="Status">
             <Select value={form.status ?? "ativo"} onValueChange={(v) => set("status", v)}>
               <SelectTrigger><SelectValue /></SelectTrigger>

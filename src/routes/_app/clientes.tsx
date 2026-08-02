@@ -39,6 +39,7 @@ import {
 import { clienteStatusMeta, formatBRL, type ClienteStatus } from "@/lib/status-utils";
 import { EditClienteDialog } from "@/components/EditClienteDialog";
 import { WhatsappButton } from "@/components/whatsapp-button";
+import { EquipamentosPicker } from "@/components/equipamentos-picker";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/clientes")({
@@ -247,6 +248,9 @@ function NovoClienteDialog() {
     dia_vencimento: "10",
     login_pppoe: "",
     senha_pppoe: "",
+    senha_reset: "",
+    equipamentos: [] as string[],
+    equipamentos_obs: "",
     ssid_wifi: "",
     senha_wifi: "",
     status: "ativo" as ClienteStatus,
@@ -333,9 +337,25 @@ function NovoClienteDialog() {
           <Field label="Dia vencimento"><Input type="number" min={1} max={31} value={form.dia_vencimento} onChange={(e) => set("dia_vencimento", e.target.value)} /></Field>
           <Field label="Login PPPoE"><Input value={form.login_pppoe} onChange={(e) => set("login_pppoe", e.target.value)} /></Field>
           <Field label="Senha PPPoE"><Input value={form.senha_pppoe} onChange={(e) => set("senha_pppoe", e.target.value)} /></Field>
+          <Field label="Senha de reset"><Input value={form.senha_reset} onChange={(e) => set("senha_reset", e.target.value)} placeholder="senha de reset do equipamento" /></Field>
           <Field label="SSID Wi-Fi"><Input value={form.ssid_wifi} onChange={(e) => set("ssid_wifi", e.target.value)} /></Field>
           <Field label="Senha Wi-Fi"><Input value={form.senha_wifi} onChange={(e) => set("senha_wifi", e.target.value)} /></Field>
+          <Field label="Equipamentos na casa do cliente" col={2}>
+            <EquipamentosPicker
+              value={form.equipamentos}
+              onChange={(next) => setForm((f) => ({ ...f, equipamentos: next }))}
+            />
+          </Field>
+          <Field label="Observação dos equipamentos" col={2}>
+            <Textarea
+              rows={2}
+              value={form.equipamentos_obs}
+              onChange={(e) => set("equipamentos_obs", e.target.value)}
+              placeholder="Ex.: repetidor Wi-Fi, switch, ONU modelo X..."
+            />
+          </Field>
           <Field label="Status">
+
             <Select value={form.status} onValueChange={(v) => set("status", v)}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
