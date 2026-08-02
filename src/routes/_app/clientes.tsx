@@ -353,6 +353,7 @@ function NovoClienteDialog() {
               placeholder="Ex.: repetidor Wi-Fi, switch, ONU modelo X..."
             />
           </Field>
+          <Field label="Status">
 
             <Select value={form.status} onValueChange={(v) => set("status", v)}>
               <SelectTrigger><SelectValue /></SelectTrigger>
