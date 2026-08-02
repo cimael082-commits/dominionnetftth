@@ -43,6 +43,7 @@ import { Route as AreaClienteAtendimentoRouteImport } from './routes/_area.clien
 import { Route as AppClientesIdRouteImport } from './routes/_app/clientes.$id'
 import { Route as ApiPublicMikrotikSyncRouteImport } from './routes/api/public/mikrotik/sync'
 import { Route as ApiPublicMikrotikStatusRouteImport } from './routes/api/public/mikrotik/status'
+import { Route as ApiPublicClientePortalRouteImport } from './routes/api/public/cliente/portal'
 import { Route as ApiPublicClienteNotificacoesRouteImport } from './routes/api/public/cliente/notificacoes'
 import { Route as ApiPublicClienteMeRouteImport } from './routes/api/public/cliente/me'
 import { Route as ApiPublicClienteIndicacoesRouteImport } from './routes/api/public/cliente/indicacoes'
@@ -221,6 +222,11 @@ const ApiPublicMikrotikStatusRoute = ApiPublicMikrotikStatusRouteImport.update({
   path: '/api/public/mikrotik/status',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicClientePortalRoute = ApiPublicClientePortalRouteImport.update({
+  id: '/api/public/cliente/portal',
+  path: '/api/public/cliente/portal',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicClienteNotificacoesRoute =
   ApiPublicClienteNotificacoesRouteImport.update({
     id: '/api/public/cliente/notificacoes',
@@ -305,6 +311,7 @@ export interface FileRoutesByFullPath {
   '/api/public/cliente/indicacoes': typeof ApiPublicClienteIndicacoesRoute
   '/api/public/cliente/me': typeof ApiPublicClienteMeRoute
   '/api/public/cliente/notificacoes': typeof ApiPublicClienteNotificacoesRoute
+  '/api/public/cliente/portal': typeof ApiPublicClientePortalRoute
   '/api/public/mikrotik/status': typeof ApiPublicMikrotikStatusRoute
   '/api/public/mikrotik/sync': typeof ApiPublicMikrotikSyncRoute
   '/api/public/cliente/auth/login': typeof ApiPublicClienteAuthLoginRoute
@@ -347,6 +354,7 @@ export interface FileRoutesByTo {
   '/api/public/cliente/indicacoes': typeof ApiPublicClienteIndicacoesRoute
   '/api/public/cliente/me': typeof ApiPublicClienteMeRoute
   '/api/public/cliente/notificacoes': typeof ApiPublicClienteNotificacoesRoute
+  '/api/public/cliente/portal': typeof ApiPublicClientePortalRoute
   '/api/public/mikrotik/status': typeof ApiPublicMikrotikStatusRoute
   '/api/public/mikrotik/sync': typeof ApiPublicMikrotikSyncRoute
   '/api/public/cliente/auth/login': typeof ApiPublicClienteAuthLoginRoute
@@ -392,6 +400,7 @@ export interface FileRoutesById {
   '/api/public/cliente/indicacoes': typeof ApiPublicClienteIndicacoesRoute
   '/api/public/cliente/me': typeof ApiPublicClienteMeRoute
   '/api/public/cliente/notificacoes': typeof ApiPublicClienteNotificacoesRoute
+  '/api/public/cliente/portal': typeof ApiPublicClientePortalRoute
   '/api/public/mikrotik/status': typeof ApiPublicMikrotikStatusRoute
   '/api/public/mikrotik/sync': typeof ApiPublicMikrotikSyncRoute
   '/api/public/cliente/auth/login': typeof ApiPublicClienteAuthLoginRoute
@@ -436,6 +445,7 @@ export interface FileRouteTypes {
     | '/api/public/cliente/indicacoes'
     | '/api/public/cliente/me'
     | '/api/public/cliente/notificacoes'
+    | '/api/public/cliente/portal'
     | '/api/public/mikrotik/status'
     | '/api/public/mikrotik/sync'
     | '/api/public/cliente/auth/login'
@@ -478,6 +488,7 @@ export interface FileRouteTypes {
     | '/api/public/cliente/indicacoes'
     | '/api/public/cliente/me'
     | '/api/public/cliente/notificacoes'
+    | '/api/public/cliente/portal'
     | '/api/public/mikrotik/status'
     | '/api/public/mikrotik/sync'
     | '/api/public/cliente/auth/login'
@@ -522,6 +533,7 @@ export interface FileRouteTypes {
     | '/api/public/cliente/indicacoes'
     | '/api/public/cliente/me'
     | '/api/public/cliente/notificacoes'
+    | '/api/public/cliente/portal'
     | '/api/public/mikrotik/status'
     | '/api/public/mikrotik/sync'
     | '/api/public/cliente/auth/login'
@@ -543,6 +555,7 @@ export interface RootRouteChildren {
   ApiPublicClienteIndicacoesRoute: typeof ApiPublicClienteIndicacoesRoute
   ApiPublicClienteMeRoute: typeof ApiPublicClienteMeRoute
   ApiPublicClienteNotificacoesRoute: typeof ApiPublicClienteNotificacoesRoute
+  ApiPublicClientePortalRoute: typeof ApiPublicClientePortalRoute
   ApiPublicMikrotikStatusRoute: typeof ApiPublicMikrotikStatusRoute
   ApiPublicMikrotikSyncRoute: typeof ApiPublicMikrotikSyncRoute
   ApiPublicClienteAuthLoginRoute: typeof ApiPublicClienteAuthLoginRoute
@@ -788,6 +801,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicMikrotikStatusRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/cliente/portal': {
+      id: '/api/public/cliente/portal'
+      path: '/api/public/cliente/portal'
+      fullPath: '/api/public/cliente/portal'
+      preLoaderRoute: typeof ApiPublicClientePortalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/cliente/notificacoes': {
       id: '/api/public/cliente/notificacoes'
       path: '/api/public/cliente/notificacoes'
@@ -937,6 +957,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicClienteIndicacoesRoute: ApiPublicClienteIndicacoesRoute,
   ApiPublicClienteMeRoute: ApiPublicClienteMeRoute,
   ApiPublicClienteNotificacoesRoute: ApiPublicClienteNotificacoesRoute,
+  ApiPublicClientePortalRoute: ApiPublicClientePortalRoute,
   ApiPublicMikrotikStatusRoute: ApiPublicMikrotikStatusRoute,
   ApiPublicMikrotikSyncRoute: ApiPublicMikrotikSyncRoute,
   ApiPublicClienteAuthLoginRoute: ApiPublicClienteAuthLoginRoute,

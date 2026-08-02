@@ -422,6 +422,11 @@ export type Database = {
           pix_chave: string
           pix_cidade: string
           pix_tipo: string
+          portal_promo_ativo: boolean
+          portal_promo_rodape: string
+          portal_promo_texto: string
+          portal_promo_titulo: string
+          portal_suporte_whatsapp: string
           telefone: string | null
           updated_at: string
         }
@@ -436,6 +441,11 @@ export type Database = {
           pix_chave?: string
           pix_cidade?: string
           pix_tipo?: string
+          portal_promo_ativo?: boolean
+          portal_promo_rodape?: string
+          portal_promo_texto?: string
+          portal_promo_titulo?: string
+          portal_suporte_whatsapp?: string
           telefone?: string | null
           updated_at?: string
         }
@@ -450,6 +460,11 @@ export type Database = {
           pix_chave?: string
           pix_cidade?: string
           pix_tipo?: string
+          portal_promo_ativo?: boolean
+          portal_promo_rodape?: string
+          portal_promo_texto?: string
+          portal_promo_titulo?: string
+          portal_suporte_whatsapp?: string
           telefone?: string | null
           updated_at?: string
         }
