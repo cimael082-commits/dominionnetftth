@@ -175,7 +175,26 @@ function HomeCliente() {
             </CardContent>
           </Card>
         </Link>
+        <Link to="/cliente/chamados">
+          <Card>
+            <CardContent className="p-4">
+              <LifeBuoy className="h-5 w-5 text-primary mb-2" />
+              <div className="text-[11px] text-muted-foreground">Chamados</div>
+              <div className="text-sm font-semibold">Abrir e acompanhar</div>
+            </CardContent>
+          </Card>
+        </Link>
+        <Link to="/cliente/indique">
+          <Card>
+            <CardContent className="p-4">
+              <Gift className="h-5 w-5 text-primary mb-2" />
+              <div className="text-[11px] text-muted-foreground">Indique e ganhe</div>
+              <div className="text-sm font-semibold">Desconto na mensalidade</div>
+            </CardContent>
+          </Card>
+        </Link>
       </div>
+
 
       <Card className="border-primary/30 bg-gradient-to-br from-primary/10 to-transparent">
         <CardContent className="p-5 space-y-3 text-sm leading-relaxed">
