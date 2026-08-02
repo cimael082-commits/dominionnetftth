@@ -99,7 +99,9 @@ export async function buscarClientes(args: {
       `nome.ilike.${s},cpf_cnpj.ilike.${s},telefone.ilike.${s},whatsapp.ilike.${s},endereco.ilike.${s},bairro.ilike.${s},cidade.ilike.${s},login_pppoe.ilike.${s},plano.ilike.${s}`,
     );
   }
-  if (args.status?.trim()) q = q.eq("status", args.status.trim());
+  if (args.status?.trim()) {
+    q = q.eq("status", args.status.trim() as Database["public"]["Enums"]["cliente_status"]);
+  }
   if (args.plano?.trim()) q = q.ilike("plano", `%${args.plano.trim()}%`);
 
   const { data, error } = await q;
