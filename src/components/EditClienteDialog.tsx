@@ -61,6 +61,7 @@ export function EditClienteDialog({
 }) {
   const qc = useQueryClient();
   const [form, setForm] = useState<Record<string, string>>({});
+  const [equipamentos, setEquipamentos] = useState<string[]>([]);
 
   useEffect(() => {
     if (cliente && open) {
