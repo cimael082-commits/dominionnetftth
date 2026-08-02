@@ -215,6 +215,8 @@ function HomeCliente() {
         </CardContent>
       </Card>
 
+      <PixQrCard titulo="Pagamento rápido — Pix" />
+
       <Button asChild size="lg" className="w-full bg-emerald-600 hover:bg-emerald-500 text-white">
         <a href={suporteUrl} target="_blank" rel="noopener noreferrer">
           <MessageCircle className="h-5 w-5 mr-2" /> 📲 Falar com Suporte
