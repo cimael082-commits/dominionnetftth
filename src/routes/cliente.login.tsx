@@ -100,8 +100,8 @@ function LoginCliente() {
               {loading ? "Entrando..." : "Entrar"}
             </Button>
             <div className="text-xs text-center text-muted-foreground pt-2">
-              Login com Google/Facebook em breve. <br />
-              Esqueceu a senha? Contate o suporte no WhatsApp.
+              Acesse com seu <strong>CPF</strong> ou <strong>telefone cadastrado</strong>. <br />
+              Senha padrão: <strong>123</strong> — esqueceu? Fale com o suporte no WhatsApp.
             </div>
           </form>
         </CardContent>
