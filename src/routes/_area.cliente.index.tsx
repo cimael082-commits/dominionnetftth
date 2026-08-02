@@ -59,6 +59,7 @@ function HomeCliente() {
   const navigate = useNavigate();
   const [cli, setCli] = useState<Cliente | null>(null);
   const [parcelas, setParcelas] = useState<Parcela[]>([]);
+  const [avisos, setAvisos] = useState<Aviso[]>([]);
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
   const [tentativa, setTentativa] = useState(0);
@@ -69,8 +70,8 @@ function HomeCliente() {
       setLoading(true);
       setErro(null);
       try {
-        // O cadastro do cliente é o dado essencial da tela; o financeiro é
-        // secundário e não deve derrubar a página inteira se falhar.
+        // O cadastro do cliente é o dado essencial da tela; o financeiro e os
+        // avisos são secundários e não devem derrubar a página inteira.
         const me = await clienteFetch<{ cliente: Cliente }>("/api/public/cliente/me");
         if (!ativo) return;
         setCli(me.cliente);
@@ -82,6 +83,13 @@ function HomeCliente() {
         } catch {
           if (ativo) setParcelas([]);
         }
+        try {
+          const av = await clienteFetch<{ avisos: Aviso[] }>("/api/public/cliente/avisos");
+          if (ativo) setAvisos((av.avisos ?? []).slice(0, 3));
+        } catch {
+          if (ativo) setAvisos([]);
+        }
+
       } catch (e) {
         if (!ativo) return;
         const msg = e instanceof Error ? e.message : "Falha ao carregar seus dados";
