@@ -82,6 +82,10 @@ function HomeCliente() {
         <h1 className="text-2xl font-bold tracking-tight">{cli.nome.split(" ")[0]}</h1>
       </div>
 
+      <BannerCarousel />
+
+
+
       <Card className={online ? "border-emerald-500/40 bg-emerald-500/5" : "border-red-500/40 bg-red-500/5"}>
         <CardContent className="p-4 flex items-center gap-3">
           <div
