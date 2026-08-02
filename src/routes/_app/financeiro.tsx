@@ -98,9 +98,13 @@ function FinanceiroPage() {
 
   const filtradas = useMemo(() => {
     const rows = q.data ?? [];
-    if (filtro === "todos") return rows;
-    return rows.filter((r) => r.status === filtro);
-  }, [q.data, filtro]);
+    const termo = busca.trim().toLowerCase();
+    return rows.filter((r) => {
+      if (filtro !== "todos" && r.status !== filtro) return false;
+      if (!termo) return true;
+      return (r.clientes?.nome ?? "").toLowerCase().includes(termo);
+    });
+  }, [q.data, filtro, busca]);
 
   const totais = useMemo(() => {
     const rows = q.data ?? [];
