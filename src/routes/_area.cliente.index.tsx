@@ -1,10 +1,22 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Wallet, AlertTriangle, CheckCircle2, Wifi, Info, Radio, MessageCircle } from "lucide-react";
+import {
+  Wallet,
+  AlertTriangle,
+  CheckCircle2,
+  Wifi,
+  Info,
+  Radio,
+  MessageCircle,
+  LifeBuoy,
+  Gift,
+} from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { BannerCarousel } from "@/components/banner-carousel";
 import { clienteFetch } from "@/lib/cliente-auth";
 import { formatBRL } from "@/lib/status-utils";
+
 
 export const Route = createFileRoute("/_area/cliente/")({
   component: HomeCliente,
@@ -69,6 +81,10 @@ function HomeCliente() {
         <div className="text-xs text-muted-foreground">Olá,</div>
         <h1 className="text-2xl font-bold tracking-tight">{cli.nome.split(" ")[0]}</h1>
       </div>
+
+      <BannerCarousel />
+
+
 
       <Card className={online ? "border-emerald-500/40 bg-emerald-500/5" : "border-red-500/40 bg-red-500/5"}>
         <CardContent className="p-4 flex items-center gap-3">
@@ -159,7 +175,26 @@ function HomeCliente() {
             </CardContent>
           </Card>
         </Link>
+        <Link to="/cliente/chamados">
+          <Card>
+            <CardContent className="p-4">
+              <LifeBuoy className="h-5 w-5 text-primary mb-2" />
+              <div className="text-[11px] text-muted-foreground">Chamados</div>
+              <div className="text-sm font-semibold">Abrir e acompanhar</div>
+            </CardContent>
+          </Card>
+        </Link>
+        <Link to="/cliente/indique">
+          <Card>
+            <CardContent className="p-4">
+              <Gift className="h-5 w-5 text-primary mb-2" />
+              <div className="text-[11px] text-muted-foreground">Indique e ganhe</div>
+              <div className="text-sm font-semibold">Desconto na mensalidade</div>
+            </CardContent>
+          </Card>
+        </Link>
       </div>
+
 
       <Card className="border-primary/30 bg-gradient-to-br from-primary/10 to-transparent">
         <CardContent className="p-5 space-y-3 text-sm leading-relaxed">

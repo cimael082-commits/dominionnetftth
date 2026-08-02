@@ -21,14 +21,19 @@ import { Route as AppFinanceiroRouteImport } from './routes/_app/financeiro'
 import { Route as AppDashboardRouteImport } from './routes/_app/dashboard'
 import { Route as AppConfiguracoesRouteImport } from './routes/_app/configuracoes'
 import { Route as AppClientesRouteImport } from './routes/_app/clientes'
+import { Route as AppChamadosRouteImport } from './routes/_app/chamados'
 import { Route as AppCarnesRouteImport } from './routes/_app/carnes'
+import { Route as AppBannersRouteImport } from './routes/_app/banners'
 import { Route as AppAvisosRouteImport } from './routes/_app/avisos'
 import { Route as AreaClienteIndexRouteImport } from './routes/_area.cliente.index'
 import { Route as AreaClienteWifiRouteImport } from './routes/_area.cliente.wifi'
 import { Route as AreaClientePlanoRouteImport } from './routes/_area.cliente.plano'
 import { Route as AreaClientePerfilRouteImport } from './routes/_area.cliente.perfil'
+import { Route as AreaClienteNotificacoesRouteImport } from './routes/_area.cliente.notificacoes'
+import { Route as AreaClienteIndiqueRouteImport } from './routes/_area.cliente.indique'
 import { Route as AreaClienteFinanceiroRouteImport } from './routes/_area.cliente.financeiro'
 import { Route as AreaClienteConexaoRouteImport } from './routes/_area.cliente.conexao'
+import { Route as AreaClienteChamadosRouteImport } from './routes/_area.cliente.chamados'
 import { Route as AreaClienteAvisosRouteImport } from './routes/_area.cliente.avisos'
 import { Route as AreaClienteAtendimentoRouteImport } from './routes/_area.cliente.atendimento'
 import { Route as AppClientesIdRouteImport } from './routes/_app/clientes.$id'
@@ -36,7 +41,10 @@ import { Route as ApiPublicMikrotikSyncRouteImport } from './routes/api/public/m
 import { Route as ApiPublicMikrotikStatusRouteImport } from './routes/api/public/mikrotik/status'
 import { Route as ApiPublicClienteNotificacoesRouteImport } from './routes/api/public/cliente/notificacoes'
 import { Route as ApiPublicClienteMeRouteImport } from './routes/api/public/cliente/me'
+import { Route as ApiPublicClienteIndicacoesRouteImport } from './routes/api/public/cliente/indicacoes'
 import { Route as ApiPublicClienteFinanceiroRouteImport } from './routes/api/public/cliente/financeiro'
+import { Route as ApiPublicClienteChamadosRouteImport } from './routes/api/public/cliente/chamados'
+import { Route as ApiPublicClienteBannersRouteImport } from './routes/api/public/cliente/banners'
 import { Route as ApiPublicClienteAvisosRouteImport } from './routes/api/public/cliente/avisos'
 import { Route as ApiPublicClienteAuthLoginRouteImport } from './routes/api/public/cliente/auth/login'
 
@@ -98,9 +106,19 @@ const AppClientesRoute = AppClientesRouteImport.update({
   path: '/clientes',
   getParentRoute: () => AppRoute,
 } as any)
+const AppChamadosRoute = AppChamadosRouteImport.update({
+  id: '/chamados',
+  path: '/chamados',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppCarnesRoute = AppCarnesRouteImport.update({
   id: '/carnes',
   path: '/carnes',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppBannersRoute = AppBannersRouteImport.update({
+  id: '/banners',
+  path: '/banners',
   getParentRoute: () => AppRoute,
 } as any)
 const AppAvisosRoute = AppAvisosRouteImport.update({
@@ -128,6 +146,16 @@ const AreaClientePerfilRoute = AreaClientePerfilRouteImport.update({
   path: '/cliente/perfil',
   getParentRoute: () => AreaRoute,
 } as any)
+const AreaClienteNotificacoesRoute = AreaClienteNotificacoesRouteImport.update({
+  id: '/cliente/notificacoes',
+  path: '/cliente/notificacoes',
+  getParentRoute: () => AreaRoute,
+} as any)
+const AreaClienteIndiqueRoute = AreaClienteIndiqueRouteImport.update({
+  id: '/cliente/indique',
+  path: '/cliente/indique',
+  getParentRoute: () => AreaRoute,
+} as any)
 const AreaClienteFinanceiroRoute = AreaClienteFinanceiroRouteImport.update({
   id: '/cliente/financeiro',
   path: '/cliente/financeiro',
@@ -136,6 +164,11 @@ const AreaClienteFinanceiroRoute = AreaClienteFinanceiroRouteImport.update({
 const AreaClienteConexaoRoute = AreaClienteConexaoRouteImport.update({
   id: '/cliente/conexao',
   path: '/cliente/conexao',
+  getParentRoute: () => AreaRoute,
+} as any)
+const AreaClienteChamadosRoute = AreaClienteChamadosRouteImport.update({
+  id: '/cliente/chamados',
+  path: '/cliente/chamados',
   getParentRoute: () => AreaRoute,
 } as any)
 const AreaClienteAvisosRoute = AreaClienteAvisosRouteImport.update({
@@ -174,12 +207,29 @@ const ApiPublicClienteMeRoute = ApiPublicClienteMeRouteImport.update({
   path: '/api/public/cliente/me',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicClienteIndicacoesRoute =
+  ApiPublicClienteIndicacoesRouteImport.update({
+    id: '/api/public/cliente/indicacoes',
+    path: '/api/public/cliente/indicacoes',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicClienteFinanceiroRoute =
   ApiPublicClienteFinanceiroRouteImport.update({
     id: '/api/public/cliente/financeiro',
     path: '/api/public/cliente/financeiro',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicClienteChamadosRoute =
+  ApiPublicClienteChamadosRouteImport.update({
+    id: '/api/public/cliente/chamados',
+    path: '/api/public/cliente/chamados',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicClienteBannersRoute = ApiPublicClienteBannersRouteImport.update({
+  id: '/api/public/cliente/banners',
+  path: '/api/public/cliente/banners',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicClienteAvisosRoute = ApiPublicClienteAvisosRouteImport.update({
   id: '/api/public/cliente/avisos',
   path: '/api/public/cliente/avisos',
@@ -196,7 +246,9 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/avisos': typeof AppAvisosRoute
+  '/banners': typeof AppBannersRoute
   '/carnes': typeof AppCarnesRoute
+  '/chamados': typeof AppChamadosRoute
   '/clientes': typeof AppClientesRouteWithChildren
   '/configuracoes': typeof AppConfiguracoesRoute
   '/dashboard': typeof AppDashboardRoute
@@ -208,14 +260,20 @@ export interface FileRoutesByFullPath {
   '/clientes/$id': typeof AppClientesIdRoute
   '/cliente/atendimento': typeof AreaClienteAtendimentoRoute
   '/cliente/avisos': typeof AreaClienteAvisosRoute
+  '/cliente/chamados': typeof AreaClienteChamadosRoute
   '/cliente/conexao': typeof AreaClienteConexaoRoute
   '/cliente/financeiro': typeof AreaClienteFinanceiroRoute
+  '/cliente/indique': typeof AreaClienteIndiqueRoute
+  '/cliente/notificacoes': typeof AreaClienteNotificacoesRoute
   '/cliente/perfil': typeof AreaClientePerfilRoute
   '/cliente/plano': typeof AreaClientePlanoRoute
   '/cliente/wifi': typeof AreaClienteWifiRoute
   '/cliente/': typeof AreaClienteIndexRoute
   '/api/public/cliente/avisos': typeof ApiPublicClienteAvisosRoute
+  '/api/public/cliente/banners': typeof ApiPublicClienteBannersRoute
+  '/api/public/cliente/chamados': typeof ApiPublicClienteChamadosRoute
   '/api/public/cliente/financeiro': typeof ApiPublicClienteFinanceiroRoute
+  '/api/public/cliente/indicacoes': typeof ApiPublicClienteIndicacoesRoute
   '/api/public/cliente/me': typeof ApiPublicClienteMeRoute
   '/api/public/cliente/notificacoes': typeof ApiPublicClienteNotificacoesRoute
   '/api/public/mikrotik/status': typeof ApiPublicMikrotikStatusRoute
@@ -226,7 +284,9 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/avisos': typeof AppAvisosRoute
+  '/banners': typeof AppBannersRoute
   '/carnes': typeof AppCarnesRoute
+  '/chamados': typeof AppChamadosRoute
   '/clientes': typeof AppClientesRouteWithChildren
   '/configuracoes': typeof AppConfiguracoesRoute
   '/dashboard': typeof AppDashboardRoute
@@ -238,14 +298,20 @@ export interface FileRoutesByTo {
   '/clientes/$id': typeof AppClientesIdRoute
   '/cliente/atendimento': typeof AreaClienteAtendimentoRoute
   '/cliente/avisos': typeof AreaClienteAvisosRoute
+  '/cliente/chamados': typeof AreaClienteChamadosRoute
   '/cliente/conexao': typeof AreaClienteConexaoRoute
   '/cliente/financeiro': typeof AreaClienteFinanceiroRoute
+  '/cliente/indique': typeof AreaClienteIndiqueRoute
+  '/cliente/notificacoes': typeof AreaClienteNotificacoesRoute
   '/cliente/perfil': typeof AreaClientePerfilRoute
   '/cliente/plano': typeof AreaClientePlanoRoute
   '/cliente/wifi': typeof AreaClienteWifiRoute
   '/cliente': typeof AreaClienteIndexRoute
   '/api/public/cliente/avisos': typeof ApiPublicClienteAvisosRoute
+  '/api/public/cliente/banners': typeof ApiPublicClienteBannersRoute
+  '/api/public/cliente/chamados': typeof ApiPublicClienteChamadosRoute
   '/api/public/cliente/financeiro': typeof ApiPublicClienteFinanceiroRoute
+  '/api/public/cliente/indicacoes': typeof ApiPublicClienteIndicacoesRoute
   '/api/public/cliente/me': typeof ApiPublicClienteMeRoute
   '/api/public/cliente/notificacoes': typeof ApiPublicClienteNotificacoesRoute
   '/api/public/mikrotik/status': typeof ApiPublicMikrotikStatusRoute
@@ -259,7 +325,9 @@ export interface FileRoutesById {
   '/_area': typeof AreaRouteWithChildren
   '/auth': typeof AuthRoute
   '/_app/avisos': typeof AppAvisosRoute
+  '/_app/banners': typeof AppBannersRoute
   '/_app/carnes': typeof AppCarnesRoute
+  '/_app/chamados': typeof AppChamadosRoute
   '/_app/clientes': typeof AppClientesRouteWithChildren
   '/_app/configuracoes': typeof AppConfiguracoesRoute
   '/_app/dashboard': typeof AppDashboardRoute
@@ -271,14 +339,20 @@ export interface FileRoutesById {
   '/_app/clientes/$id': typeof AppClientesIdRoute
   '/_area/cliente/atendimento': typeof AreaClienteAtendimentoRoute
   '/_area/cliente/avisos': typeof AreaClienteAvisosRoute
+  '/_area/cliente/chamados': typeof AreaClienteChamadosRoute
   '/_area/cliente/conexao': typeof AreaClienteConexaoRoute
   '/_area/cliente/financeiro': typeof AreaClienteFinanceiroRoute
+  '/_area/cliente/indique': typeof AreaClienteIndiqueRoute
+  '/_area/cliente/notificacoes': typeof AreaClienteNotificacoesRoute
   '/_area/cliente/perfil': typeof AreaClientePerfilRoute
   '/_area/cliente/plano': typeof AreaClientePlanoRoute
   '/_area/cliente/wifi': typeof AreaClienteWifiRoute
   '/_area/cliente/': typeof AreaClienteIndexRoute
   '/api/public/cliente/avisos': typeof ApiPublicClienteAvisosRoute
+  '/api/public/cliente/banners': typeof ApiPublicClienteBannersRoute
+  '/api/public/cliente/chamados': typeof ApiPublicClienteChamadosRoute
   '/api/public/cliente/financeiro': typeof ApiPublicClienteFinanceiroRoute
+  '/api/public/cliente/indicacoes': typeof ApiPublicClienteIndicacoesRoute
   '/api/public/cliente/me': typeof ApiPublicClienteMeRoute
   '/api/public/cliente/notificacoes': typeof ApiPublicClienteNotificacoesRoute
   '/api/public/mikrotik/status': typeof ApiPublicMikrotikStatusRoute
@@ -291,7 +365,9 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/avisos'
+    | '/banners'
     | '/carnes'
+    | '/chamados'
     | '/clientes'
     | '/configuracoes'
     | '/dashboard'
@@ -303,14 +379,20 @@ export interface FileRouteTypes {
     | '/clientes/$id'
     | '/cliente/atendimento'
     | '/cliente/avisos'
+    | '/cliente/chamados'
     | '/cliente/conexao'
     | '/cliente/financeiro'
+    | '/cliente/indique'
+    | '/cliente/notificacoes'
     | '/cliente/perfil'
     | '/cliente/plano'
     | '/cliente/wifi'
     | '/cliente/'
     | '/api/public/cliente/avisos'
+    | '/api/public/cliente/banners'
+    | '/api/public/cliente/chamados'
     | '/api/public/cliente/financeiro'
+    | '/api/public/cliente/indicacoes'
     | '/api/public/cliente/me'
     | '/api/public/cliente/notificacoes'
     | '/api/public/mikrotik/status'
@@ -321,7 +403,9 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/avisos'
+    | '/banners'
     | '/carnes'
+    | '/chamados'
     | '/clientes'
     | '/configuracoes'
     | '/dashboard'
@@ -333,14 +417,20 @@ export interface FileRouteTypes {
     | '/clientes/$id'
     | '/cliente/atendimento'
     | '/cliente/avisos'
+    | '/cliente/chamados'
     | '/cliente/conexao'
     | '/cliente/financeiro'
+    | '/cliente/indique'
+    | '/cliente/notificacoes'
     | '/cliente/perfil'
     | '/cliente/plano'
     | '/cliente/wifi'
     | '/cliente'
     | '/api/public/cliente/avisos'
+    | '/api/public/cliente/banners'
+    | '/api/public/cliente/chamados'
     | '/api/public/cliente/financeiro'
+    | '/api/public/cliente/indicacoes'
     | '/api/public/cliente/me'
     | '/api/public/cliente/notificacoes'
     | '/api/public/mikrotik/status'
@@ -353,7 +443,9 @@ export interface FileRouteTypes {
     | '/_area'
     | '/auth'
     | '/_app/avisos'
+    | '/_app/banners'
     | '/_app/carnes'
+    | '/_app/chamados'
     | '/_app/clientes'
     | '/_app/configuracoes'
     | '/_app/dashboard'
@@ -365,14 +457,20 @@ export interface FileRouteTypes {
     | '/_app/clientes/$id'
     | '/_area/cliente/atendimento'
     | '/_area/cliente/avisos'
+    | '/_area/cliente/chamados'
     | '/_area/cliente/conexao'
     | '/_area/cliente/financeiro'
+    | '/_area/cliente/indique'
+    | '/_area/cliente/notificacoes'
     | '/_area/cliente/perfil'
     | '/_area/cliente/plano'
     | '/_area/cliente/wifi'
     | '/_area/cliente/'
     | '/api/public/cliente/avisos'
+    | '/api/public/cliente/banners'
+    | '/api/public/cliente/chamados'
     | '/api/public/cliente/financeiro'
+    | '/api/public/cliente/indicacoes'
     | '/api/public/cliente/me'
     | '/api/public/cliente/notificacoes'
     | '/api/public/mikrotik/status'
@@ -387,7 +485,10 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   ClienteLoginRoute: typeof ClienteLoginRoute
   ApiPublicClienteAvisosRoute: typeof ApiPublicClienteAvisosRoute
+  ApiPublicClienteBannersRoute: typeof ApiPublicClienteBannersRoute
+  ApiPublicClienteChamadosRoute: typeof ApiPublicClienteChamadosRoute
   ApiPublicClienteFinanceiroRoute: typeof ApiPublicClienteFinanceiroRoute
+  ApiPublicClienteIndicacoesRoute: typeof ApiPublicClienteIndicacoesRoute
   ApiPublicClienteMeRoute: typeof ApiPublicClienteMeRoute
   ApiPublicClienteNotificacoesRoute: typeof ApiPublicClienteNotificacoesRoute
   ApiPublicMikrotikStatusRoute: typeof ApiPublicMikrotikStatusRoute
@@ -481,11 +582,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppClientesRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/chamados': {
+      id: '/_app/chamados'
+      path: '/chamados'
+      fullPath: '/chamados'
+      preLoaderRoute: typeof AppChamadosRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/carnes': {
       id: '/_app/carnes'
       path: '/carnes'
       fullPath: '/carnes'
       preLoaderRoute: typeof AppCarnesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/banners': {
+      id: '/_app/banners'
+      path: '/banners'
+      fullPath: '/banners'
+      preLoaderRoute: typeof AppBannersRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/avisos': {
@@ -523,6 +638,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AreaClientePerfilRouteImport
       parentRoute: typeof AreaRoute
     }
+    '/_area/cliente/notificacoes': {
+      id: '/_area/cliente/notificacoes'
+      path: '/cliente/notificacoes'
+      fullPath: '/cliente/notificacoes'
+      preLoaderRoute: typeof AreaClienteNotificacoesRouteImport
+      parentRoute: typeof AreaRoute
+    }
+    '/_area/cliente/indique': {
+      id: '/_area/cliente/indique'
+      path: '/cliente/indique'
+      fullPath: '/cliente/indique'
+      preLoaderRoute: typeof AreaClienteIndiqueRouteImport
+      parentRoute: typeof AreaRoute
+    }
     '/_area/cliente/financeiro': {
       id: '/_area/cliente/financeiro'
       path: '/cliente/financeiro'
@@ -535,6 +664,13 @@ declare module '@tanstack/react-router' {
       path: '/cliente/conexao'
       fullPath: '/cliente/conexao'
       preLoaderRoute: typeof AreaClienteConexaoRouteImport
+      parentRoute: typeof AreaRoute
+    }
+    '/_area/cliente/chamados': {
+      id: '/_area/cliente/chamados'
+      path: '/cliente/chamados'
+      fullPath: '/cliente/chamados'
+      preLoaderRoute: typeof AreaClienteChamadosRouteImport
       parentRoute: typeof AreaRoute
     }
     '/_area/cliente/avisos': {
@@ -586,11 +722,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicClienteMeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/cliente/indicacoes': {
+      id: '/api/public/cliente/indicacoes'
+      path: '/api/public/cliente/indicacoes'
+      fullPath: '/api/public/cliente/indicacoes'
+      preLoaderRoute: typeof ApiPublicClienteIndicacoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/cliente/financeiro': {
       id: '/api/public/cliente/financeiro'
       path: '/api/public/cliente/financeiro'
       fullPath: '/api/public/cliente/financeiro'
       preLoaderRoute: typeof ApiPublicClienteFinanceiroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/cliente/chamados': {
+      id: '/api/public/cliente/chamados'
+      path: '/api/public/cliente/chamados'
+      fullPath: '/api/public/cliente/chamados'
+      preLoaderRoute: typeof ApiPublicClienteChamadosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/cliente/banners': {
+      id: '/api/public/cliente/banners'
+      path: '/api/public/cliente/banners'
+      fullPath: '/api/public/cliente/banners'
+      preLoaderRoute: typeof ApiPublicClienteBannersRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/cliente/avisos': {
@@ -624,7 +781,9 @@ const AppClientesRouteWithChildren = AppClientesRoute._addFileChildren(
 
 interface AppRouteChildren {
   AppAvisosRoute: typeof AppAvisosRoute
+  AppBannersRoute: typeof AppBannersRoute
   AppCarnesRoute: typeof AppCarnesRoute
+  AppChamadosRoute: typeof AppChamadosRoute
   AppClientesRoute: typeof AppClientesRouteWithChildren
   AppConfiguracoesRoute: typeof AppConfiguracoesRoute
   AppDashboardRoute: typeof AppDashboardRoute
@@ -636,7 +795,9 @@ interface AppRouteChildren {
 
 const AppRouteChildren: AppRouteChildren = {
   AppAvisosRoute: AppAvisosRoute,
+  AppBannersRoute: AppBannersRoute,
   AppCarnesRoute: AppCarnesRoute,
+  AppChamadosRoute: AppChamadosRoute,
   AppClientesRoute: AppClientesRouteWithChildren,
   AppConfiguracoesRoute: AppConfiguracoesRoute,
   AppDashboardRoute: AppDashboardRoute,
@@ -651,8 +812,11 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 interface AreaRouteChildren {
   AreaClienteAtendimentoRoute: typeof AreaClienteAtendimentoRoute
   AreaClienteAvisosRoute: typeof AreaClienteAvisosRoute
+  AreaClienteChamadosRoute: typeof AreaClienteChamadosRoute
   AreaClienteConexaoRoute: typeof AreaClienteConexaoRoute
   AreaClienteFinanceiroRoute: typeof AreaClienteFinanceiroRoute
+  AreaClienteIndiqueRoute: typeof AreaClienteIndiqueRoute
+  AreaClienteNotificacoesRoute: typeof AreaClienteNotificacoesRoute
   AreaClientePerfilRoute: typeof AreaClientePerfilRoute
   AreaClientePlanoRoute: typeof AreaClientePlanoRoute
   AreaClienteWifiRoute: typeof AreaClienteWifiRoute
@@ -662,8 +826,11 @@ interface AreaRouteChildren {
 const AreaRouteChildren: AreaRouteChildren = {
   AreaClienteAtendimentoRoute: AreaClienteAtendimentoRoute,
   AreaClienteAvisosRoute: AreaClienteAvisosRoute,
+  AreaClienteChamadosRoute: AreaClienteChamadosRoute,
   AreaClienteConexaoRoute: AreaClienteConexaoRoute,
   AreaClienteFinanceiroRoute: AreaClienteFinanceiroRoute,
+  AreaClienteIndiqueRoute: AreaClienteIndiqueRoute,
+  AreaClienteNotificacoesRoute: AreaClienteNotificacoesRoute,
   AreaClientePerfilRoute: AreaClientePerfilRoute,
   AreaClientePlanoRoute: AreaClientePlanoRoute,
   AreaClienteWifiRoute: AreaClienteWifiRoute,
@@ -679,7 +846,10 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   ClienteLoginRoute: ClienteLoginRoute,
   ApiPublicClienteAvisosRoute: ApiPublicClienteAvisosRoute,
+  ApiPublicClienteBannersRoute: ApiPublicClienteBannersRoute,
+  ApiPublicClienteChamadosRoute: ApiPublicClienteChamadosRoute,
   ApiPublicClienteFinanceiroRoute: ApiPublicClienteFinanceiroRoute,
+  ApiPublicClienteIndicacoesRoute: ApiPublicClienteIndicacoesRoute,
   ApiPublicClienteMeRoute: ApiPublicClienteMeRoute,
   ApiPublicClienteNotificacoesRoute: ApiPublicClienteNotificacoesRoute,
   ApiPublicMikrotikStatusRoute: ApiPublicMikrotikStatusRoute,

@@ -12,6 +12,8 @@ import {
   Map,
   Megaphone,
   Router as RouterIcon,
+  LifeBuoy,
+  ImageIcon,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
@@ -24,10 +26,13 @@ const nav = [
   { to: "/roteadores", label: "Roteadores", icon: RouterIcon },
   { to: "/financeiro", label: "Financeiro", icon: Wallet },
   { to: "/carnes", label: "Carnês", icon: FileText },
+  { to: "/chamados", label: "Chamados", icon: LifeBuoy },
+  { to: "/banners", label: "Banners", icon: ImageIcon },
   { to: "/avisos", label: "Avisos", icon: Megaphone },
   { to: "/pesquisa", label: "Pesquisa", icon: Search },
   { to: "/configuracoes", label: "Configurações", icon: Settings },
 ] as const;
+
 
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });

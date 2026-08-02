@@ -91,6 +91,57 @@ export type Database = {
           },
         ]
       }
+      banners: {
+        Row: {
+          ativo: boolean
+          botao_texto: string | null
+          botao_url: string | null
+          cor: string
+          created_at: string
+          descricao: string | null
+          fim_em: string | null
+          id: string
+          imagem_url: string | null
+          inicio_em: string | null
+          ordem: number
+          tipo: string
+          titulo: string
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          botao_texto?: string | null
+          botao_url?: string | null
+          cor?: string
+          created_at?: string
+          descricao?: string | null
+          fim_em?: string | null
+          id?: string
+          imagem_url?: string | null
+          inicio_em?: string | null
+          ordem?: number
+          tipo?: string
+          titulo: string
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          botao_texto?: string | null
+          botao_url?: string | null
+          cor?: string
+          created_at?: string
+          descricao?: string | null
+          fim_em?: string | null
+          id?: string
+          imagem_url?: string | null
+          inicio_em?: string | null
+          ordem?: number
+          tipo?: string
+          titulo?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       ceo_emendas: {
         Row: {
           created_at: string
@@ -124,11 +175,94 @@ export type Database = {
         }
         Relationships: []
       }
+      chamado_mensagens: {
+        Row: {
+          anexo_url: string | null
+          autor: string
+          chamado_id: string
+          created_at: string
+          id: string
+          mensagem: string | null
+        }
+        Insert: {
+          anexo_url?: string | null
+          autor?: string
+          chamado_id: string
+          created_at?: string
+          id?: string
+          mensagem?: string | null
+        }
+        Update: {
+          anexo_url?: string | null
+          autor?: string
+          chamado_id?: string
+          created_at?: string
+          id?: string
+          mensagem?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chamado_mensagens_chamado_id_fkey"
+            columns: ["chamado_id"]
+            isOneToOne: false
+            referencedRelation: "chamados"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chamados: {
+        Row: {
+          assunto: string
+          categoria: string
+          cliente_id: string
+          created_at: string
+          descricao: string
+          id: string
+          prioridade: string
+          protocolo: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          assunto: string
+          categoria?: string
+          cliente_id: string
+          created_at?: string
+          descricao: string
+          id?: string
+          prioridade?: string
+          protocolo?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          assunto?: string
+          categoria?: string
+          cliente_id?: string
+          created_at?: string
+          descricao?: string
+          id?: string
+          prioridade?: string
+          protocolo?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chamados_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "clientes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       clientes: {
         Row: {
           bairro: string | null
           cep: string | null
           cidade: string | null
+          codigo_indicacao: string | null
           cpf_cnpj: string | null
           cpf_cnpj_norm: string | null
           created_at: string
@@ -167,6 +301,7 @@ export type Database = {
           bairro?: string | null
           cep?: string | null
           cidade?: string | null
+          codigo_indicacao?: string | null
           cpf_cnpj?: string | null
           cpf_cnpj_norm?: string | null
           created_at?: string
@@ -205,6 +340,7 @@ export type Database = {
           bairro?: string | null
           cep?: string | null
           cidade?: string | null
+          codigo_indicacao?: string | null
           cpf_cnpj?: string | null
           cpf_cnpj_norm?: string | null
           created_at?: string
@@ -407,6 +543,50 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "eventos_conexao_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "clientes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      indicacoes: {
+        Row: {
+          cliente_id: string
+          codigo: string
+          created_at: string
+          id: string
+          nome_indicado: string | null
+          recompensa: number
+          status: string
+          telefone_indicado: string | null
+          updated_at: string
+        }
+        Insert: {
+          cliente_id: string
+          codigo: string
+          created_at?: string
+          id?: string
+          nome_indicado?: string | null
+          recompensa?: number
+          status?: string
+          telefone_indicado?: string | null
+          updated_at?: string
+        }
+        Update: {
+          cliente_id?: string
+          codigo?: string
+          created_at?: string
+          id?: string
+          nome_indicado?: string | null
+          recompensa?: number
+          status?: string
+          telefone_indicado?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "indicacoes_cliente_id_fkey"
             columns: ["cliente_id"]
             isOneToOne: false
             referencedRelation: "clientes"
