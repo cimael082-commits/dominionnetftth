@@ -23,7 +23,7 @@ export const Route = createFileRoute("/_app/pesquisa")({
   component: PesquisaPage,
 });
 
-type ClienteRow = Parameters<typeof EditClienteDialog>[0]["cliente"];
+type ClienteRow = NonNullable<Parameters<typeof EditClienteDialog>[0]["cliente"]>;
 
 /** Detecta se o termo parece um código/UUID de cliente. */
 function isCodigo(term: string) {
