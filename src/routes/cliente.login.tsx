@@ -67,14 +67,15 @@ function LoginCliente() {
         <CardContent>
           <form onSubmit={submit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="ident">CPF ou usuário PPPoE</Label>
+              <Label htmlFor="ident">CPF ou telefone</Label>
               <Input
                 id="ident"
+                inputMode="numeric"
                 autoComplete="username"
                 required
                 value={identificador}
                 onChange={(e) => setIdentificador(e.target.value)}
-                placeholder="Ex.: 123.456.789-00 ou joao"
+                placeholder="Ex.: 123.456.789-00 ou (82) 99999-9999"
               />
             </div>
             <div className="space-y-2">
