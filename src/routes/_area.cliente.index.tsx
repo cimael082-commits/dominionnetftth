@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import {
   Wallet,
@@ -46,29 +46,85 @@ type Parcela = {
   data_vencimento: string;
   status: string;
 };
+type Aviso = {
+  id: string;
+  titulo: string;
+  mensagem: string;
+  tipo: string;
+  created_at: string;
+};
+
 
 function HomeCliente() {
+  const navigate = useNavigate();
   const [cli, setCli] = useState<Cliente | null>(null);
   const [parcelas, setParcelas] = useState<Parcela[]>([]);
+  const [avisos, setAvisos] = useState<Aviso[]>([]);
   const [loading, setLoading] = useState(true);
+  const [erro, setErro] = useState<string | null>(null);
+  const [tentativa, setTentativa] = useState(0);
 
   useEffect(() => {
+    let ativo = true;
     (async () => {
+      setLoading(true);
+      setErro(null);
       try {
-        const [me, fin] = await Promise.all([
-          clienteFetch<{ cliente: Cliente }>("/api/public/cliente/me"),
-          clienteFetch<{ parcelas: Parcela[] }>("/api/public/cliente/financeiro"),
-        ]);
+        // O cadastro do cliente é o dado essencial da tela; o financeiro e os
+        // avisos são secundários e não devem derrubar a página inteira.
+        const me = await clienteFetch<{ cliente: Cliente }>("/api/public/cliente/me");
+        if (!ativo) return;
         setCli(me.cliente);
-        setParcelas(fin.parcelas);
+        try {
+          const fin = await clienteFetch<{ parcelas: Parcela[] }>(
+            "/api/public/cliente/financeiro",
+          );
+          if (ativo) setParcelas(fin.parcelas ?? []);
+        } catch {
+          if (ativo) setParcelas([]);
+        }
+        try {
+          const av = await clienteFetch<{ avisos: Aviso[] }>("/api/public/cliente/avisos");
+          if (ativo) setAvisos((av.avisos ?? []).slice(0, 3));
+        } catch {
+          if (ativo) setAvisos([]);
+        }
+
+      } catch (e) {
+        if (!ativo) return;
+        const msg = e instanceof Error ? e.message : "Falha ao carregar seus dados";
+        if (/sess[aã]o expirada/i.test(msg)) {
+          navigate({ to: "/cliente/login", replace: true });
+          return;
+        }
+        setErro(msg);
       } finally {
-        setLoading(false);
+        if (ativo) setLoading(false);
       }
     })();
-  }, []);
+    return () => {
+      ativo = false;
+    };
+  }, [navigate, tentativa]);
 
   if (loading) return <div className="text-sm text-muted-foreground">Carregando...</div>;
-  if (!cli) return <div className="text-sm text-destructive">Erro ao carregar dados</div>;
+  if (!cli)
+    return (
+      <Card className="border-destructive/40">
+        <CardContent className="p-5 space-y-3">
+          <div className="flex items-center gap-2 text-destructive font-semibold">
+            <AlertTriangle className="h-5 w-5" /> Não foi possível carregar seus dados
+          </div>
+          <p className="text-xs text-muted-foreground">
+            {erro ?? "Verifique sua conexão e tente novamente."}
+          </p>
+          <Button size="sm" onClick={() => setTentativa((t) => t + 1)}>
+            Tentar novamente
+          </Button>
+        </CardContent>
+      </Card>
+    );
+
 
   const pendentes = parcelas.filter((p) => p.status !== "pago");
   const proxima = pendentes[0];
@@ -83,6 +139,37 @@ function HomeCliente() {
       </div>
 
       <BannerCarousel />
+
+      {avisos.length > 0 && (
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+              Últimos avisos
+            </div>
+            <Link to="/cliente/avisos" className="text-xs text-primary font-medium">
+              Ver todos
+            </Link>
+          </div>
+          {avisos.map((a) => (
+            <Link key={a.id} to="/cliente/avisos" className="block">
+              <Card className="hover:border-primary/60 transition-colors">
+                <CardContent className="p-3">
+                  <div className="flex items-center gap-2">
+                    <Info className="h-4 w-4 text-primary shrink-0" />
+                    <div className="text-sm font-semibold truncate">{a.titulo}</div>
+                    <span className="ml-auto text-[10px] text-muted-foreground shrink-0">
+                      {new Date(a.created_at).toLocaleDateString("pt-BR")}
+                    </span>
+                  </div>
+                  <p className="text-xs text-muted-foreground line-clamp-2 mt-1">{a.mensagem}</p>
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
+        </div>
+      )}
+
+
 
 
 
