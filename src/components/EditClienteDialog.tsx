@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import type { ClienteStatus } from "@/lib/status-utils";
+import { EquipamentosPicker } from "@/components/equipamentos-picker";
 
 type Cliente = {
   id: string;
