@@ -10,6 +10,7 @@ import { clienteFetch } from "@/lib/cliente-auth";
 import { formatBRL, formatDate, parcelaStatusMeta, type ParcelaStatus } from "@/lib/status-utils";
 import { gerarCarnePDF } from "@/lib/carne-pdf";
 import { gerarReciboPDF } from "@/lib/recibo-pdf";
+import { PixQrCard } from "@/components/pix-qr-card";
 
 export const Route = createFileRoute("/_area/cliente/financeiro")({
   component: FinanceiroCliente,
