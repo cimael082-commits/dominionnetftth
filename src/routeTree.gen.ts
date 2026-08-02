@@ -26,6 +26,9 @@ import { Route as AppCarnesRouteImport } from './routes/_app/carnes'
 import { Route as AppBannersRouteImport } from './routes/_app/banners'
 import { Route as AppAvisosRouteImport } from './routes/_app/avisos'
 import { Route as AreaClienteIndexRouteImport } from './routes/_area.cliente.index'
+import { Route as ApiAssistenteVozRouteImport } from './routes/api/assistente/voz'
+import { Route as ApiAssistenteTranscreverRouteImport } from './routes/api/assistente/transcrever'
+import { Route as ApiAssistenteChatRouteImport } from './routes/api/assistente/chat'
 import { Route as AreaClienteWifiRouteImport } from './routes/_area.cliente.wifi'
 import { Route as AreaClientePlanoRouteImport } from './routes/_area.cliente.plano'
 import { Route as AreaClientePerfilRouteImport } from './routes/_area.cliente.perfil'
@@ -130,6 +133,22 @@ const AreaClienteIndexRoute = AreaClienteIndexRouteImport.update({
   id: '/cliente/',
   path: '/cliente/',
   getParentRoute: () => AreaRoute,
+} as any)
+const ApiAssistenteVozRoute = ApiAssistenteVozRouteImport.update({
+  id: '/api/assistente/voz',
+  path: '/api/assistente/voz',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAssistenteTranscreverRoute =
+  ApiAssistenteTranscreverRouteImport.update({
+    id: '/api/assistente/transcrever',
+    path: '/api/assistente/transcrever',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiAssistenteChatRoute = ApiAssistenteChatRouteImport.update({
+  id: '/api/assistente/chat',
+  path: '/api/assistente/chat',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AreaClienteWifiRoute = AreaClienteWifiRouteImport.update({
   id: '/cliente/wifi',
@@ -268,6 +287,9 @@ export interface FileRoutesByFullPath {
   '/cliente/perfil': typeof AreaClientePerfilRoute
   '/cliente/plano': typeof AreaClientePlanoRoute
   '/cliente/wifi': typeof AreaClienteWifiRoute
+  '/api/assistente/chat': typeof ApiAssistenteChatRoute
+  '/api/assistente/transcrever': typeof ApiAssistenteTranscreverRoute
+  '/api/assistente/voz': typeof ApiAssistenteVozRoute
   '/cliente/': typeof AreaClienteIndexRoute
   '/api/public/cliente/avisos': typeof ApiPublicClienteAvisosRoute
   '/api/public/cliente/banners': typeof ApiPublicClienteBannersRoute
@@ -306,6 +328,9 @@ export interface FileRoutesByTo {
   '/cliente/perfil': typeof AreaClientePerfilRoute
   '/cliente/plano': typeof AreaClientePlanoRoute
   '/cliente/wifi': typeof AreaClienteWifiRoute
+  '/api/assistente/chat': typeof ApiAssistenteChatRoute
+  '/api/assistente/transcrever': typeof ApiAssistenteTranscreverRoute
+  '/api/assistente/voz': typeof ApiAssistenteVozRoute
   '/cliente': typeof AreaClienteIndexRoute
   '/api/public/cliente/avisos': typeof ApiPublicClienteAvisosRoute
   '/api/public/cliente/banners': typeof ApiPublicClienteBannersRoute
@@ -347,6 +372,9 @@ export interface FileRoutesById {
   '/_area/cliente/perfil': typeof AreaClientePerfilRoute
   '/_area/cliente/plano': typeof AreaClientePlanoRoute
   '/_area/cliente/wifi': typeof AreaClienteWifiRoute
+  '/api/assistente/chat': typeof ApiAssistenteChatRoute
+  '/api/assistente/transcrever': typeof ApiAssistenteTranscreverRoute
+  '/api/assistente/voz': typeof ApiAssistenteVozRoute
   '/_area/cliente/': typeof AreaClienteIndexRoute
   '/api/public/cliente/avisos': typeof ApiPublicClienteAvisosRoute
   '/api/public/cliente/banners': typeof ApiPublicClienteBannersRoute
@@ -387,6 +415,9 @@ export interface FileRouteTypes {
     | '/cliente/perfil'
     | '/cliente/plano'
     | '/cliente/wifi'
+    | '/api/assistente/chat'
+    | '/api/assistente/transcrever'
+    | '/api/assistente/voz'
     | '/cliente/'
     | '/api/public/cliente/avisos'
     | '/api/public/cliente/banners'
@@ -425,6 +456,9 @@ export interface FileRouteTypes {
     | '/cliente/perfil'
     | '/cliente/plano'
     | '/cliente/wifi'
+    | '/api/assistente/chat'
+    | '/api/assistente/transcrever'
+    | '/api/assistente/voz'
     | '/cliente'
     | '/api/public/cliente/avisos'
     | '/api/public/cliente/banners'
@@ -465,6 +499,9 @@ export interface FileRouteTypes {
     | '/_area/cliente/perfil'
     | '/_area/cliente/plano'
     | '/_area/cliente/wifi'
+    | '/api/assistente/chat'
+    | '/api/assistente/transcrever'
+    | '/api/assistente/voz'
     | '/_area/cliente/'
     | '/api/public/cliente/avisos'
     | '/api/public/cliente/banners'
@@ -484,6 +521,9 @@ export interface RootRouteChildren {
   AreaRoute: typeof AreaRouteWithChildren
   AuthRoute: typeof AuthRoute
   ClienteLoginRoute: typeof ClienteLoginRoute
+  ApiAssistenteChatRoute: typeof ApiAssistenteChatRoute
+  ApiAssistenteTranscreverRoute: typeof ApiAssistenteTranscreverRoute
+  ApiAssistenteVozRoute: typeof ApiAssistenteVozRoute
   ApiPublicClienteAvisosRoute: typeof ApiPublicClienteAvisosRoute
   ApiPublicClienteBannersRoute: typeof ApiPublicClienteBannersRoute
   ApiPublicClienteChamadosRoute: typeof ApiPublicClienteChamadosRoute
@@ -616,6 +656,27 @@ declare module '@tanstack/react-router' {
       fullPath: '/cliente/'
       preLoaderRoute: typeof AreaClienteIndexRouteImport
       parentRoute: typeof AreaRoute
+    }
+    '/api/assistente/voz': {
+      id: '/api/assistente/voz'
+      path: '/api/assistente/voz'
+      fullPath: '/api/assistente/voz'
+      preLoaderRoute: typeof ApiAssistenteVozRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/assistente/transcrever': {
+      id: '/api/assistente/transcrever'
+      path: '/api/assistente/transcrever'
+      fullPath: '/api/assistente/transcrever'
+      preLoaderRoute: typeof ApiAssistenteTranscreverRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/assistente/chat': {
+      id: '/api/assistente/chat'
+      path: '/api/assistente/chat'
+      fullPath: '/api/assistente/chat'
+      preLoaderRoute: typeof ApiAssistenteChatRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_area/cliente/wifi': {
       id: '/_area/cliente/wifi'
@@ -845,6 +906,9 @@ const rootRouteChildren: RootRouteChildren = {
   AreaRoute: AreaRouteWithChildren,
   AuthRoute: AuthRoute,
   ClienteLoginRoute: ClienteLoginRoute,
+  ApiAssistenteChatRoute: ApiAssistenteChatRoute,
+  ApiAssistenteTranscreverRoute: ApiAssistenteTranscreverRoute,
+  ApiAssistenteVozRoute: ApiAssistenteVozRoute,
   ApiPublicClienteAvisosRoute: ApiPublicClienteAvisosRoute,
   ApiPublicClienteBannersRoute: ApiPublicClienteBannersRoute,
   ApiPublicClienteChamadosRoute: ApiPublicClienteChamadosRoute,
