@@ -55,7 +55,8 @@ function PerfilPage() {
       <Card>
         <CardContent className="p-4 space-y-3">
           <Row icon={Hash} label="Plano" value={cli?.plano} />
-          <Row icon={User} label="Login PPPoE" value={cli?.login_pppoe} />
+          {/* Credencial técnica: ocultada por privacidade. */}
+          <Row icon={User} label="Login PPPoE" value="********" />
         </CardContent>
       </Card>
 
