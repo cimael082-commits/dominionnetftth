@@ -170,8 +170,20 @@ export function EditClienteDialog({
           <F label="Dia vencimento"><Input type="number" min={1} max={31} value={form.dia_vencimento ?? ""} onChange={(e) => set("dia_vencimento", e.target.value)} /></F>
           <F label="Login PPPoE"><Input value={form.login_pppoe ?? ""} onChange={(e) => set("login_pppoe", e.target.value)} /></F>
           <F label="Senha PPPoE"><Input value={form.senha_pppoe ?? ""} onChange={(e) => set("senha_pppoe", e.target.value)} /></F>
+          <F label="Senha de reset"><Input value={form.senha_reset ?? ""} onChange={(e) => set("senha_reset", e.target.value)} placeholder="senha de reset do equipamento" /></F>
           <F label="SSID Wi-Fi"><Input value={form.ssid_wifi ?? ""} onChange={(e) => set("ssid_wifi", e.target.value)} /></F>
           <F label="Senha Wi-Fi"><Input value={form.senha_wifi ?? ""} onChange={(e) => set("senha_wifi", e.target.value)} /></F>
+          <F label="Equipamentos na casa do cliente" col={2}>
+            <EquipamentosPicker value={equipamentos} onChange={setEquipamentos} />
+          </F>
+          <F label="Observação dos equipamentos" col={2}>
+            <Textarea
+              rows={2}
+              value={form.equipamentos_obs ?? ""}
+              onChange={(e) => set("equipamentos_obs", e.target.value)}
+              placeholder="Ex.: repetidor Wi-Fi, switch, ONU modelo X..."
+            />
+          </F>
           <F label="Status">
             <Select value={form.status ?? "ativo"} onValueChange={(v) => set("status", v)}>
               <SelectTrigger><SelectValue /></SelectTrigger>
