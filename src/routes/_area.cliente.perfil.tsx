@@ -56,12 +56,38 @@ function PerfilPage() {
           <Row icon={User} label="Login PPPoE" value={cli?.login_pppoe} />
         </CardContent>
       </Card>
+
+      <Card>
+        <CardContent className="p-4 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
+          <div className="min-w-0">
+            <div className="text-sm font-semibold">Aparência</div>
+            <p className="text-xs text-muted-foreground">Alternar entre modo claro e escuro.</p>
+          </div>
+          <ThemeToggle className="border border-border/60" />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent className="p-4 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
+          <div className="min-w-0">
+            <div className="text-sm font-semibold">Indique e ganhe</div>
+            <p className="text-xs text-muted-foreground">Ganhe desconto indicando amigos.</p>
+          </div>
+          <Button asChild size="sm" variant="outline">
+            <Link to="/cliente/indique">
+              <Gift className="h-3.5 w-3.5 mr-1" /> Ver
+            </Link>
+          </Button>
+        </CardContent>
+      </Card>
+
       <p className="text-xs text-muted-foreground text-center">
         Para alterar dados cadastrais, fale com o suporte.
       </p>
     </div>
   );
 }
+
 
 function Row({ icon: Icon, label, value }: { icon: typeof User; label: string; value: string | null | undefined }) {
   return (
