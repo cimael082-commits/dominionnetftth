@@ -38,6 +38,7 @@ import {
 } from "@/components/ui/select";
 import { clienteStatusMeta, formatBRL, type ClienteStatus } from "@/lib/status-utils";
 import { EditClienteDialog } from "@/components/EditClienteDialog";
+import { WhatsappButton } from "@/components/whatsapp-button";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/clientes")({
@@ -122,7 +123,14 @@ function ClientesPage() {
                 <Card className="p-4 hover:border-primary/60 hover:bg-accent/30 transition-colors">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <div className="font-semibold truncate">{c.nome}</div>
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className="font-semibold truncate">{c.nome}</span>
+                        <WhatsappButton
+                          cliente={c}
+                          message={`Olá ${c.nome}, aqui é da Dominion Net.`}
+                          className="shrink-0"
+                        />
+                      </div>
                       <div className="text-xs text-muted-foreground truncate">
                         {c.cpf_cnpj || "Sem CPF"} · {c.plano || "Sem plano"}
                       </div>
