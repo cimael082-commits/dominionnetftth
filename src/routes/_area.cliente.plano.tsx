@@ -87,6 +87,8 @@ function PlanoPage() {
         </Card>
       </div>
 
+      <PixQrCard titulo="Pagar mensalidade" />
+
       <Card>
         <CardContent className="p-4 space-y-3">
           <div className="flex items-center gap-2">
