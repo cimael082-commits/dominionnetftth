@@ -43,7 +43,6 @@ const maisMenu = [
   { to: "/cliente/avisos", label: "Avisos", icon: Info },
   { to: "/cliente/plano", label: "Meu plano", icon: Radio },
   { to: "/cliente/indique", label: "Indique um amigo", icon: Gift },
-  { to: "/cliente/atendimento", label: "Atendimento", icon: MessageCircle },
   { to: "/cliente/perfil", label: "Meu perfil", icon: UserIcon },
 ] as const;
 
