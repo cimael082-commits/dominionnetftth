@@ -247,7 +247,6 @@ function NovoClienteDialog() {
     valor_mensalidade: "",
     dia_vencimento: "10",
     login_pppoe: "",
-    senha_pppoe: "",
     senha_reset: "",
     equipamentos: [] as string[],
     equipamentos_obs: "",
