@@ -25,6 +25,7 @@ function ConfigPage() {
   });
 
   const [form, setForm] = useState<Record<string, string>>({});
+  const [promoAtivo, setPromoAtivo] = useState(true);
   useEffect(() => {
     if (q.data) {
       setForm({
@@ -37,9 +38,15 @@ function ConfigPage() {
         pix_tipo: q.data.pix_tipo ?? "email",
         pix_beneficiario: q.data.pix_beneficiario ?? "",
         pix_cidade: q.data.pix_cidade ?? "",
+        portal_promo_titulo: q.data.portal_promo_titulo ?? "",
+        portal_promo_texto: q.data.portal_promo_texto ?? "",
+        portal_promo_rodape: q.data.portal_promo_rodape ?? "",
+        portal_suporte_whatsapp: q.data.portal_suporte_whatsapp ?? "",
       });
+      setPromoAtivo(q.data.portal_promo_ativo ?? true);
     }
   }, [q.data]);
+
 
   const save = useMutation({
     mutationFn: async () => {
