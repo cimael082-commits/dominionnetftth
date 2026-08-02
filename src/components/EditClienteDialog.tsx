@@ -39,7 +39,7 @@ type Cliente = {
   valor_mensalidade: number;
   dia_vencimento: number;
   login_pppoe: string | null;
-  senha_pppoe: string | null;
+  
   senha_reset?: string | null;
   equipamentos?: string[] | null;
   equipamentos_obs?: string | null;
