@@ -140,6 +140,37 @@ function HomeCliente() {
 
       <BannerCarousel />
 
+      {avisos.length > 0 && (
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+              Últimos avisos
+            </div>
+            <Link to="/cliente/avisos" className="text-xs text-primary font-medium">
+              Ver todos
+            </Link>
+          </div>
+          {avisos.map((a) => (
+            <Link key={a.id} to="/cliente/avisos" className="block">
+              <Card className="hover:border-primary/60 transition-colors">
+                <CardContent className="p-3">
+                  <div className="flex items-center gap-2">
+                    <Info className="h-4 w-4 text-primary shrink-0" />
+                    <div className="text-sm font-semibold truncate">{a.titulo}</div>
+                    <span className="ml-auto text-[10px] text-muted-foreground shrink-0">
+                      {new Date(a.created_at).toLocaleDateString("pt-BR")}
+                    </span>
+                  </div>
+                  <p className="text-xs text-muted-foreground line-clamp-2 mt-1">{a.mensagem}</p>
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
+        </div>
+      )}
+
+
+
 
 
       <Card className={online ? "border-emerald-500/40 bg-emerald-500/5" : "border-red-500/40 bg-red-500/5"}>
