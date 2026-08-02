@@ -39,6 +39,9 @@ type Cliente = {
   dia_vencimento: number;
   login_pppoe: string | null;
   senha_pppoe: string | null;
+  senha_reset?: string | null;
+  equipamentos?: string[] | null;
+  equipamentos_obs?: string | null;
   ssid_wifi: string | null;
   senha_wifi: string | null;
   status: string;
