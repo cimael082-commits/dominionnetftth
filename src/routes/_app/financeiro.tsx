@@ -72,13 +72,14 @@ function FinanceiroPage() {
 
       const { data, error } = await supabase
         .from("parcelas")
-        .select("*, clientes(nome, id)")
+        .select("*, clientes(id, nome, telefone, whatsapp)")
         .order("data_vencimento", { ascending: false })
         .limit(500);
       if (error) throw error;
-      return data ?? [];
+      return (data ?? []) as unknown as ParcelaRow[];
     },
   });
+
 
   const marcarPago = useMutation({
     mutationFn: async (parcelaId: string) => {
