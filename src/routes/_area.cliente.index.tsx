@@ -14,6 +14,7 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { BannerCarousel } from "@/components/banner-carousel";
+import { PixQrCard } from "@/components/pix-qr-card";
 import { clienteFetch } from "@/lib/cliente-auth";
 import { formatBRL } from "@/lib/status-utils";
 
