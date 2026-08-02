@@ -56,6 +56,7 @@ type ParcelaRow = {
 function FinanceiroPage() {
   const qc = useQueryClient();
   const [filtro, setFiltro] = useState<"todos" | ParcelaStatus>("todos");
+  const [busca, setBusca] = useState("");
   const [buscaDevedor, setBuscaDevedor] = useState("");
   const [aberto, setAberto] = useState<string | null>(null);
 
