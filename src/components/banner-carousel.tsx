@@ -7,9 +7,9 @@ export interface Banner {
   id: string;
   titulo: string;
   descricao: string | null;
-  imagem_url: string | null;
-  link_url: string | null;
-  texto_botao: string | null;
+  imagem: string | null;
+  botao_url: string | null;
+  botao_texto: string | null;
 }
 
 /** Carrossel de campanhas/banners configurados pelo administrador. */
@@ -33,19 +33,19 @@ export function BannerCarousel({ className }: { className?: string }) {
   const b = banners[Math.min(idx, banners.length - 1)];
   if (!b) return null;
 
-  const Wrapper = b.link_url ? "a" : "div";
+  const Wrapper = b.botao_url ? "a" : "div";
 
   return (
     <div className={cn("relative overflow-hidden rounded-xl border border-border/60", className)}>
       <Wrapper
-        {...(b.link_url
-          ? { href: b.link_url, target: "_blank", rel: "noopener noreferrer" }
+        {...(b.botao_url
+          ? { href: b.botao_url, target: "_blank", rel: "noopener noreferrer" }
           : {})}
         className="block"
       >
-        {b.imagem_url ? (
+        {b.imagem ? (
           <img
-            src={b.imagem_url}
+            src={b.imagem}
             alt={b.titulo}
             loading="lazy"
             className="h-40 w-full object-cover"
@@ -59,9 +59,9 @@ export function BannerCarousel({ className }: { className?: string }) {
           {b.descricao && (
             <p className="text-xs text-muted-foreground line-clamp-2">{b.descricao}</p>
           )}
-          {b.link_url && (
+          {b.botao_url && (
             <span className="mt-2 inline-flex rounded-md bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground">
-              {b.texto_botao || "Saiba mais"}
+              {b.botao_texto || "Saiba mais"}
             </span>
           )}
         </div>
