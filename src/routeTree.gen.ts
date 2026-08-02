@@ -37,6 +37,7 @@ import { Route as ApiPublicMikrotikStatusRouteImport } from './routes/api/public
 import { Route as ApiPublicClienteNotificacoesRouteImport } from './routes/api/public/cliente/notificacoes'
 import { Route as ApiPublicClienteMeRouteImport } from './routes/api/public/cliente/me'
 import { Route as ApiPublicClienteFinanceiroRouteImport } from './routes/api/public/cliente/financeiro'
+import { Route as ApiPublicClienteBannersRouteImport } from './routes/api/public/cliente/banners'
 import { Route as ApiPublicClienteAvisosRouteImport } from './routes/api/public/cliente/avisos'
 import { Route as ApiPublicClienteAuthLoginRouteImport } from './routes/api/public/cliente/auth/login'
 
@@ -180,6 +181,11 @@ const ApiPublicClienteFinanceiroRoute =
     path: '/api/public/cliente/financeiro',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicClienteBannersRoute = ApiPublicClienteBannersRouteImport.update({
+  id: '/api/public/cliente/banners',
+  path: '/api/public/cliente/banners',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicClienteAvisosRoute = ApiPublicClienteAvisosRouteImport.update({
   id: '/api/public/cliente/avisos',
   path: '/api/public/cliente/avisos',
@@ -215,6 +221,7 @@ export interface FileRoutesByFullPath {
   '/cliente/wifi': typeof AreaClienteWifiRoute
   '/cliente/': typeof AreaClienteIndexRoute
   '/api/public/cliente/avisos': typeof ApiPublicClienteAvisosRoute
+  '/api/public/cliente/banners': typeof ApiPublicClienteBannersRoute
   '/api/public/cliente/financeiro': typeof ApiPublicClienteFinanceiroRoute
   '/api/public/cliente/me': typeof ApiPublicClienteMeRoute
   '/api/public/cliente/notificacoes': typeof ApiPublicClienteNotificacoesRoute
@@ -245,6 +252,7 @@ export interface FileRoutesByTo {
   '/cliente/wifi': typeof AreaClienteWifiRoute
   '/cliente': typeof AreaClienteIndexRoute
   '/api/public/cliente/avisos': typeof ApiPublicClienteAvisosRoute
+  '/api/public/cliente/banners': typeof ApiPublicClienteBannersRoute
   '/api/public/cliente/financeiro': typeof ApiPublicClienteFinanceiroRoute
   '/api/public/cliente/me': typeof ApiPublicClienteMeRoute
   '/api/public/cliente/notificacoes': typeof ApiPublicClienteNotificacoesRoute
@@ -278,6 +286,7 @@ export interface FileRoutesById {
   '/_area/cliente/wifi': typeof AreaClienteWifiRoute
   '/_area/cliente/': typeof AreaClienteIndexRoute
   '/api/public/cliente/avisos': typeof ApiPublicClienteAvisosRoute
+  '/api/public/cliente/banners': typeof ApiPublicClienteBannersRoute
   '/api/public/cliente/financeiro': typeof ApiPublicClienteFinanceiroRoute
   '/api/public/cliente/me': typeof ApiPublicClienteMeRoute
   '/api/public/cliente/notificacoes': typeof ApiPublicClienteNotificacoesRoute
@@ -310,6 +319,7 @@ export interface FileRouteTypes {
     | '/cliente/wifi'
     | '/cliente/'
     | '/api/public/cliente/avisos'
+    | '/api/public/cliente/banners'
     | '/api/public/cliente/financeiro'
     | '/api/public/cliente/me'
     | '/api/public/cliente/notificacoes'
@@ -340,6 +350,7 @@ export interface FileRouteTypes {
     | '/cliente/wifi'
     | '/cliente'
     | '/api/public/cliente/avisos'
+    | '/api/public/cliente/banners'
     | '/api/public/cliente/financeiro'
     | '/api/public/cliente/me'
     | '/api/public/cliente/notificacoes'
@@ -372,6 +383,7 @@ export interface FileRouteTypes {
     | '/_area/cliente/wifi'
     | '/_area/cliente/'
     | '/api/public/cliente/avisos'
+    | '/api/public/cliente/banners'
     | '/api/public/cliente/financeiro'
     | '/api/public/cliente/me'
     | '/api/public/cliente/notificacoes'
@@ -387,6 +399,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   ClienteLoginRoute: typeof ClienteLoginRoute
   ApiPublicClienteAvisosRoute: typeof ApiPublicClienteAvisosRoute
+  ApiPublicClienteBannersRoute: typeof ApiPublicClienteBannersRoute
   ApiPublicClienteFinanceiroRoute: typeof ApiPublicClienteFinanceiroRoute
   ApiPublicClienteMeRoute: typeof ApiPublicClienteMeRoute
   ApiPublicClienteNotificacoesRoute: typeof ApiPublicClienteNotificacoesRoute
@@ -593,6 +606,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicClienteFinanceiroRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/cliente/banners': {
+      id: '/api/public/cliente/banners'
+      path: '/api/public/cliente/banners'
+      fullPath: '/api/public/cliente/banners'
+      preLoaderRoute: typeof ApiPublicClienteBannersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/cliente/avisos': {
       id: '/api/public/cliente/avisos'
       path: '/api/public/cliente/avisos'
@@ -679,6 +699,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   ClienteLoginRoute: ClienteLoginRoute,
   ApiPublicClienteAvisosRoute: ApiPublicClienteAvisosRoute,
+  ApiPublicClienteBannersRoute: ApiPublicClienteBannersRoute,
   ApiPublicClienteFinanceiroRoute: ApiPublicClienteFinanceiroRoute,
   ApiPublicClienteMeRoute: ApiPublicClienteMeRoute,
   ApiPublicClienteNotificacoesRoute: ApiPublicClienteNotificacoesRoute,
