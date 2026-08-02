@@ -294,6 +294,8 @@ export type Database = {
           dia_vencimento: number
           email: string | null
           endereco: string | null
+          equipamentos: string[]
+          equipamentos_obs: string | null
           facebook_id: string | null
           google_sub: string | null
           id: string
@@ -309,6 +311,7 @@ export type Database = {
           router_id: string | null
           senha_cliente_hash: string | null
           senha_pppoe: string | null
+          senha_reset: string | null
           senha_wifi: string | null
           ssid_wifi: string | null
           status: Database["public"]["Enums"]["cliente_status"]
@@ -333,6 +336,8 @@ export type Database = {
           dia_vencimento?: number
           email?: string | null
           endereco?: string | null
+          equipamentos?: string[]
+          equipamentos_obs?: string | null
           facebook_id?: string | null
           google_sub?: string | null
           id?: string
@@ -348,6 +353,7 @@ export type Database = {
           router_id?: string | null
           senha_cliente_hash?: string | null
           senha_pppoe?: string | null
+          senha_reset?: string | null
           senha_wifi?: string | null
           ssid_wifi?: string | null
           status?: Database["public"]["Enums"]["cliente_status"]
@@ -372,6 +378,8 @@ export type Database = {
           dia_vencimento?: number
           email?: string | null
           endereco?: string | null
+          equipamentos?: string[]
+          equipamentos_obs?: string | null
           facebook_id?: string | null
           google_sub?: string | null
           id?: string
@@ -387,6 +395,7 @@ export type Database = {
           router_id?: string | null
           senha_cliente_hash?: string | null
           senha_pppoe?: string | null
+          senha_reset?: string | null
           senha_wifi?: string | null
           ssid_wifi?: string | null
           status?: Database["public"]["Enums"]["cliente_status"]
