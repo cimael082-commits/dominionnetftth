@@ -102,6 +102,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: ErrorComponent,
 });
 
+const THEME_INIT = `try{var t=localStorage.getItem('dominion_theme');document.documentElement.classList.toggle('dark',t!=='light')}catch(e){}`;
+
 function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="pt-BR" className="dark">
@@ -109,6 +111,7 @@ function RootShell({ children }: { children: ReactNode }) {
         <HeadContent />
       </head>
       <body>
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT }} />
         {children}
         <Scripts />
       </body>
