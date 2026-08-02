@@ -166,6 +166,8 @@ function FinanceiroCliente() {
         </Button>
       </div>
 
+      <PixQrCard titulo="Pagar a próxima fatura" />
+
       <section className="space-y-3">
         <h2 className="text-xs uppercase tracking-wider text-muted-foreground">
           Em aberto ({pendentes.length})
