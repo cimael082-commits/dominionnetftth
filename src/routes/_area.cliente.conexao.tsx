@@ -15,7 +15,6 @@ type Cliente = {
   ip_atual: string | null;
   uptime_atual: string | null;
   ultima_sincronizacao: string | null;
-  login_pppoe: string | null;
   plano: string | null;
 };
 
