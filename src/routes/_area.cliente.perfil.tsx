@@ -1,7 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { User, MapPin, Mail, Phone, Hash } from "lucide-react";
+import { User, MapPin, Mail, Phone, Hash, Gift } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { clienteFetch } from "@/lib/cliente-auth";
 
 export const Route = createFileRoute("/_area/cliente/perfil")({
