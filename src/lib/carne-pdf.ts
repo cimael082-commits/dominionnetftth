@@ -26,6 +26,10 @@ export interface CarneInput {
     pix_cidade: string;
   };
   parcelas: CarneParcela[];
+  /** URL da Central do Cliente impressa nas orientações finais. */
+  centralUrl?: string;
+  /** Senha padrão de primeiro acesso à Central do Cliente. */
+  senhaPadrao?: string;
 }
 
 const fmtBRL = (v: number) =>
@@ -63,7 +67,104 @@ export async function gerarCarnePDF(input: CarneInput): Promise<Blob> {
     await desenharBoleto(doc, margin, y, pageW - margin * 2, boletoH, p, input);
   }
 
+  await desenharInstrucoes(doc, input);
+
   return doc.output("blob");
+}
+
+/**
+ * Página final com as orientações de acesso à Central do Cliente.
+ * Impressa junto ao carnê para que o assinante receba tudo de uma vez.
+ */
+async function desenharInstrucoes(doc: jsPDF, input: CarneInput) {
+  const central =
+    input.centralUrl ??
+    (typeof window !== "undefined" ? `${window.location.origin}/cliente/login` : "");
+  const senha = input.senhaPadrao ?? "123";
+  const telefone = input.cliente.telefone?.trim() || "—";
+
+  doc.addPage();
+  const x = 14;
+  const w = 182;
+  let y = 20;
+
+  doc.setFillColor(...NAVY);
+  doc.roundedRect(x, y, w, 14, 3, 3, "F");
+  doc.setTextColor(255, 255, 255);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(13);
+  doc.text("CENTRAL DO CLIENTE — COMO ACESSAR", x + w / 2, y + 9, { align: "center" });
+
+  y += 22;
+  doc.setTextColor(...TEXT);
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(10);
+  const passos = [
+    "1. Abra o navegador do seu celular ou computador.",
+    "2. Acesse o link da Central do Cliente indicado abaixo.",
+    "3. Informe seu CPF ou o telefone cadastrado.",
+    `4. Digite a senha padrao: ${senha}`,
+    "5. Pronto! Veja faturas, QR Code Pix, plano, Wi-Fi e avisos.",
+  ];
+  for (const linha of passos) {
+    doc.text(linha, x + 2, y);
+    y += 7;
+  }
+
+  y += 4;
+  doc.setDrawColor(...NAVY);
+  doc.setLineWidth(0.4);
+  doc.roundedRect(x, y, w, 40, 3, 3, "S");
+
+  const linhas: [string, string][] = [
+    ["Link de acesso", central || "Consulte o suporte"],
+    ["Telefone cadastrado", telefone],
+    ["Senha padrao", senha],
+  ];
+  let ly = y + 10;
+  for (const [rotulo, valor] of linhas) {
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(9);
+    doc.setTextColor(...NAVY);
+    doc.text(`${rotulo}:`, x + 5, ly);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(...TEXT);
+    doc.text(valor, x + 48, ly);
+    ly += 11;
+  }
+
+  y += 48;
+  if (central) {
+    try {
+      const qr = await QRCode.toDataURL(central, { margin: 0, width: 300 });
+      doc.addImage(qr, "PNG", x + w / 2 - 20, y, 40, 40);
+      doc.setFontSize(8);
+      doc.setTextColor(...MUTED);
+      doc.text("Aponte a camera para abrir a Central", x + w / 2, y + 45, { align: "center" });
+    } catch {
+      /* ignore */
+    }
+    y += 52;
+  }
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(9);
+  doc.setTextColor(...NAVY);
+  doc.text(
+    `Suporte ${input.empresa.nome_empresa}: ${input.empresa.telefone ?? ""}`.trim(),
+    x + w / 2,
+    y + 6,
+    { align: "center" },
+  );
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(8);
+  doc.setTextColor(...MUTED);
+  doc.text(
+    "Guarde este comprovante. Por seguranca, altere sua senha apos o primeiro acesso.",
+    x + w / 2,
+    y + 12,
+    { align: "center" },
+  );
 }
 
 function drawLogo(doc: jsPDF, x: number, y: number, w: number, h: number) {

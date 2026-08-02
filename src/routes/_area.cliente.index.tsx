@@ -14,6 +14,7 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { BannerCarousel } from "@/components/banner-carousel";
+import { PixQrCard } from "@/components/pix-qr-card";
 import { clienteFetch } from "@/lib/cliente-auth";
 import { formatBRL } from "@/lib/status-utils";
 
@@ -214,6 +215,8 @@ function HomeCliente() {
           </div>
         </CardContent>
       </Card>
+
+      <PixQrCard titulo="Pagamento rápido — Pix" />
 
       <Button asChild size="lg" className="w-full bg-emerald-600 hover:bg-emerald-500 text-white">
         <a href={suporteUrl} target="_blank" rel="noopener noreferrer">

@@ -10,6 +10,7 @@ import { clienteFetch } from "@/lib/cliente-auth";
 import { formatBRL, formatDate, parcelaStatusMeta, type ParcelaStatus } from "@/lib/status-utils";
 import { gerarCarnePDF } from "@/lib/carne-pdf";
 import { gerarReciboPDF } from "@/lib/recibo-pdf";
+import { PixQrCard } from "@/components/pix-qr-card";
 
 export const Route = createFileRoute("/_area/cliente/financeiro")({
   component: FinanceiroCliente,
@@ -165,6 +166,8 @@ function FinanceiroCliente() {
           <Download className="h-3.5 w-3.5 mr-1" /> {gerando ? "Gerando..." : "Baixar carnê"}
         </Button>
       </div>
+
+      <PixQrCard titulo="Pagar a próxima fatura" />
 
       <section className="space-y-3">
         <h2 className="text-xs uppercase tracking-wider text-muted-foreground">

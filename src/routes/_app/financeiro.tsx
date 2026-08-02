@@ -1,18 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { Check, ChevronDown, ChevronRight, AlertTriangle } from "lucide-react";
+import { Check, ChevronDown, ChevronRight, AlertTriangle, Search } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 import {
   parcelaStatusMeta,
   formatBRL,
@@ -56,6 +50,7 @@ type ParcelaRow = {
 function FinanceiroPage() {
   const qc = useQueryClient();
   const [filtro, setFiltro] = useState<"todos" | ParcelaStatus>("todos");
+  const [busca, setBusca] = useState("");
   const [buscaDevedor, setBuscaDevedor] = useState("");
   const [aberto, setAberto] = useState<string | null>(null);
 
@@ -98,9 +93,13 @@ function FinanceiroPage() {
 
   const filtradas = useMemo(() => {
     const rows = q.data ?? [];
-    if (filtro === "todos") return rows;
-    return rows.filter((r) => r.status === filtro);
-  }, [q.data, filtro]);
+    const termo = busca.trim().toLowerCase();
+    return rows.filter((r) => {
+      if (filtro !== "todos" && r.status !== filtro) return false;
+      if (!termo) return true;
+      return (r.clientes?.nome ?? "").toLowerCase().includes(termo);
+    });
+  }, [q.data, filtro, busca]);
 
   const totais = useMemo(() => {
     const rows = q.data ?? [];
@@ -314,19 +313,52 @@ function FinanceiroPage() {
       </Card>
 
 
-      <div className="flex items-center gap-3">
-        <span className="text-sm text-muted-foreground">Filtrar:</span>
-        <Select value={filtro} onValueChange={(v) => setFiltro(v as typeof filtro)}>
-          <SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
-          <SelectContent>
-            <SelectItem value="todos">Todos</SelectItem>
-            <SelectItem value="pago">Pagos</SelectItem>
-            <SelectItem value="pendente">Pendentes</SelectItem>
-            <SelectItem value="vencido">Vencidos</SelectItem>
-            <SelectItem value="cancelado">Cancelados</SelectItem>
-          </SelectContent>
-        </Select>
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap gap-1 rounded-lg border border-border/60 bg-muted/30 p-1">
+          {(
+            [
+              ["todos", "Todos"],
+              ["pago", "Pagos"],
+              ["pendente", "Pendentes"],
+              ["vencido", "Vencidos"],
+              ["cancelado", "Cancelados"],
+            ] as const
+          ).map(([valor, rotulo]) => {
+            const ativo = filtro === valor;
+            const qtd =
+              valor === "todos"
+                ? (q.data ?? []).length
+                : (q.data ?? []).filter((r) => r.status === valor).length;
+            return (
+              <button
+                key={valor}
+                type="button"
+                onClick={() => setFiltro(valor)}
+                aria-pressed={ativo}
+                className={cn(
+                  "rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
+                  ativo
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:bg-accent hover:text-foreground",
+                )}
+              >
+                {rotulo}
+                <span className="ml-1.5 text-xs opacity-70">{qtd}</span>
+              </button>
+            );
+          })}
+        </div>
+        <div className="relative ml-auto w-full max-w-xs">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            className="pl-9"
+            placeholder="Pesquisar cliente pelo nome..."
+            value={busca}
+            onChange={(e) => setBusca(e.target.value)}
+          />
+        </div>
       </div>
+
 
       <Card className="overflow-hidden">
         <table className="w-full text-sm">

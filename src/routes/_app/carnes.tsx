@@ -79,21 +79,29 @@ function CarnesPage() {
       if (!v || v <= 0) throw new Error("Valor inválido");
 
       const dataInicio = new Date(inicio + "T00:00:00");
+      const diaBase = dataInicio.getDate();
       const lista: CarneParcela[] = [];
       type ParcelaInsert = import("@/integrations/supabase/types").TablesInsert<"parcelas">;
       const insertRows: ParcelaInsert[] = [];
       for (let i = 0; i < parcelas; i++) {
-        const venc = new Date(dataInicio);
-        venc.setMonth(venc.getMonth() + i);
+        // Somar meses via ano/mês evita o "estouro" do Date (31/01 + 1 mês = 03/03),
+        // que fazia meses de referência repetidos no carnê.
+        const alvoMes = dataInicio.getMonth() + i;
+        const ano = dataInicio.getFullYear() + Math.floor(alvoMes / 12);
+        const mes = ((alvoMes % 12) + 12) % 12;
+        const ultimoDia = new Date(ano, mes + 1, 0).getDate();
+        const venc = new Date(ano, mes, Math.min(diaBase, ultimoDia));
         lista.push({ numero: i + 1, total: parcelas, valor: v, vencimento: venc });
         insertRows.push({
           cliente_id: clienteId,
           numero_parcela: i + 1,
           total_parcelas: parcelas,
-          referencia_mes: venc.getMonth() + 1,
-          referencia_ano: venc.getFullYear(),
+          referencia_mes: mes + 1,
+          referencia_ano: ano,
           valor: v,
-          data_vencimento: venc.toISOString().slice(0, 10),
+          data_vencimento: `${ano}-${String(mes + 1).padStart(2, "0")}-${String(
+            Math.min(diaBase, ultimoDia),
+          ).padStart(2, "0")}`,
           status: "pendente" as const,
           origem: "carne",
         });

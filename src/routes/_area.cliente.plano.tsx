@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { clienteFetch } from "@/lib/cliente-auth";
 import { formatBRL } from "@/lib/status-utils";
+import { PixQrCard } from "@/components/pix-qr-card";
 
 export const Route = createFileRoute("/_area/cliente/plano")({
   component: PlanoPage,
@@ -86,6 +87,8 @@ function PlanoPage() {
           </CardContent>
         </Card>
       </div>
+
+      <PixQrCard titulo="Pagar mensalidade" />
 
       <Card>
         <CardContent className="p-4 space-y-3">
