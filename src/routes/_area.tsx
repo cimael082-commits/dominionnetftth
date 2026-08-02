@@ -5,13 +5,25 @@ import {
   Wallet,
   Bell,
   Wifi,
-  MessageCircle,
+  LifeBuoy,
   LogOut,
   User as UserIcon,
   Waves,
+  MoreHorizontal,
+  Radio,
+  Gift,
+  Info,
+  MessageCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { clearClienteToken, getClienteToken } from "@/lib/cliente-auth";
+import { ThemeToggle } from "@/components/theme-toggle";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export const Route = createFileRoute("/_area")({
   ssr: false,
@@ -23,8 +35,16 @@ const nav = [
   { to: "/cliente/financeiro", label: "Financeiro", icon: Wallet },
   { to: "/cliente/conexao", label: "Conexão", icon: Waves },
   { to: "/cliente/wifi", label: "Wi-Fi", icon: Wifi },
-  { to: "/cliente/avisos", label: "Avisos", icon: Bell },
-  { to: "/cliente/atendimento", label: "Suporte", icon: MessageCircle },
+  { to: "/cliente/chamados", label: "Chamados", icon: LifeBuoy },
+] as const;
+
+const maisMenu = [
+  { to: "/cliente/notificacoes", label: "Notificações", icon: Bell },
+  { to: "/cliente/avisos", label: "Avisos", icon: Info },
+  { to: "/cliente/plano", label: "Meu plano", icon: Radio },
+  { to: "/cliente/indique", label: "Indique um amigo", icon: Gift },
+  { to: "/cliente/atendimento", label: "Atendimento", icon: MessageCircle },
+  { to: "/cliente/perfil", label: "Meu perfil", icon: UserIcon },
 ] as const;
 
 function AreaLayout() {
@@ -47,20 +67,23 @@ function AreaLayout() {
     navigate({ to: "/cliente/login", replace: true });
   }
 
+  const maisAtivo = maisMenu.some((m) => pathname.startsWith(m.to));
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <header className="sticky top-0 z-40 border-b border-border/60 bg-card/80 backdrop-blur">
-        <div className="mx-auto max-w-3xl px-4 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/20 text-primary ring-1 ring-primary/40">
+        <div className="mx-auto max-w-3xl px-4 h-14 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
+          <div className="flex min-w-0 items-center gap-2">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/20 text-primary ring-1 ring-primary/40">
               <Waves className="h-4 w-4" />
             </div>
-            <div className="leading-tight">
-              <div className="text-sm font-bold">Dominion Net</div>
+            <div className="leading-tight min-w-0">
+              <div className="truncate text-sm font-bold">Dominion Net</div>
               <div className="text-[10px] text-muted-foreground">Área do Cliente</div>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
+            <ThemeToggle />
             <Link
               to="/cliente/perfil"
               className="rounded-full p-2 text-muted-foreground hover:text-foreground hover:bg-accent"
@@ -89,9 +112,7 @@ function AreaLayout() {
         <div className="mx-auto max-w-3xl grid grid-cols-6">
           {nav.map((n) => {
             const active =
-              n.to === "/cliente"
-                ? pathname === "/cliente"
-                : pathname.startsWith(n.to);
+              n.to === "/cliente" ? pathname === "/cliente" : pathname.startsWith(n.to);
             const Icon = n.icon;
             return (
               <Link
@@ -107,6 +128,30 @@ function AreaLayout() {
               </Link>
             );
           })}
+
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              className={cn(
+                "flex flex-col items-center justify-center gap-0.5 py-2.5 text-[10px] font-medium transition-colors outline-none",
+                maisAtivo ? "text-primary" : "text-muted-foreground hover:text-foreground",
+              )}
+            >
+              <MoreHorizontal className="h-5 w-5" />
+              Mais
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" side="top" className="mb-2 w-56">
+              {maisMenu.map((m) => {
+                const Icon = m.icon;
+                return (
+                  <DropdownMenuItem key={m.to} asChild>
+                    <Link to={m.to} className="flex items-center gap-2">
+                      <Icon className="h-4 w-4" /> {m.label}
+                    </Link>
+                  </DropdownMenuItem>
+                );
+              })}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </nav>
     </div>
