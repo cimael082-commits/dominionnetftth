@@ -302,49 +302,39 @@ function HomeCliente() {
       </div>
 
 
+      {(portal?.portal_promo_ativo ?? true) && (
       <Card className="border-primary/30 bg-gradient-to-br from-primary/10 to-transparent">
         <CardContent className="p-5 space-y-3 text-sm leading-relaxed">
-          <p className="font-bold text-base">🚀 Chegou a internet que conecta você ao melhor da tecnologia! 🚀</p>
-          <p>🌐 <span className="font-semibold">Dominion Net 5G</span> — internet rápida, estável e feita para sua casa.</p>
+          {portal?.portal_promo_titulo ? (
+            <p className="font-bold text-base">{portal.portal_promo_titulo}</p>
+          ) : null}
 
-          <div>
-            <p className="font-semibold mb-1">Confira nossos planos:</p>
-            <ul className="space-y-1.5">
-              <li>⚡ <span className="font-medium">Plano Internet 50 Mega</span> — 💰 R$ 49,90/mês</li>
-              <li>🎬 <span className="font-medium">Internet + Netflix</span> — 💰 R$ 70,00/mês</li>
-              <li>🍿 <span className="font-medium">Filmes e Séries</span> — 💰 R$ 90,00/mês</li>
-              <li>📺 <span className="font-medium">TV por Assinatura</span> — 💰 R$ 130,00/mês</li>
-            </ul>
-          </div>
-
-          <ul className="space-y-0.5">
-            <li>✅ Internet rápida</li>
-            <li>✅ Estabilidade para todos os dispositivos</li>
-            <li>✅ Atendimento especializado</li>
-          </ul>
+          {(portal?.portal_promo_texto ?? "")
+            .split("\n")
+            .map((linha, i) =>
+              linha.trim() === "" ? (
+                <div key={i} className="h-1" />
+              ) : (
+                <p key={i} className={/:$/.test(linha.trim()) ? "font-semibold" : undefined}>
+                  {linha}
+                </p>
+              ),
+            )}
 
           <div className="pt-2 border-t border-border/40">
             <p className="font-semibold">📲 Suporte WhatsApp:</p>
             <a href={suporteUrl} target="_blank" rel="noopener noreferrer" className="text-primary underline">
-              (82) 99382-3246
+              Falar no WhatsApp
             </a>
           </div>
 
-          <div>
-            <p className="font-semibold">🕒 Horários:</p>
-            <p>Segunda a sexta: 08:00 às 20:00</p>
-            <p>Sábado: 08:00 às 17:00</p>
-            <p>Domingo: 09:00 às 12:00</p>
-          </div>
-
-          <p className="text-center font-semibold pt-2">
-            🌐 Dominion Net 5G<br />
-            <span className="text-xs font-normal text-muted-foreground">
-              Conectando você ao mundo com velocidade e qualidade!
-            </span>
-          </p>
+          {portal?.portal_promo_rodape ? (
+            <p className="text-center text-xs text-muted-foreground pt-2">{portal.portal_promo_rodape}</p>
+          ) : null}
         </CardContent>
       </Card>
+      )}
+
     </div>
   );
 }
