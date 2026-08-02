@@ -14,6 +14,7 @@ import {
   Router as RouterIcon,
   LifeBuoy,
   ImageIcon,
+  Bot,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
@@ -21,6 +22,7 @@ import { toast } from "sonner";
 
 const nav = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { to: "/assistente", label: "Assistente IA", icon: Bot },
   { to: "/clientes", label: "Clientes", icon: Users },
   { to: "/mapa", label: "Mapa da Rede", icon: Map },
   { to: "/roteadores", label: "Roteadores", icon: RouterIcon },
