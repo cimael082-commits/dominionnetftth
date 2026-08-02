@@ -63,7 +63,8 @@ function ConexaoPage() {
 
       <div className="grid grid-cols-2 gap-3">
         <InfoTile label="Plano" value={cli?.plano || "—"} />
-        <InfoTile label="Login PPPoE" value={cli?.login_pppoe || "—"} />
+        {/* Dado técnico interno: nunca exibimos o usuário PPPoE ao assinante. */}
+        <InfoTile label="Login PPPoE" value="********" />
         <InfoTile label="IP" value={cli?.ip_atual || "—"} />
         <InfoTile label="Uptime" value={cli?.uptime_atual || "—"} />
       </div>
