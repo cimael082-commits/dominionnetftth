@@ -38,6 +38,7 @@ import {
 } from "@/components/ui/select";
 import { clienteStatusMeta, formatBRL, type ClienteStatus } from "@/lib/status-utils";
 import { EditClienteDialog } from "@/components/EditClienteDialog";
+import { WhatsappButton } from "@/components/whatsapp-button";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/clientes")({
