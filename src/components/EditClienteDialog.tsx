@@ -80,7 +80,7 @@ export function EditClienteDialog({
         valor_mensalidade: String(cliente.valor_mensalidade ?? 0),
         dia_vencimento: String(cliente.dia_vencimento ?? 10),
         login_pppoe: cliente.login_pppoe ?? "",
-        senha_pppoe: cliente.senha_pppoe ?? "",
+        
         senha_reset: cliente.senha_reset ?? "",
         equipamentos_obs: cliente.equipamentos_obs ?? "",
         ssid_wifi: cliente.ssid_wifi ?? "",
