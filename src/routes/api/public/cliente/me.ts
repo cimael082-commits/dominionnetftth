@@ -12,7 +12,7 @@ export const Route = createFileRoute("/api/public/cliente/me")({
         const { data, error } = await supabaseAdmin
           .from("clientes")
           .select(
-            "id, nome, cpf_cnpj, telefone, whatsapp, email, endereco, bairro, cidade, cep, plano, valor_mensalidade, dia_vencimento, status, login_pppoe, online, ip_atual, uptime_atual, ultima_sincronizacao, wifi_ssid, wifi_senha, ssid_wifi, senha_wifi",
+            "id, nome, cpf_cnpj, telefone, whatsapp, email, endereco, bairro, cidade, cep, plano, valor_mensalidade, dia_vencimento, status, online, ip_atual, uptime_atual, ultima_sincronizacao, wifi_ssid, wifi_senha, ssid_wifi, senha_wifi",
           )
           .eq("id", clienteId)
           .maybeSingle();
