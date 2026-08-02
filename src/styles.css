@@ -143,7 +143,7 @@
 
 @layer base {
   html {
-    color-scheme: dark;
+    color-scheme: light dark;
   }
   * {
     border-color: var(--color-border);
