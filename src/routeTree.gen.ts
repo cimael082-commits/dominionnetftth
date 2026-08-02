@@ -36,6 +36,7 @@ import { Route as ApiPublicMikrotikSyncRouteImport } from './routes/api/public/m
 import { Route as ApiPublicMikrotikStatusRouteImport } from './routes/api/public/mikrotik/status'
 import { Route as ApiPublicClienteNotificacoesRouteImport } from './routes/api/public/cliente/notificacoes'
 import { Route as ApiPublicClienteMeRouteImport } from './routes/api/public/cliente/me'
+import { Route as ApiPublicClienteIndicacoesRouteImport } from './routes/api/public/cliente/indicacoes'
 import { Route as ApiPublicClienteFinanceiroRouteImport } from './routes/api/public/cliente/financeiro'
 import { Route as ApiPublicClienteChamadosRouteImport } from './routes/api/public/cliente/chamados'
 import { Route as ApiPublicClienteBannersRouteImport } from './routes/api/public/cliente/banners'
@@ -176,6 +177,12 @@ const ApiPublicClienteMeRoute = ApiPublicClienteMeRouteImport.update({
   path: '/api/public/cliente/me',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicClienteIndicacoesRoute =
+  ApiPublicClienteIndicacoesRouteImport.update({
+    id: '/api/public/cliente/indicacoes',
+    path: '/api/public/cliente/indicacoes',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicClienteFinanceiroRoute =
   ApiPublicClienteFinanceiroRouteImport.update({
     id: '/api/public/cliente/financeiro',
@@ -231,6 +238,7 @@ export interface FileRoutesByFullPath {
   '/api/public/cliente/banners': typeof ApiPublicClienteBannersRoute
   '/api/public/cliente/chamados': typeof ApiPublicClienteChamadosRoute
   '/api/public/cliente/financeiro': typeof ApiPublicClienteFinanceiroRoute
+  '/api/public/cliente/indicacoes': typeof ApiPublicClienteIndicacoesRoute
   '/api/public/cliente/me': typeof ApiPublicClienteMeRoute
   '/api/public/cliente/notificacoes': typeof ApiPublicClienteNotificacoesRoute
   '/api/public/mikrotik/status': typeof ApiPublicMikrotikStatusRoute
@@ -263,6 +271,7 @@ export interface FileRoutesByTo {
   '/api/public/cliente/banners': typeof ApiPublicClienteBannersRoute
   '/api/public/cliente/chamados': typeof ApiPublicClienteChamadosRoute
   '/api/public/cliente/financeiro': typeof ApiPublicClienteFinanceiroRoute
+  '/api/public/cliente/indicacoes': typeof ApiPublicClienteIndicacoesRoute
   '/api/public/cliente/me': typeof ApiPublicClienteMeRoute
   '/api/public/cliente/notificacoes': typeof ApiPublicClienteNotificacoesRoute
   '/api/public/mikrotik/status': typeof ApiPublicMikrotikStatusRoute
@@ -298,6 +307,7 @@ export interface FileRoutesById {
   '/api/public/cliente/banners': typeof ApiPublicClienteBannersRoute
   '/api/public/cliente/chamados': typeof ApiPublicClienteChamadosRoute
   '/api/public/cliente/financeiro': typeof ApiPublicClienteFinanceiroRoute
+  '/api/public/cliente/indicacoes': typeof ApiPublicClienteIndicacoesRoute
   '/api/public/cliente/me': typeof ApiPublicClienteMeRoute
   '/api/public/cliente/notificacoes': typeof ApiPublicClienteNotificacoesRoute
   '/api/public/mikrotik/status': typeof ApiPublicMikrotikStatusRoute
@@ -332,6 +342,7 @@ export interface FileRouteTypes {
     | '/api/public/cliente/banners'
     | '/api/public/cliente/chamados'
     | '/api/public/cliente/financeiro'
+    | '/api/public/cliente/indicacoes'
     | '/api/public/cliente/me'
     | '/api/public/cliente/notificacoes'
     | '/api/public/mikrotik/status'
@@ -364,6 +375,7 @@ export interface FileRouteTypes {
     | '/api/public/cliente/banners'
     | '/api/public/cliente/chamados'
     | '/api/public/cliente/financeiro'
+    | '/api/public/cliente/indicacoes'
     | '/api/public/cliente/me'
     | '/api/public/cliente/notificacoes'
     | '/api/public/mikrotik/status'
@@ -398,6 +410,7 @@ export interface FileRouteTypes {
     | '/api/public/cliente/banners'
     | '/api/public/cliente/chamados'
     | '/api/public/cliente/financeiro'
+    | '/api/public/cliente/indicacoes'
     | '/api/public/cliente/me'
     | '/api/public/cliente/notificacoes'
     | '/api/public/mikrotik/status'
@@ -415,6 +428,7 @@ export interface RootRouteChildren {
   ApiPublicClienteBannersRoute: typeof ApiPublicClienteBannersRoute
   ApiPublicClienteChamadosRoute: typeof ApiPublicClienteChamadosRoute
   ApiPublicClienteFinanceiroRoute: typeof ApiPublicClienteFinanceiroRoute
+  ApiPublicClienteIndicacoesRoute: typeof ApiPublicClienteIndicacoesRoute
   ApiPublicClienteMeRoute: typeof ApiPublicClienteMeRoute
   ApiPublicClienteNotificacoesRoute: typeof ApiPublicClienteNotificacoesRoute
   ApiPublicMikrotikStatusRoute: typeof ApiPublicMikrotikStatusRoute
@@ -613,6 +627,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicClienteMeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/cliente/indicacoes': {
+      id: '/api/public/cliente/indicacoes'
+      path: '/api/public/cliente/indicacoes'
+      fullPath: '/api/public/cliente/indicacoes'
+      preLoaderRoute: typeof ApiPublicClienteIndicacoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/cliente/financeiro': {
       id: '/api/public/cliente/financeiro'
       path: '/api/public/cliente/financeiro'
@@ -723,6 +744,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicClienteBannersRoute: ApiPublicClienteBannersRoute,
   ApiPublicClienteChamadosRoute: ApiPublicClienteChamadosRoute,
   ApiPublicClienteFinanceiroRoute: ApiPublicClienteFinanceiroRoute,
+  ApiPublicClienteIndicacoesRoute: ApiPublicClienteIndicacoesRoute,
   ApiPublicClienteMeRoute: ApiPublicClienteMeRoute,
   ApiPublicClienteNotificacoesRoute: ApiPublicClienteNotificacoesRoute,
   ApiPublicMikrotikStatusRoute: ApiPublicMikrotikStatusRoute,

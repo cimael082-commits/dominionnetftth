@@ -21,12 +21,12 @@ export const Route = createFileRoute("/api/public/cliente/financeiro")({
             .order("data_vencimento", { ascending: true }),
           supabaseAdmin
             .from("clientes")
-            .select("nome, cidade")
+            .select("nome, cpf_cnpj, telefone, endereco, bairro, cidade")
             .eq("id", clienteId)
             .maybeSingle(),
           supabaseAdmin
             .from("configuracoes_empresa")
-            .select("pix_chave, pix_beneficiario, pix_cidade")
+            .select("nome_empresa, cnpj, telefone, endereco, pix_chave, pix_beneficiario, pix_cidade")
             .limit(1)
             .maybeSingle(),
         ]);
