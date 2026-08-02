@@ -22,6 +22,7 @@ import { Route as AppDashboardRouteImport } from './routes/_app/dashboard'
 import { Route as AppConfiguracoesRouteImport } from './routes/_app/configuracoes'
 import { Route as AppClientesRouteImport } from './routes/_app/clientes'
 import { Route as AppCarnesRouteImport } from './routes/_app/carnes'
+import { Route as AppBannersRouteImport } from './routes/_app/banners'
 import { Route as AppAvisosRouteImport } from './routes/_app/avisos'
 import { Route as AreaClienteIndexRouteImport } from './routes/_area.cliente.index'
 import { Route as AreaClienteWifiRouteImport } from './routes/_area.cliente.wifi'
@@ -107,6 +108,11 @@ const AppClientesRoute = AppClientesRouteImport.update({
 const AppCarnesRoute = AppCarnesRouteImport.update({
   id: '/carnes',
   path: '/carnes',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppBannersRoute = AppBannersRouteImport.update({
+  id: '/banners',
+  path: '/banners',
   getParentRoute: () => AppRoute,
 } as any)
 const AppAvisosRoute = AppAvisosRouteImport.update({
@@ -234,6 +240,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/avisos': typeof AppAvisosRoute
+  '/banners': typeof AppBannersRoute
   '/carnes': typeof AppCarnesRoute
   '/clientes': typeof AppClientesRouteWithChildren
   '/configuracoes': typeof AppConfiguracoesRoute
@@ -270,6 +277,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/avisos': typeof AppAvisosRoute
+  '/banners': typeof AppBannersRoute
   '/carnes': typeof AppCarnesRoute
   '/clientes': typeof AppClientesRouteWithChildren
   '/configuracoes': typeof AppConfiguracoesRoute
@@ -309,6 +317,7 @@ export interface FileRoutesById {
   '/_area': typeof AreaRouteWithChildren
   '/auth': typeof AuthRoute
   '/_app/avisos': typeof AppAvisosRoute
+  '/_app/banners': typeof AppBannersRoute
   '/_app/carnes': typeof AppCarnesRoute
   '/_app/clientes': typeof AppClientesRouteWithChildren
   '/_app/configuracoes': typeof AppConfiguracoesRoute
@@ -347,6 +356,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/avisos'
+    | '/banners'
     | '/carnes'
     | '/clientes'
     | '/configuracoes'
@@ -383,6 +393,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/avisos'
+    | '/banners'
     | '/carnes'
     | '/clientes'
     | '/configuracoes'
@@ -421,6 +432,7 @@ export interface FileRouteTypes {
     | '/_area'
     | '/auth'
     | '/_app/avisos'
+    | '/_app/banners'
     | '/_app/carnes'
     | '/_app/clientes'
     | '/_app/configuracoes'
@@ -563,6 +575,13 @@ declare module '@tanstack/react-router' {
       path: '/carnes'
       fullPath: '/carnes'
       preLoaderRoute: typeof AppCarnesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/banners': {
+      id: '/_app/banners'
+      path: '/banners'
+      fullPath: '/banners'
+      preLoaderRoute: typeof AppBannersRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/avisos': {
@@ -743,6 +762,7 @@ const AppClientesRouteWithChildren = AppClientesRoute._addFileChildren(
 
 interface AppRouteChildren {
   AppAvisosRoute: typeof AppAvisosRoute
+  AppBannersRoute: typeof AppBannersRoute
   AppCarnesRoute: typeof AppCarnesRoute
   AppClientesRoute: typeof AppClientesRouteWithChildren
   AppConfiguracoesRoute: typeof AppConfiguracoesRoute
@@ -755,6 +775,7 @@ interface AppRouteChildren {
 
 const AppRouteChildren: AppRouteChildren = {
   AppAvisosRoute: AppAvisosRoute,
+  AppBannersRoute: AppBannersRoute,
   AppCarnesRoute: AppCarnesRoute,
   AppClientesRoute: AppClientesRouteWithChildren,
   AppConfiguracoesRoute: AppConfiguracoesRoute,
