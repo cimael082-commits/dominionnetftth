@@ -111,7 +111,7 @@ export function EditClienteDialog({
         valor_mensalidade: parseFloat(form.valor_mensalidade) || 0,
         dia_vencimento: parseInt(form.dia_vencimento) || 10,
         login_pppoe: form.login_pppoe || null,
-        senha_pppoe: form.senha_pppoe || null,
+        
         senha_reset: form.senha_reset || null,
         equipamentos,
         equipamentos_obs: form.equipamentos_obs || null,
