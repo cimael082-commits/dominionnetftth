@@ -25,6 +25,7 @@ import { Route as AppChamadosRouteImport } from './routes/_app/chamados'
 import { Route as AppCarnesRouteImport } from './routes/_app/carnes'
 import { Route as AppBannersRouteImport } from './routes/_app/banners'
 import { Route as AppAvisosRouteImport } from './routes/_app/avisos'
+import { Route as AppAssistenteRouteImport } from './routes/_app/assistente'
 import { Route as AreaClienteIndexRouteImport } from './routes/_area.cliente.index'
 import { Route as ApiAssistenteVozRouteImport } from './routes/api/assistente/voz'
 import { Route as ApiAssistenteTranscreverRouteImport } from './routes/api/assistente/transcrever'
@@ -127,6 +128,11 @@ const AppBannersRoute = AppBannersRouteImport.update({
 const AppAvisosRoute = AppAvisosRouteImport.update({
   id: '/avisos',
   path: '/avisos',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAssistenteRoute = AppAssistenteRouteImport.update({
+  id: '/assistente',
+  path: '/assistente',
   getParentRoute: () => AppRoute,
 } as any)
 const AreaClienteIndexRoute = AreaClienteIndexRouteImport.update({
@@ -264,6 +270,7 @@ const ApiPublicClienteAuthLoginRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/assistente': typeof AppAssistenteRoute
   '/avisos': typeof AppAvisosRoute
   '/banners': typeof AppBannersRoute
   '/carnes': typeof AppCarnesRoute
@@ -305,6 +312,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/assistente': typeof AppAssistenteRoute
   '/avisos': typeof AppAvisosRoute
   '/banners': typeof AppBannersRoute
   '/carnes': typeof AppCarnesRoute
@@ -349,6 +357,7 @@ export interface FileRoutesById {
   '/_app': typeof AppRouteWithChildren
   '/_area': typeof AreaRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_app/assistente': typeof AppAssistenteRoute
   '/_app/avisos': typeof AppAvisosRoute
   '/_app/banners': typeof AppBannersRoute
   '/_app/carnes': typeof AppCarnesRoute
@@ -392,6 +401,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/assistente'
     | '/avisos'
     | '/banners'
     | '/carnes'
@@ -433,6 +443,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/assistente'
     | '/avisos'
     | '/banners'
     | '/carnes'
@@ -476,6 +487,7 @@ export interface FileRouteTypes {
     | '/_app'
     | '/_area'
     | '/auth'
+    | '/_app/assistente'
     | '/_app/avisos'
     | '/_app/banners'
     | '/_app/carnes'
@@ -648,6 +660,13 @@ declare module '@tanstack/react-router' {
       path: '/avisos'
       fullPath: '/avisos'
       preLoaderRoute: typeof AppAvisosRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/assistente': {
+      id: '/_app/assistente'
+      path: '/assistente'
+      fullPath: '/assistente'
+      preLoaderRoute: typeof AppAssistenteRouteImport
       parentRoute: typeof AppRoute
     }
     '/_area/cliente/': {
@@ -841,6 +860,7 @@ const AppClientesRouteWithChildren = AppClientesRoute._addFileChildren(
 )
 
 interface AppRouteChildren {
+  AppAssistenteRoute: typeof AppAssistenteRoute
   AppAvisosRoute: typeof AppAvisosRoute
   AppBannersRoute: typeof AppBannersRoute
   AppCarnesRoute: typeof AppCarnesRoute
@@ -855,6 +875,7 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppAssistenteRoute: AppAssistenteRoute,
   AppAvisosRoute: AppAvisosRoute,
   AppBannersRoute: AppBannersRoute,
   AppCarnesRoute: AppCarnesRoute,

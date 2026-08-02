@@ -116,7 +116,7 @@ function AssistentePage() {
       new DefaultChatTransport({
         api: "/api/assistente/chat",
         // O token da sessão é resolvido a cada envio para nunca ir vencido.
-        headers: async () => {
+        headers: async (): Promise<Record<string, string>> => {
           const token = await tokenAtual();
           return token ? { Authorization: `Bearer ${token}` } : {};
         },
@@ -405,7 +405,7 @@ function AssistentePage() {
                     ) : (
                       <>
                         {ferramentas.length > 0 && (
-                          <Shimmer className="text-sm">Consultando {ferramentas.join(", ")}…</Shimmer>
+                          <Shimmer className="text-sm">{`Consultando ${ferramentas.join(", ")}…`}</Shimmer>
                         )}
                         {texto && (
                           <p className="whitespace-pre-wrap text-foreground">{texto}</p>
