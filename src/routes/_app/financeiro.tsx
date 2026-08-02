@@ -1,10 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { Check } from "lucide-react";
+import { Check, ChevronDown, ChevronRight, AlertTriangle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -18,16 +19,46 @@ import {
   formatDate,
   type ParcelaStatus,
 } from "@/lib/status-utils";
+import { WhatsappButton } from "@/components/whatsapp-button";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/financeiro")({
-  head: () => ({ meta: [{ title: "Financeiro — Dominion Net" }] }),
+  head: () => ({
+    meta: [
+      { title: "Financeiro e cobrança — Dominion Net" },
+      {
+        name: "description",
+        content:
+          "Acompanhe mensalidades em aberto, vencimentos e o total em atraso de cada assinante.",
+      },
+    ],
+  }),
   component: FinanceiroPage,
 });
+
+/** Linha de parcela com dados do cliente embutidos. */
+type ParcelaRow = {
+  id: string;
+  cliente_id: string;
+  referencia_mes: number;
+  referencia_ano: number;
+  data_vencimento: string;
+  valor: number | string;
+  status: string;
+  clientes: {
+    id: string;
+    nome: string;
+    telefone: string | null;
+    whatsapp: string | null;
+  } | null;
+};
 
 function FinanceiroPage() {
   const qc = useQueryClient();
   const [filtro, setFiltro] = useState<"todos" | ParcelaStatus>("todos");
+  const [buscaDevedor, setBuscaDevedor] = useState("");
+  const [aberto, setAberto] = useState<string | null>(null);
+
 
   const q = useQuery({
     queryKey: ["financeiro-all"],
