@@ -67,6 +67,11 @@ function HomeCliente() {
   const [cli, setCli] = useState<Cliente | null>(null);
   const [parcelas, setParcelas] = useState<Parcela[]>([]);
   const [avisos, setAvisos] = useState<Aviso[]>([]);
+  const [portal, setPortal] = useState<Portal | null>(null);
+  const suporteUrl = `https://wa.me/${
+    (portal?.portal_suporte_whatsapp || SUPORTE_WHATSAPP_PADRAO).replace(/\D/g, "")
+  }?text=${encodeURIComponent("Olá! Preciso de suporte da Dominion Net 5G.")}`;
+
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
   const [tentativa, setTentativa] = useState(0);
