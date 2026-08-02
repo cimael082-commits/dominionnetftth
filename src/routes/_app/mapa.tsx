@@ -1,4 +1,15 @@
 /// <reference types="google.maps" />
+/** Escapa valores vindos do banco antes de injetá-los em HTML (InfoWindow). */
+const escHtml = (v: unknown): string =>
+  v === null || v === undefined
+    ? ""
+    : String(v)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
