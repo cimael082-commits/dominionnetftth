@@ -347,17 +347,39 @@ function MapaPage() {
 
     const map = mapRef.current;
 
+    // Índice de clientes por CTO, usado para diagnóstico automático.
+    const porCto = new Map<
+      string,
+      { nome: string; online: boolean | null; porta: number }[]
+    >();
+    (portasTodasQ.data ?? []).forEach((p) => {
+      if (!p.clientes) return;
+      const arr = porCto.get(p.cto_id) ?? [];
+      arr.push({ nome: p.clientes.nome, online: p.clientes.online, porta: p.porta_numero });
+      porCto.set(p.cto_id, arr);
+    });
+
     (ctosQ.data ?? []).forEach((c) => {
+      const conectados = porCto.get(c.id) ?? [];
+      const offline = conectados.filter((x) => x.online !== true).length;
+      const pot = c.potencia_dbm == null ? null : Number(c.potencia_dbm);
+      const potRuim = pot != null && (pot < -27 || pot > -8);
+      // CTO fica vermelha quando a potência está fora da faixa aceitável
+      // ou quando metade ou mais dos clientes atendidos estão offline.
+      const problema =
+        c.status !== "desativado" &&
+        (potRuim || (conectados.length > 0 && offline >= Math.ceil(conectados.length / 2)));
+      const fill = problema ? "#ef4444" : statusColor[c.status];
       const marker = new google.maps.Marker({
         position: { lat: Number(c.latitude), lng: Number(c.longitude) },
         map,
         title: `CTO ${c.nome} — ${c.portas_livres}/${c.portas_totais} livres`,
         icon: {
           path: "M -9 -9 L 9 -9 L 9 9 L -9 9 z",
-          fillColor: statusColor[c.status],
+          fillColor: fill,
           fillOpacity: 1,
-          strokeColor: "#0A1628",
-          strokeWeight: 2,
+          strokeColor: problema ? "#fca5a5" : "#0A1628",
+          strokeWeight: problema ? 3 : 2,
           scale: 1,
         },
         label: {
@@ -366,10 +388,35 @@ function MapaPage() {
           fontSize: "9px",
           fontWeight: "700",
         },
+        zIndex: problema ? 40 : 10,
       });
-      marker.addListener("click", () => setEditCto(c));
+      const listaHtml = conectados.length
+        ? conectados
+            .sort((a, b) => a.porta - b.porta)
+            .map(
+              (x) =>
+                `<div>P${x.porta} · <span style="color:${x.online ? "#059669" : "#dc2626"}">●</span> ${escHtml(x.nome)}</div>`,
+            )
+            .join("")
+        : "<div style='color:#64748b'>Nenhum cliente vinculado</div>";
+      const info = new google.maps.InfoWindow({
+        content: `<div style="color:#0A1628;font-family:system-ui;font-size:12px;min-width:220px;max-height:240px;overflow:auto">
+<b>CTO ${escHtml(c.nome)}</b><br/>
+Status: ${escHtml(statusLabel[c.status])}${problema ? ' <b style="color:#dc2626">· ALERTA</b>' : ""}<br/>
+Portas: ${c.portas_totais - c.portas_livres}/${c.portas_totais} ocupadas<br/>
+Potência: ${pot == null ? "não informada" : `<b style="color:${potRuim ? "#dc2626" : "#059669"}">${pot.toFixed(2)} dBm</b>`}<br/>
+Clientes conectados: <b>${conectados.length}</b> (${offline} offline)
+${c.alerta ? `<br/><span style="color:#dc2626">${escHtml(c.alerta)}</span>` : ""}
+<div style="margin-top:6px;border-top:1px solid #e2e8f0;padding-top:4px">${listaHtml}</div>
+</div>`,
+      });
+      marker.addListener("click", () => {
+        info.open({ map, anchor: marker });
+        setEditCto(c);
+      });
       markersRef.current.push(marker);
     });
+
 
     (ceosQ.data ?? []).forEach((c) => {
       const marker = new google.maps.Marker({
