@@ -76,7 +76,11 @@ type Cto = {
   portas_totais: number;
   portas_livres: number;
   status: InfraStatus;
+  potencia_dbm?: number | string | null;
+  potencia_atualizada_em?: string | null;
+  alerta?: string | null;
 };
+
 type Ceo = { id: string; nome: string; latitude: number; longitude: number; status: InfraStatus };
 type Rota = {
   id: string;
