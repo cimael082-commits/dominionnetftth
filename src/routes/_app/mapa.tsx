@@ -1475,13 +1475,21 @@ function EditCtoDialog({ cto, onClose }: { cto: Cto | null; onClose: () => void 
   const saveDados = useMutation({
     mutationFn: async () => {
       if (!cto) return;
+      const potNum = potencia.trim() === "" ? null : Number(potencia.replace(",", "."));
+      if (potNum != null && !Number.isFinite(potNum)) {
+        throw new Error("Potência inválida. Use um número em dBm (ex: -21.5).");
+      }
       const { error } = await db.from("ctos").update({
         nome,
         status,
         portas_totais: parseInt(portasTotais) || cto.portas_totais,
+        potencia_dbm: potNum,
+        potencia_atualizada_em: potNum == null ? null : new Date().toISOString(),
+        alerta: alerta.trim() === "" ? null : alerta.trim(),
       }).eq("id", cto.id);
       if (error) throw error;
     },
+
     onSuccess: () => {
       toast.success("CTO atualizada");
       qc.invalidateQueries({ queryKey: ["map"] });
