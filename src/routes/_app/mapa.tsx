@@ -76,7 +76,11 @@ type Cto = {
   portas_totais: number;
   portas_livres: number;
   status: InfraStatus;
+  potencia_dbm?: number | string | null;
+  potencia_atualizada_em?: string | null;
+  alerta?: string | null;
 };
+
 type Ceo = { id: string; nome: string; latitude: number; longitude: number; status: InfraStatus };
 type Rota = {
   id: string;
@@ -172,6 +176,26 @@ function MapaPage() {
       return (data ?? []) as Cto[];
     },
   });
+  /** Todas as portas ocupadas, com o cliente e o estado de conexão dele. */
+  const portasTodasQ = useQuery({
+    queryKey: ["map", "cto_portas_todas"],
+    queryFn: async () => {
+      const { data, error } = await db
+        .from("cto_portas")
+        .select("id, cto_id, porta_numero, cliente_id, clientes(id, nome, online)")
+        .not("cliente_id", "is", null)
+        .order("porta_numero");
+      if (error) throw error;
+      return (data ?? []) as unknown as Array<{
+        id: string;
+        cto_id: string;
+        porta_numero: number;
+        cliente_id: string | null;
+        clientes: { id: string; nome: string; online: boolean | null } | null;
+      }>;
+    },
+  });
+
   const ceosQ = useQuery({
     queryKey: ["map", "ceos"],
     queryFn: async () => {
@@ -323,17 +347,39 @@ function MapaPage() {
 
     const map = mapRef.current;
 
+    // Índice de clientes por CTO, usado para diagnóstico automático.
+    const porCto = new Map<
+      string,
+      { nome: string; online: boolean | null; porta: number }[]
+    >();
+    (portasTodasQ.data ?? []).forEach((p) => {
+      if (!p.clientes) return;
+      const arr = porCto.get(p.cto_id) ?? [];
+      arr.push({ nome: p.clientes.nome, online: p.clientes.online, porta: p.porta_numero });
+      porCto.set(p.cto_id, arr);
+    });
+
     (ctosQ.data ?? []).forEach((c) => {
+      const conectados = porCto.get(c.id) ?? [];
+      const offline = conectados.filter((x) => x.online !== true).length;
+      const pot = c.potencia_dbm == null ? null : Number(c.potencia_dbm);
+      const potRuim = pot != null && (pot < -27 || pot > -8);
+      // CTO fica vermelha quando a potência está fora da faixa aceitável
+      // ou quando metade ou mais dos clientes atendidos estão offline.
+      const problema =
+        c.status !== "desativado" &&
+        (potRuim || (conectados.length > 0 && offline >= Math.ceil(conectados.length / 2)));
+      const fill = problema ? "#ef4444" : statusColor[c.status];
       const marker = new google.maps.Marker({
         position: { lat: Number(c.latitude), lng: Number(c.longitude) },
         map,
         title: `CTO ${c.nome} — ${c.portas_livres}/${c.portas_totais} livres`,
         icon: {
           path: "M -9 -9 L 9 -9 L 9 9 L -9 9 z",
-          fillColor: statusColor[c.status],
+          fillColor: fill,
           fillOpacity: 1,
-          strokeColor: "#0A1628",
-          strokeWeight: 2,
+          strokeColor: problema ? "#fca5a5" : "#0A1628",
+          strokeWeight: problema ? 3 : 2,
           scale: 1,
         },
         label: {
@@ -342,10 +388,35 @@ function MapaPage() {
           fontSize: "9px",
           fontWeight: "700",
         },
+        zIndex: problema ? 40 : 10,
       });
-      marker.addListener("click", () => setEditCto(c));
+      const listaHtml = conectados.length
+        ? conectados
+            .sort((a, b) => a.porta - b.porta)
+            .map(
+              (x) =>
+                `<div>P${x.porta} · <span style="color:${x.online ? "#059669" : "#dc2626"}">●</span> ${escHtml(x.nome)}</div>`,
+            )
+            .join("")
+        : "<div style='color:#64748b'>Nenhum cliente vinculado</div>";
+      const info = new google.maps.InfoWindow({
+        content: `<div style="color:#0A1628;font-family:system-ui;font-size:12px;min-width:220px;max-height:240px;overflow:auto">
+<b>CTO ${escHtml(c.nome)}</b><br/>
+Status: ${escHtml(statusLabel[c.status])}${problema ? ' <b style="color:#dc2626">· ALERTA</b>' : ""}<br/>
+Portas: ${c.portas_totais - c.portas_livres}/${c.portas_totais} ocupadas<br/>
+Potência: ${pot == null ? "não informada" : `<b style="color:${potRuim ? "#dc2626" : "#059669"}">${pot.toFixed(2)} dBm</b>`}<br/>
+Clientes conectados: <b>${conectados.length}</b> (${offline} offline)
+${c.alerta ? `<br/><span style="color:#dc2626">${escHtml(c.alerta)}</span>` : ""}
+<div style="margin-top:6px;border-top:1px solid #e2e8f0;padding-top:4px">${listaHtml}</div>
+</div>`,
+      });
+      marker.addListener("click", () => {
+        info.open({ map, anchor: marker });
+        setEditCto(c);
+      });
       markersRef.current.push(marker);
     });
+
 
     (ceosQ.data ?? []).forEach((c) => {
       const marker = new google.maps.Marker({
@@ -420,7 +491,7 @@ function MapaPage() {
       });
       polylinesRef.current.push({ id: r.id, pl });
     });
-  }, [ready, ctosQ.data, ceosQ.data, rotasQ.data, clientesQ.data]);
+  }, [ready, ctosQ.data, ceosQ.data, rotasQ.data, clientesQ.data, portasTodasQ.data]);
 
   const cancelDrawing = useCallback(() => {
     const d = drawingRef.current;
@@ -1364,14 +1435,19 @@ function EditCtoDialog({ cto, onClose }: { cto: Cto | null; onClose: () => void 
   const [nome, setNome] = useState("");
   const [status, setStatus] = useState<InfraStatus>("ativo");
   const [portasTotais, setPortasTotais] = useState("8");
+  const [potencia, setPotencia] = useState("");
+  const [alerta, setAlerta] = useState("");
 
   useEffect(() => {
     if (cto) {
       setNome(cto.nome);
       setStatus(cto.status);
       setPortasTotais(String(cto.portas_totais));
+      setPotencia(cto.potencia_dbm == null ? "" : String(cto.potencia_dbm));
+      setAlerta(cto.alerta ?? "");
     }
   }, [cto]);
+
 
   const portasQ = useQuery({
     queryKey: ["cto_portas", cto?.id],
@@ -1399,13 +1475,21 @@ function EditCtoDialog({ cto, onClose }: { cto: Cto | null; onClose: () => void 
   const saveDados = useMutation({
     mutationFn: async () => {
       if (!cto) return;
+      const potNum = potencia.trim() === "" ? null : Number(potencia.replace(",", "."));
+      if (potNum != null && !Number.isFinite(potNum)) {
+        throw new Error("Potência inválida. Use um número em dBm (ex: -21.5).");
+      }
       const { error } = await db.from("ctos").update({
         nome,
         status,
         portas_totais: parseInt(portasTotais) || cto.portas_totais,
+        potencia_dbm: potNum,
+        potencia_atualizada_em: potNum == null ? null : new Date().toISOString(),
+        alerta: alerta.trim() === "" ? null : alerta.trim(),
       }).eq("id", cto.id);
       if (error) throw error;
     },
+
     onSuccess: () => {
       toast.success("CTO atualizada");
       qc.invalidateQueries({ queryKey: ["map"] });
@@ -1522,9 +1606,37 @@ function EditCtoDialog({ cto, onClose }: { cto: Cto | null; onClose: () => void 
                 />
               </div>
             </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label className="text-xs">Potência óptica (dBm)</Label>
+                <Input
+                  value={potencia}
+                  onChange={(e) => setPotencia(e.target.value)}
+                  placeholder="ex: -21.5"
+                />
+                <p className="text-[10px] text-muted-foreground">
+                  Fora da faixa −8 a −27 dBm a CTO fica vermelha no mapa.
+                </p>
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs">Alerta / observação</Label>
+                <Input
+                  value={alerta}
+                  onChange={(e) => setAlerta(e.target.value)}
+                  placeholder="ex: fibra rompida no poste 12"
+                />
+              </div>
+            </div>
+            {cto.potencia_atualizada_em && (
+              <div className="text-xs text-muted-foreground">
+                Última leitura de potência:{" "}
+                {new Date(cto.potencia_atualizada_em).toLocaleString("pt-BR")}
+              </div>
+            )}
             <div className="text-xs text-muted-foreground">
               Lat: {Number(cto.latitude).toFixed(6)} · Lng: {Number(cto.longitude).toFixed(6)}
             </div>
+
             <div className="flex justify-between pt-2">
               <Button
                 variant="destructive"

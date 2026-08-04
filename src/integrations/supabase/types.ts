@@ -517,6 +517,7 @@ export type Database = {
       }
       ctos: {
         Row: {
+          alerta: string | null
           created_at: string
           id: string
           latitude: number
@@ -525,11 +526,14 @@ export type Database = {
           observacoes: string | null
           portas_livres: number
           portas_totais: number
+          potencia_atualizada_em: string | null
+          potencia_dbm: number | null
           router_id: string | null
           status: Database["public"]["Enums"]["infra_status"]
           updated_at: string
         }
         Insert: {
+          alerta?: string | null
           created_at?: string
           id?: string
           latitude: number
@@ -538,11 +542,14 @@ export type Database = {
           observacoes?: string | null
           portas_livres?: number
           portas_totais?: number
+          potencia_atualizada_em?: string | null
+          potencia_dbm?: number | null
           router_id?: string | null
           status?: Database["public"]["Enums"]["infra_status"]
           updated_at?: string
         }
         Update: {
+          alerta?: string | null
           created_at?: string
           id?: string
           latitude?: number
@@ -551,6 +558,8 @@ export type Database = {
           observacoes?: string | null
           portas_livres?: number
           portas_totais?: number
+          potencia_atualizada_em?: string | null
+          potencia_dbm?: number | null
           router_id?: string | null
           status?: Database["public"]["Enums"]["infra_status"]
           updated_at?: string
