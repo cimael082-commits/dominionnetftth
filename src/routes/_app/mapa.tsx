@@ -1435,14 +1435,19 @@ function EditCtoDialog({ cto, onClose }: { cto: Cto | null; onClose: () => void 
   const [nome, setNome] = useState("");
   const [status, setStatus] = useState<InfraStatus>("ativo");
   const [portasTotais, setPortasTotais] = useState("8");
+  const [potencia, setPotencia] = useState("");
+  const [alerta, setAlerta] = useState("");
 
   useEffect(() => {
     if (cto) {
       setNome(cto.nome);
       setStatus(cto.status);
       setPortasTotais(String(cto.portas_totais));
+      setPotencia(cto.potencia_dbm == null ? "" : String(cto.potencia_dbm));
+      setAlerta(cto.alerta ?? "");
     }
   }, [cto]);
+
 
   const portasQ = useQuery({
     queryKey: ["cto_portas", cto?.id],
