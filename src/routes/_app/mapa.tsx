@@ -176,6 +176,26 @@ function MapaPage() {
       return (data ?? []) as Cto[];
     },
   });
+  /** Todas as portas ocupadas, com o cliente e o estado de conexão dele. */
+  const portasTodasQ = useQuery({
+    queryKey: ["map", "cto_portas_todas"],
+    queryFn: async () => {
+      const { data, error } = await db
+        .from("cto_portas")
+        .select("id, cto_id, porta_numero, cliente_id, clientes(id, nome, online)")
+        .not("cliente_id", "is", null)
+        .order("porta_numero");
+      if (error) throw error;
+      return (data ?? []) as unknown as Array<{
+        id: string;
+        cto_id: string;
+        porta_numero: number;
+        cliente_id: string | null;
+        clientes: { id: string; nome: string; online: boolean | null } | null;
+      }>;
+    },
+  });
+
   const ceosQ = useQuery({
     queryKey: ["map", "ceos"],
     queryFn: async () => {
