@@ -65,15 +65,25 @@ function FinanceiroPage() {
         .eq("status", "pendente")
         .lt("data_vencimento", today);
 
-      const { data, error } = await supabase
-        .from("parcelas")
-        .select("*, clientes(id, nome, telefone, whatsapp)")
-        .order("data_vencimento", { ascending: false })
-        .limit(500);
-      if (error) throw error;
-      return (data ?? []) as unknown as ParcelaRow[];
+      // Busca paginada: o PostgREST limita cada resposta, então percorremos
+      // todas as páginas para nunca esconder parcelas antigas do administrador.
+      const PAGE = 1000;
+      const todas: ParcelaRow[] = [];
+      for (let from = 0; ; from += PAGE) {
+        const { data, error } = await supabase
+          .from("parcelas")
+          .select("*, clientes(id, nome, telefone, whatsapp)")
+          .order("data_vencimento", { ascending: false })
+          .range(from, from + PAGE - 1);
+        if (error) throw error;
+        const lote = (data ?? []) as unknown as ParcelaRow[];
+        todas.push(...lote);
+        if (lote.length < PAGE) break;
+      }
+      return todas;
     },
   });
+
 
 
   const marcarPago = useMutation({
