@@ -491,7 +491,7 @@ ${c.alerta ? `<br/><span style="color:#dc2626">${escHtml(c.alerta)}</span>` : ""
       });
       polylinesRef.current.push({ id: r.id, pl });
     });
-  }, [ready, ctosQ.data, ceosQ.data, rotasQ.data, clientesQ.data]);
+  }, [ready, ctosQ.data, ceosQ.data, rotasQ.data, clientesQ.data, portasTodasQ.data]);
 
   const cancelDrawing = useCallback(() => {
     const d = drawingRef.current;
