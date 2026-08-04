@@ -1606,9 +1606,37 @@ function EditCtoDialog({ cto, onClose }: { cto: Cto | null; onClose: () => void 
                 />
               </div>
             </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label className="text-xs">Potência óptica (dBm)</Label>
+                <Input
+                  value={potencia}
+                  onChange={(e) => setPotencia(e.target.value)}
+                  placeholder="ex: -21.5"
+                />
+                <p className="text-[10px] text-muted-foreground">
+                  Fora da faixa −8 a −27 dBm a CTO fica vermelha no mapa.
+                </p>
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs">Alerta / observação</Label>
+                <Input
+                  value={alerta}
+                  onChange={(e) => setAlerta(e.target.value)}
+                  placeholder="ex: fibra rompida no poste 12"
+                />
+              </div>
+            </div>
+            {cto.potencia_atualizada_em && (
+              <div className="text-xs text-muted-foreground">
+                Última leitura de potência:{" "}
+                {new Date(cto.potencia_atualizada_em).toLocaleString("pt-BR")}
+              </div>
+            )}
             <div className="text-xs text-muted-foreground">
               Lat: {Number(cto.latitude).toFixed(6)} · Lng: {Number(cto.longitude).toFixed(6)}
             </div>
+
             <div className="flex justify-between pt-2">
               <Button
                 variant="destructive"
