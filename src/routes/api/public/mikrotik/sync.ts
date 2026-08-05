@@ -73,19 +73,34 @@ export const Route = createFileRoute("/api/public/mikrotik/sync")({
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const now = new Date().toISOString();
 
-        // Registra/atualiza o roteador
-        await supabaseAdmin.from("roteadores").upsert(
-          {
+        // Registra/atualiza o roteador. O nome definido pelo admin no painel
+        // NÃO é sobrescrito pelo agente — só é usado na criação do registro.
+        const { data: routerExistente } = await supabaseAdmin
+          .from("roteadores")
+          .select("id")
+          .eq("router_id", routerId)
+          .maybeSingle();
+
+        const dadosTecnicos = {
+          ip: str(body.router_ip),
+          identity: str(body.identity),
+          versao: str(body.versao),
+          online: true,
+          ultima_sincronizacao: now,
+        };
+
+        if (routerExistente) {
+          await supabaseAdmin
+            .from("roteadores")
+            .update(dadosTecnicos)
+            .eq("router_id", routerId);
+        } else {
+          await supabaseAdmin.from("roteadores").insert({
             router_id: routerId,
             nome: str(body.router_nome) ?? str(body.identity) ?? routerId,
-            ip: str(body.router_ip),
-            identity: str(body.identity),
-            versao: str(body.versao),
-            online: true,
-            ultima_sincronizacao: now,
-          },
-          { onConflict: "router_id" },
-        );
+            ...dadosTecnicos,
+          });
+        }
 
         // Carrega TODOS os clientes com login PPPoE.
         // O vínculo é feito pelo login enviado pelo agente: se o mesmo cliente
