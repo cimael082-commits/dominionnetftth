@@ -87,12 +87,14 @@ export const Route = createFileRoute("/api/public/mikrotik/sync")({
           { onConflict: "router_id" },
         );
 
-        // Carrega clientes: os que já pertencem a este router + os ainda sem router definido
+        // Carrega TODOS os clientes com login PPPoE.
+        // O vínculo é feito pelo login enviado pelo agente: se o mesmo cliente
+        // passar a responder por outro MikroTik (troca de link), ele é
+        // reatribuído a este router_id em vez de ficar "não encontrado".
         const { data: clientesDb, error: errList } = await supabaseAdmin
           .from("clientes")
           .select("id, login_pppoe, online, router_id")
-          .not("login_pppoe", "is", null)
-          .or(`router_id.eq.${routerId},router_id.is.null`);
+          .not("login_pppoe", "is", null);
         if (errList) return json(500, { error: errList.message });
 
         const porLogin = new Map<
