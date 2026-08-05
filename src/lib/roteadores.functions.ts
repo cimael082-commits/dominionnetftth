@@ -26,7 +26,7 @@ export const atualizarRoteador = createServerFn({ method: "POST" })
     return data;
   })
   .handler(async ({ data, context }) => {
-    await assertStaff(context.supabase, context.userId);
+    await assertStaff(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin
       .from("roteadores")
@@ -47,7 +47,7 @@ export const excluirRoteador = createServerFn({ method: "POST" })
     return data;
   })
   .handler(async ({ data, context }) => {
-    await assertStaff(context.supabase, context.userId);
+    await assertStaff(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const routerId = data.routerId;
 
