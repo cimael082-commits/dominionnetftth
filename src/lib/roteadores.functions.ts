@@ -1,9 +1,15 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
+type AuthedContext = { supabase: { rpc: (...args: never[]) => unknown }; userId: string };
+
 /** Garante que o chamador é staff antes de qualquer operação privilegiada. */
-async function assertStaff(supabase: { rpc: (fn: string, args: Record<string, unknown>) => Promise<{ data: unknown }> }, userId: string) {
-  const { data } = await supabase.rpc("is_staff", { _user_id: userId });
+async function assertStaff(context: unknown) {
+  const ctx = context as AuthedContext;
+  const { data } = (await (ctx.supabase.rpc as unknown as (
+    fn: "is_staff",
+    args: { _user_id: string },
+  ) => Promise<{ data: boolean | null }>)("is_staff", { _user_id: ctx.userId }));
   if (data !== true) throw new Error("Acesso negado");
 }
 
