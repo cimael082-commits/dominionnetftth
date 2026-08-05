@@ -73,26 +73,43 @@ export const Route = createFileRoute("/api/public/mikrotik/sync")({
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const now = new Date().toISOString();
 
-        // Registra/atualiza o roteador
-        await supabaseAdmin.from("roteadores").upsert(
-          {
+        // Registra/atualiza o roteador. O nome definido pelo admin no painel
+        // NÃO é sobrescrito pelo agente — só é usado na criação do registro.
+        const { data: routerExistente } = await supabaseAdmin
+          .from("roteadores")
+          .select("id")
+          .eq("router_id", routerId)
+          .maybeSingle();
+
+        const dadosTecnicos = {
+          ip: str(body.router_ip),
+          identity: str(body.identity),
+          versao: str(body.versao),
+          online: true,
+          ultima_sincronizacao: now,
+        };
+
+        if (routerExistente) {
+          await supabaseAdmin
+            .from("roteadores")
+            .update(dadosTecnicos)
+            .eq("router_id", routerId);
+        } else {
+          await supabaseAdmin.from("roteadores").insert({
             router_id: routerId,
             nome: str(body.router_nome) ?? str(body.identity) ?? routerId,
-            ip: str(body.router_ip),
-            identity: str(body.identity),
-            versao: str(body.versao),
-            online: true,
-            ultima_sincronizacao: now,
-          },
-          { onConflict: "router_id" },
-        );
+            ...dadosTecnicos,
+          });
+        }
 
-        // Carrega clientes: os que já pertencem a este router + os ainda sem router definido
+        // Carrega TODOS os clientes com login PPPoE.
+        // O vínculo é feito pelo login enviado pelo agente: se o mesmo cliente
+        // passar a responder por outro MikroTik (troca de link), ele é
+        // reatribuído a este router_id em vez de ficar "não encontrado".
         const { data: clientesDb, error: errList } = await supabaseAdmin
           .from("clientes")
           .select("id, login_pppoe, online, router_id")
-          .not("login_pppoe", "is", null)
-          .or(`router_id.eq.${routerId},router_id.is.null`);
+          .not("login_pppoe", "is", null);
         if (errList) return json(500, { error: errList.message });
 
         const porLogin = new Map<
