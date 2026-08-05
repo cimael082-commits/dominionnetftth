@@ -821,12 +821,14 @@ export type Database = {
           clientes_online: number
           clientes_total: number
           created_at: string
+          descricao: string | null
           id: string
           identity: string | null
           ip: string | null
           nome: string
           observacoes: string | null
           online: boolean
+          operadora: string | null
           router_id: string
           ultima_sincronizacao: string | null
           updated_at: string
@@ -836,12 +838,14 @@ export type Database = {
           clientes_online?: number
           clientes_total?: number
           created_at?: string
+          descricao?: string | null
           id?: string
           identity?: string | null
           ip?: string | null
           nome: string
           observacoes?: string | null
           online?: boolean
+          operadora?: string | null
           router_id: string
           ultima_sincronizacao?: string | null
           updated_at?: string
@@ -851,12 +855,14 @@ export type Database = {
           clientes_online?: number
           clientes_total?: number
           created_at?: string
+          descricao?: string | null
           id?: string
           identity?: string | null
           ip?: string | null
           nome?: string
           observacoes?: string | null
           online?: boolean
+          operadora?: string | null
           router_id?: string
           ultima_sincronizacao?: string | null
           updated_at?: string
