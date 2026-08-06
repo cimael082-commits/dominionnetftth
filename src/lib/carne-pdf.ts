@@ -408,24 +408,25 @@ async function desenharBoleto(
   doc.setLineWidth(0.3);
   doc.line(col3X - 5, bY, col3X - 5, y + h - 3);
 
-  drawIcon(doc, col3X + 4, bY + 4, 4, BLUE, "$");
+  drawIcon(doc, col3X + 3.2, bY + 4, 3.2, BLUE, "$");
   doc.setTextColor(...NAVY);
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(9.5);
-  doc.text("PAGUE COM PIX", col3X + 10, bY + 5.2);
+  doc.setFontSize(8);
+  doc.text("PAGUE COM PIX", col3X + 8, bY + 5);
   if (qrPix) doc.addImage(qrPix, "PNG", col3X + 3, bY + 10, qrSize, qrSize);
-  doc.setFontSize(7);
+  doc.setFontSize(6.5);
   doc.text("ESCANEIE O QR CODE", col3X + 3 + qrSize / 2, bY + 10 + qrSize + 3.5, {
     align: "center",
   });
   doc.setFont("helvetica", "normal");
-  doc.setFontSize(6.5);
-  doc.text("para pagar com Pix", col3X + 3 + qrSize / 2, bY + 10 + qrSize + 6.8, {
+  doc.setFontSize(6);
+  doc.text("para pagar com Pix", col3X + 3 + qrSize / 2, bY + 10 + qrSize + 6.5, {
     align: "center",
   });
 
   // ---------- Coluna 4: Central do Cliente ----------
-  const col4X = x + 122;
+  const col4X = x + 126;
+
   const col4W = x + w - 4 - col4X;
   doc.setDrawColor(...BLUE_LIGHT);
   doc.line(col4X - 5, bY, col4X - 5, y + h - 3);
