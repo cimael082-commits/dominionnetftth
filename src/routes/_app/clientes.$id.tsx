@@ -45,7 +45,9 @@ import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/clientes/$id")({
   head: () => ({ meta: [{ title: "Cliente — Dominion Net" }] }),
-  validateSearch: (s: Record<string, unknown>) => ({ edit: s.edit === 1 || s.edit === "1" ? 1 : undefined }),
+  validateSearch: (s: Record<string, unknown>): { edit?: 1 } =>
+    s.edit === 1 || s.edit === "1" ? { edit: 1 } : {},
+
   component: ClienteDetail,
 });
 

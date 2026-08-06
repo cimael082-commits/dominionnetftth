@@ -228,6 +228,13 @@ function drawIcon(
   doc.text(glyph, cx, cy + 0.2, { align: "center", baseline: "middle" });
 }
 
+function centralLink(input: CarneInput) {
+  return (
+    input.centralUrl ??
+    (typeof window !== "undefined" ? `${window.location.origin}/cliente/login` : "")
+  );
+}
+
 async function desenharBoleto(
   doc: jsPDF,
   x: number,
@@ -243,19 +250,17 @@ async function desenharBoleto(
   doc.roundedRect(x, y, w, h, 3, 3, "S");
 
   // ================= TOPO =================
-  const topH = 32;
-  // Divisória vertical entre bloco de campos e área da empresa
-  const leftW = 78;
+  const topH = 30;
+  const leftW = 74;
 
-  // Campos DOCUMENTO / VENCIMENTO / PARCELA / VALOR
   const fx = x + 4;
   const fy = y + 4;
-  const fieldW = 32;
+  const fieldW = 30;
   const fieldH = 7;
   const gapX = 4;
   const gapY = 3;
 
-  const docNum = (input.cliente.cpf_cnpj ?? "").replace(/\D/g, "").slice(-5) || "66959";
+  const docNum = (input.cliente.cpf_cnpj ?? "").replace(/\D/g, "").slice(-5) || "—";
 
   drawField(doc, fx, fy, fieldW, fieldH, "DOCUMENTO", docNum, true);
   drawField(doc, fx + fieldW + gapX, fy, fieldW, fieldH, "VENCIMENTO", fmtDate(parcela.vencimento));
@@ -277,82 +282,91 @@ async function desenharBoleto(
 
   // Logo
   const logoX = x + leftW + 3;
-  const logoY = y + 3;
   const logoW = 28;
-  drawLogo(doc, logoX, logoY, logoW, topH - 6);
+  drawLogo(doc, logoX, y + 3, logoW, topH - 6);
 
   // Bloco direito: nome empresa + descrição + telefone
-  const rx = logoX + logoW + 3;
+  const rx = logoX + logoW + 4;
   const rw = x + w - rx - 4;
+  const tel = input.empresa.telefone ?? "(82) 99382-3246";
 
   doc.setTextColor(...NAVY);
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(11);
+  doc.setFontSize(12);
   doc.text(input.empresa.nome_empresa, rx, y + 8);
 
   doc.setFont("helvetica", "normal");
-  doc.setFontSize(8);
+  doc.setFontSize(7.5);
   doc.setTextColor(...TEXT);
   doc.text("Internet Fibra Óptica Mais bem avaliada em Maceió", rx, y + 13);
-  doc.text("Qualidade Garantida Velocidade sem Limites.", rx, y + 17);
+  doc.text("Qualidade Garantida Velocidade sem Limites.", rx, y + 16.5);
 
-  // Barra azul clara com telefone
   doc.setFillColor(...BLUE_LIGHT);
-  doc.roundedRect(rx, y + 20, rw, 7, 3, 3, "F");
+  doc.roundedRect(rx, y + 19, rw, 8, 4, 4, "F");
+  drawIcon(doc, rx + 5, y + 23, 2.6, BLUE, "T");
   doc.setTextColor(...NAVY);
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(7.5);
-  const tel = input.empresa.telefone ?? "(82) 98758-5338 ou (82) 99382-3246";
-  doc.text(`Telefone: ${tel}`, rx + 3, y + 24.5);
+  doc.setFontSize(8);
+  doc.text(`Telefone: ${tel}`, rx + 9.5, y + 23.8);
 
   // Linha divisória horizontal
   doc.setDrawColor(...NAVY);
-  doc.setLineWidth(0.3);
+  doc.setLineWidth(0.4);
   doc.line(x + 2, y + topH + 1, x + w - 2, y + topH + 1);
 
   // ================= INFERIOR =================
   const bY = y + topH + 4;
-  const bH = h - topH - 6;
 
-  // Coluna esquerda: NOME / ENDEREÇO / SUPORTE
+  // ---------- Coluna 1: dados do cliente ----------
   const infoX = x + 4;
-  let iy = bY + 2;
-  const iconR = 3;
+  const iconR = 2.8;
+  let iy = bY + 1;
 
-  drawIcon(doc, infoX + iconR, iy + iconR, iconR, BLUE, "P");
-  doc.setTextColor(...NAVY);
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(9);
-  doc.text("NOME", infoX + iconR * 2 + 3, iy + 2);
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(9);
-  doc.setTextColor(...TEXT);
-  doc.text(input.cliente.nome.slice(0, 40), infoX + iconR * 2 + 3, iy + 6);
+  const linhaInfo = (
+    rotulo: string,
+    valor: string,
+    cor: [number, number, number],
+    glyph: string,
+    corRotulo: [number, number, number] = NAVY,
+  ) => {
+    drawIcon(doc, infoX + iconR, iy + iconR, iconR, cor, glyph);
+    doc.setTextColor(...corRotulo);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(8.5);
+    doc.text(rotulo, infoX + iconR * 2 + 3, iy + 2.2);
+    if (valor) {
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(7.5);
+      doc.setTextColor(...TEXT);
+      doc.text(valor, infoX + iconR * 2 + 3, iy + 6);
+    }
+    iy += 12;
+  };
 
-  iy += 13;
-  drawIcon(doc, infoX + iconR, iy + iconR, iconR, BLUE, "L");
-  doc.setTextColor(...NAVY);
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(9);
-  doc.text("ENDEREÇO", infoX + iconR * 2 + 3, iy + 2);
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(9);
-  doc.setTextColor(...TEXT);
-  const end = (input.cliente.endereco ?? "").slice(0, 45);
-  doc.text(end, infoX + iconR * 2 + 3, iy + 6);
-
-  iy += 13;
+  linhaInfo("NOME", input.cliente.nome.slice(0, 32), BLUE, "P");
+  linhaInfo("ENDEREÇO", (input.cliente.endereco ?? "").slice(0, 34), BLUE, "L");
   drawIcon(doc, infoX + iconR, iy + iconR, iconR, GREEN_WA, "W");
   doc.setTextColor(...NAVY);
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(9);
-  doc.text("SUPORTE", infoX + iconR * 2 + 3, iy + 2);
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(9);
-  doc.setTextColor(...TEXT);
+  doc.setFontSize(8.5);
+  doc.text("SUPORTE", infoX + iconR * 2 + 3, iy + 2.2);
+  doc.setTextColor(...BLUE);
+  doc.setFontSize(8);
   doc.text(tel, infoX + iconR * 2 + 3, iy + 6);
+  iy += 12;
 
-  // Gerar BR Code
+  drawIcon(doc, infoX + iconR, iy + iconR, iconR, BLUE, "$");
+  doc.setTextColor(...NAVY);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(8.5);
+  doc.text("PAGUE COM PIX", infoX + iconR * 2 + 3, iy + 2.2);
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(7);
+  doc.setTextColor(...TEXT);
+  doc.text("Pode fazer o pagamento", infoX + iconR * 2 + 3, iy + 5.5);
+  doc.text(`pelo Pix ${input.empresa.pix_chave}`, infoX + iconR * 2 + 3, iy + 8.5);
+
+  // ---------- QR Code Pix (inalterado na geração) ----------
   const brcode = gerarPixBRCode({
     chave: input.empresa.pix_chave,
     beneficiario: input.empresa.pix_beneficiario,
@@ -362,54 +376,123 @@ async function desenharBoleto(
     txid: `P${parcela.numero}${Date.now().toString().slice(-6)}`,
   });
 
-  let qrDataUrl = "";
+  let qrPix = "";
   try {
-    qrDataUrl = await QRCode.toDataURL(brcode, {
+    qrPix = await QRCode.toDataURL(brcode, {
       margin: 0,
-      width: 260,
+      width: 400,
       color: { dark: "#000000", light: "#FFFFFF" },
     });
   } catch {
     /* ignore */
   }
 
-  const qrSize = 26;
-  // QR esquerdo (com legenda "ESCANEIE O QR CODE")
-  const qrLX = x + 82;
-  const qrY = bY + 3;
-  if (qrDataUrl) doc.addImage(qrDataUrl, "PNG", qrLX, qrY, qrSize, qrSize);
+  const col2X = x + 58;
+  const qrSize = 24;
+  const qrY = bY + 2;
+  if (qrPix) doc.addImage(qrPix, "PNG", col2X, qrY, qrSize, qrSize);
   doc.setTextColor(...NAVY);
   doc.setFont("helvetica", "bold");
   doc.setFontSize(7);
-  doc.text("ESCANEIE O QR CODE", qrLX + qrSize / 2, qrY + qrSize + 3, { align: "center" });
+  doc.text("ESCANEIE O QR CODE", col2X + qrSize / 2, qrY + qrSize + 3.5, { align: "center" });
   doc.setFont("helvetica", "normal");
-  doc.text("para pagar com Pix", qrLX + qrSize / 2, qrY + qrSize + 6, { align: "center" });
+  doc.setFontSize(6.5);
+  doc.text("para pagar com Pix", col2X + qrSize / 2, qrY + qrSize + 6.8, { align: "center" });
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(6.5);
+  doc.text(input.empresa.pix_chave, col2X + qrSize / 2, qrY + qrSize + 10, { align: "center" });
 
-  // Bloco PAGUE COM PIX (ícone + textos)
-  const pxX = qrLX + qrSize + 6;
-  drawIcon(doc, pxX + 4, bY + 7, 4, BLUE, "$");
+  // ---------- Coluna 3: bloco PAGUE COM PIX com QR ----------
+  const col3X = x + 90;
+  doc.setDrawColor(...BLUE_LIGHT);
+  doc.setLineWidth(0.3);
+  doc.line(col3X - 5, bY, col3X - 5, y + h - 3);
+
+  drawIcon(doc, col3X + 3.2, bY + 4, 3.2, BLUE, "$");
   doc.setTextColor(...NAVY);
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(10);
-  doc.text("PAGUE COM PIX", pxX + 10, bY + 5);
-  doc.setFont("helvetica", "normal");
   doc.setFontSize(8);
-  doc.setTextColor(...TEXT);
-  doc.text("Pode fazer o pagamento", pxX + 10, bY + 10);
-  doc.text(`pelo Pix ${input.empresa.pix_chave}`, pxX + 10, bY + 14);
-  doc.text("ou QR Codes", pxX + 10, bY + 18);
+  doc.text("PAGUE COM PIX", col3X + 8, bY + 5);
+  if (qrPix) doc.addImage(qrPix, "PNG", col3X + 3, bY + 10, qrSize, qrSize);
+  doc.setFontSize(6.5);
+  doc.text("ESCANEIE O QR CODE", col3X + 3 + qrSize / 2, bY + 10 + qrSize + 3.5, {
+    align: "center",
+  });
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(6);
+  doc.text("para pagar com Pix", col3X + 3 + qrSize / 2, bY + 10 + qrSize + 6.5, {
+    align: "center",
+  });
 
-  // QR direito (idêntico)
-  const qrRX = x + w - qrSize - 4;
-  if (qrDataUrl) doc.addImage(qrDataUrl, "PNG", qrRX, qrY, qrSize, qrSize);
+  // ---------- Coluna 4: Central do Cliente ----------
+  const col4X = x + 126;
+
+  const col4W = x + w - 4 - col4X;
+  doc.setDrawColor(...BLUE_LIGHT);
+  doc.line(col4X - 5, bY, col4X - 5, y + h - 3);
+
+  drawIcon(doc, col4X + 3.5, bY + 4, 3.5, BLUE, "P");
+  doc.setTextColor(...NAVY);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(9.5);
+  doc.text("CENTRAL DO CLIENTE", col4X + 9, bY + 5.2);
+
+  const senha = input.senhaPadrao ?? "123";
+  const passos: string[][] = [
+    ["Acesse o link da Central", "do Cliente indicado abaixo."],
+    ["Informe seu CPF ou", "telefone cadastrado."],
+    [`Digite a senha padrão: ${senha}`],
+    ["Pronto! Veja faturas,", "plano, Wi-Fi e avisos."],
+  ];
+  let py = bY + 12;
+  passos.forEach((linhas, i) => {
+    drawIcon(doc, col4X + 2.5, py, 2.5, BLUE, String(i + 1));
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(7);
+    doc.setTextColor(...TEXT);
+    linhas.forEach((l, j) => doc.text(l, col4X + 7, py - 0.8 + j * 3.2));
+    py += linhas.length > 1 ? 8 : 6.5;
+  });
+
+  // QR da Central do Cliente (destino: portal do assinante)
+  const central = centralLink(input);
+  if (central) {
+    try {
+      const qrCentral = await QRCode.toDataURL(central, {
+        margin: 0,
+        width: 400,
+        color: { dark: "#1E3A8A", light: "#FFFFFF" },
+      });
+      const cqS = 21;
+      const cqX = col4X + col4W - cqS - 1;
+      doc.addImage(qrCentral, "PNG", cqX, bY + 11, cqS, cqS);
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(6);
+      doc.setTextColor(...MUTED);
+      doc.text("Aponte a câmera para", cqX + cqS / 2, bY + 11 + cqS + 3, { align: "center" });
+      doc.text("abrir a Central", cqX + cqS / 2, bY + 11 + cqS + 5.8, { align: "center" });
+    } catch {
+      /* ignore */
+    }
+
+    // Faixa com o endereço da Central
+    const faixaY = y + h - 12;
+    doc.setFillColor(...BLUE_LIGHT);
+    doc.roundedRect(col4X, faixaY, col4W, 9, 4, 4, "F");
+    drawIcon(doc, col4X + 5, faixaY + 4.5, 3, BLUE, "@");
+    doc.setTextColor(...BLUE);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(9);
+    const linkTexto = central.replace(/^https?:\/\//, "");
+    doc.text(linkTexto, col4X + 10, faixaY + 5.8, { maxWidth: col4W - 13 });
+  }
 
   // Rodapé mini (parcela n/total)
+  doc.setFont("helvetica", "normal");
   doc.setFontSize(6.5);
   doc.setTextColor(...MUTED);
-  doc.text(
-    `Parcela ${parcela.numero}/${parcela.total}`,
-    x + w - 4,
-    y + h - 1.5,
-    { align: "right" },
-  );
+  doc.text(`Parcela ${parcela.numero}/${parcela.total}`, x + w - 4, y + h - 1.5, {
+    align: "right",
+  });
 }
+
