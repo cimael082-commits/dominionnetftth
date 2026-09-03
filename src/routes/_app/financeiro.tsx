@@ -289,7 +289,7 @@ function FinanceiroPage() {
                             "",
                             "Pedimos, por favor, que verifique o pagamento e, se já tiver realizado, desconsidere esta mensagem.",
                             "",
-                            `Caso precise da segunda via ou do Pix para pagamento, estamos à disposição. 📲 Pix: alexandrejosecicero561@gmail.com`,
+                            "Caso precise da segunda via ou do Pix para pagamento, estamos à disposição. 📲",
                             "",
                             "Agradecemos pela atenção e preferência!",
                             "",
