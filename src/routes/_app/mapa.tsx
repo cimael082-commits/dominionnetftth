@@ -1550,7 +1550,13 @@ function EditCtoDialog({ cto, onClose }: { cto: Cto | null; onClose: () => void 
           <TabsList>
             <TabsTrigger value="portas"><Plug className="h-4 w-4" /> Portas</TabsTrigger>
             <TabsTrigger value="dados">Dados</TabsTrigger>
+            <TabsTrigger value="qr"><QrCode className="h-4 w-4" /> QR Code</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="qr">
+            <CtoQrPanel cto={cto} />
+          </TabsContent>
+
 
           <TabsContent value="portas" className="space-y-2">
             <div className="text-xs text-muted-foreground">
