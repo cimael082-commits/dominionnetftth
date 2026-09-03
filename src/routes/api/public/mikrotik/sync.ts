@@ -240,7 +240,10 @@ export const Route = createFileRoute("/api/public/mikrotik/sync")({
               logsEventos.push({
                 tipo: "SUCESSO",
                 categoria: "Cliente",
-                descricao: `Cliente conectado (online novamente) — IP ${r.ip ?? "—"}`,
+                descricao: reconectados.has(cli.id)
+                  ? `${cli.nome} — voltou a ficar online em ${dataHora}`
+                  : `${cli.nome} — ficou online em ${dataHora}`,
+
                 origem: "API MikroTik",
                 cliente_id: cli.id,
                 cliente_nome: cli.nome,
