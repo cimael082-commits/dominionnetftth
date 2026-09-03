@@ -79,15 +79,9 @@ export const Route = createFileRoute("/api/public/mikrotik/sync")({
           return json(400, { error: "Campo obrigatório 'router_id' ausente" });
         }
 
-        await registrarLog({
-          tipo: "INFO",
-          categoria: "MikroTik",
-          descricao: `Sincronização iniciada com ${body.clientes.length} conexões recebidas`,
-          origem: "API MikroTik",
-          equipamento: routerId,
-          status: "em_andamento",
-          ip: ipDaRequisicao(request),
-        });
+        // Sincronizações rodam a cada poucos segundos: registrar cada início
+        // afogaria o histórico. Só gravamos o resumo quando algo muda.
+
 
         const recebidos = body.clientes
           .map((c) => ({
