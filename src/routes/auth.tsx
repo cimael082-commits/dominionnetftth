@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Waves } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { registrarLogAuth } from "@/lib/logs.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -36,7 +37,11 @@ function AuthPage() {
     setLoading(true);
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     setLoading(false);
-    if (error) return toast.error("Falha no login", { description: error.message });
+    if (error) {
+      void registrarLogAuth({ data: { evento: "login_falha", usuario: email } }).catch(() => {});
+      return toast.error("Falha no login", { description: error.message });
+    }
+    void registrarLogAuth({ data: { evento: "login_ok", usuario: email } }).catch(() => {});
     toast.success("Bem-vindo de volta!");
     navigate({ to: "/dashboard", replace: true });
   }
