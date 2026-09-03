@@ -177,6 +177,33 @@ export const Route = createFileRoute("/api/public/mikrotik/sync")({
         // reaproveitando os dados que a API já recebeu (sem chamadas extras).
         const logsEventos: LogEntrada[] = [];
 
+        // Data/hora legível (fuso de Brasília) usada nas descrições do histórico.
+        const quando = new Date(now).toLocaleString("pt-BR", {
+          timeZone: "America/Sao_Paulo",
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+        const dataHora = quando.replace(", ", " às ");
+
+        // Quem está voltando a ficar online nesta sincronização
+        const voltando = recebidos
+          .map((r) => porLogin.get(r.pppoe_user))
+          .filter((c): c is NonNullable<typeof c> => !!c && !c.online)
+          .map((c) => c.id);
+        // Já houve queda registrada antes? Então é "voltou a ficar online".
+        const reconectados = new Set<string>();
+        if (voltando.length > 0) {
+          const { data: quedas } = await supabaseAdmin
+            .from("eventos_conexao")
+            .select("cliente_id")
+            .eq("tipo", "desconectou")
+            .in("cliente_id", voltando);
+          for (const q of quedas ?? []) if (q.cliente_id) reconectados.add(q.cliente_id);
+        }
+
         // ONLINE: encontrados nesta sincronização — pertencem a este router
         const idsOnline: string[] = [];
         let atualizados = 0;
@@ -188,6 +215,7 @@ export const Route = createFileRoute("/api/public/mikrotik/sync")({
             continue;
           }
           idsOnline.push(cli.id);
+
           const { error: uErr } = await supabaseAdmin
             .from("clientes")
             .update({
