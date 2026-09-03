@@ -13,6 +13,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AreaRouteImport } from './routes/_area'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CtoTokenRouteImport } from './routes/cto.$token'
 import { Route as ClienteLoginRouteImport } from './routes/cliente.login'
 import { Route as AppRoteadoresRouteImport } from './routes/_app/roteadores'
 import { Route as AppPesquisaRouteImport } from './routes/_app/pesquisa'
@@ -69,6 +70,11 @@ const AppRoute = AppRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CtoTokenRoute = CtoTokenRouteImport.update({
+  id: '/cto/$token',
+  path: '/cto/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ClienteLoginRoute = ClienteLoginRouteImport.update({
@@ -289,6 +295,7 @@ export interface FileRoutesByFullPath {
   '/pesquisa': typeof AppPesquisaRoute
   '/roteadores': typeof AppRoteadoresRoute
   '/cliente/login': typeof ClienteLoginRoute
+  '/cto/$token': typeof CtoTokenRoute
   '/clientes/$id': typeof AppClientesIdRoute
   '/cliente/avisos': typeof AreaClienteAvisosRoute
   '/cliente/chamados': typeof AreaClienteChamadosRoute
@@ -332,6 +339,7 @@ export interface FileRoutesByTo {
   '/pesquisa': typeof AppPesquisaRoute
   '/roteadores': typeof AppRoteadoresRoute
   '/cliente/login': typeof ClienteLoginRoute
+  '/cto/$token': typeof CtoTokenRoute
   '/clientes/$id': typeof AppClientesIdRoute
   '/cliente/avisos': typeof AreaClienteAvisosRoute
   '/cliente/chamados': typeof AreaClienteChamadosRoute
@@ -378,6 +386,7 @@ export interface FileRoutesById {
   '/_app/pesquisa': typeof AppPesquisaRoute
   '/_app/roteadores': typeof AppRoteadoresRoute
   '/cliente/login': typeof ClienteLoginRoute
+  '/cto/$token': typeof CtoTokenRoute
   '/_app/clientes/$id': typeof AppClientesIdRoute
   '/_area/cliente/avisos': typeof AreaClienteAvisosRoute
   '/_area/cliente/chamados': typeof AreaClienteChamadosRoute
@@ -423,6 +432,7 @@ export interface FileRouteTypes {
     | '/pesquisa'
     | '/roteadores'
     | '/cliente/login'
+    | '/cto/$token'
     | '/clientes/$id'
     | '/cliente/avisos'
     | '/cliente/chamados'
@@ -466,6 +476,7 @@ export interface FileRouteTypes {
     | '/pesquisa'
     | '/roteadores'
     | '/cliente/login'
+    | '/cto/$token'
     | '/clientes/$id'
     | '/cliente/avisos'
     | '/cliente/chamados'
@@ -511,6 +522,7 @@ export interface FileRouteTypes {
     | '/_app/pesquisa'
     | '/_app/roteadores'
     | '/cliente/login'
+    | '/cto/$token'
     | '/_app/clientes/$id'
     | '/_area/cliente/avisos'
     | '/_area/cliente/chamados'
@@ -545,6 +557,7 @@ export interface RootRouteChildren {
   AreaRoute: typeof AreaRouteWithChildren
   AuthRoute: typeof AuthRoute
   ClienteLoginRoute: typeof ClienteLoginRoute
+  CtoTokenRoute: typeof CtoTokenRoute
   ApiAssistenteChatRoute: typeof ApiAssistenteChatRoute
   ApiAssistenteTranscreverRoute: typeof ApiAssistenteTranscreverRoute
   ApiAssistenteVozRoute: typeof ApiAssistenteVozRoute
@@ -590,6 +603,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cto/$token': {
+      id: '/cto/$token'
+      path: '/cto/$token'
+      fullPath: '/cto/$token'
+      preLoaderRoute: typeof CtoTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/cliente/login': {
@@ -946,6 +966,7 @@ const rootRouteChildren: RootRouteChildren = {
   AreaRoute: AreaRouteWithChildren,
   AuthRoute: AuthRoute,
   ClienteLoginRoute: ClienteLoginRoute,
+  CtoTokenRoute: CtoTokenRoute,
   ApiAssistenteChatRoute: ApiAssistenteChatRoute,
   ApiAssistenteTranscreverRoute: ApiAssistenteTranscreverRoute,
   ApiAssistenteVozRoute: ApiAssistenteVozRoute,
