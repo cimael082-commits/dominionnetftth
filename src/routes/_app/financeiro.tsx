@@ -181,52 +181,6 @@ function FinanceiroPage() {
         <p className="text-muted-foreground mt-1">Controle geral de parcelas e mensalidades.</p>
       </header>
 
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="flex flex-wrap gap-1 rounded-lg border border-border/60 bg-muted/30 p-1">
-          {(
-            [
-              ["todos", "Todos"],
-              ["pago", "Pagos"],
-              ["pendente", "Pendentes"],
-              ["vencido", "Vencidos"],
-              ["cancelado", "Cancelados"],
-            ] as const
-          ).map(([valor, rotulo]) => {
-            const ativo = filtro === valor;
-            const qtd =
-              valor === "todos"
-                ? (q.data ?? []).length
-                : (q.data ?? []).filter((r) => r.status === valor).length;
-            return (
-              <button
-                key={valor}
-                type="button"
-                onClick={() => setFiltro(valor)}
-                aria-pressed={ativo}
-                className={cn(
-                  "rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
-                  ativo
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:bg-accent hover:text-foreground",
-                )}
-              >
-                {rotulo}
-                <span className="ml-1.5 text-xs opacity-70">{qtd}</span>
-              </button>
-            );
-          })}
-        </div>
-        <div className="relative ml-auto w-full max-w-xs">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            className="pl-9"
-            placeholder="Pesquisar cliente pelo nome..."
-            value={busca}
-            onChange={(e) => setBusca(e.target.value)}
-          />
-        </div>
-      </div>
-
       <div className="grid gap-4 grid-cols-1 md:grid-cols-3">
         <Summary label="Recebido" value={totais.recebido} tone="text-emerald-400" />
         <Summary label="A receber" value={totais.aReceber} tone="text-amber-400" />
@@ -380,6 +334,55 @@ function FinanceiroPage() {
           </div>
         )}
       </Card>
+
+
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap gap-1 rounded-lg border border-border/60 bg-muted/30 p-1">
+          {(
+            [
+              ["todos", "Todos"],
+              ["pago", "Pagos"],
+              ["pendente", "Pendentes"],
+              ["vencido", "Vencidos"],
+              ["cancelado", "Cancelados"],
+            ] as const
+          ).map(([valor, rotulo]) => {
+            const ativo = filtro === valor;
+            const qtd =
+              valor === "todos"
+                ? (q.data ?? []).length
+                : (q.data ?? []).filter((r) => r.status === valor).length;
+            return (
+              <button
+                key={valor}
+                type="button"
+                onClick={() => setFiltro(valor)}
+                aria-pressed={ativo}
+                className={cn(
+                  "rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
+                  ativo
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:bg-accent hover:text-foreground",
+                )}
+              >
+                {rotulo}
+                <span className="ml-1.5 text-xs opacity-70">{qtd}</span>
+              </button>
+            );
+          })}
+        </div>
+        <div className="relative ml-auto w-full max-w-xs">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            className="pl-9"
+            placeholder="Pesquisar cliente pelo nome..."
+            value={busca}
+            onChange={(e) => setBusca(e.target.value)}
+          />
+        </div>
+      </div>
+
+
 
 
 
