@@ -79,7 +79,9 @@ type Cto = {
   potencia_dbm?: number | string | null;
   potencia_atualizada_em?: string | null;
   alerta?: string | null;
+  qr_token?: string | null;
 };
+
 
 type Ceo = { id: string; nome: string; latitude: number; longitude: number; status: InfraStatus };
 type Rota = {
