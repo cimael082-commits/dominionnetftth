@@ -301,7 +301,7 @@ export const Route = createFileRoute("/api/public/mikrotik/sync")({
               logsEventos.push({
                 tipo: "ALERTA",
                 categoria: "Cliente",
-                descricao: "Cliente desconectado (offline)",
+                descricao: `${c.nome} — ficou offline em ${dataHora}`,
                 origem: "API MikroTik",
                 cliente_id: c.id,
                 cliente_nome: c.nome,
