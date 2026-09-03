@@ -333,21 +333,24 @@ export const Route = createFileRoute("/api/public/mikrotik/sync")({
           })
           .eq("router_id", routerId);
 
-        await registrarLog({
-          tipo: "SUCESSO",
-          categoria: "MikroTik",
-          descricao: `Sincronização concluída: ${atualizados} online, ${offlineDoAntes.length} offline, ${naoEncontrados} não encontrados`,
-          origem: "API MikroTik",
-          equipamento: routerId,
-          status: "concluida",
-          ip: ipDaRequisicao(request),
-          detalhes: {
-            recebidos: recebidos.length,
-            atualizados,
-            offline: offlineDoAntes.length,
-            nao_encontrados: naoEncontrados,
-          },
-        });
+        if (eventos.length > 0) {
+          await registrarLog({
+            tipo: "SUCESSO",
+            categoria: "MikroTik",
+            descricao: `Sincronização concluída: ${atualizados} online, ${offlineDoAntes.length} offline, ${naoEncontrados} não encontrados`,
+            origem: "API MikroTik",
+            equipamento: routerId,
+            status: "concluida",
+            ip: ipDaRequisicao(request),
+            detalhes: {
+              recebidos: recebidos.length,
+              atualizados,
+              offline: offlineDoAntes.length,
+              nao_encontrados: naoEncontrados,
+            },
+          });
+        }
+
 
         return json(200, {
           ok: true,
