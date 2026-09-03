@@ -528,6 +528,7 @@ export type Database = {
           portas_totais: number
           potencia_atualizada_em: string | null
           potencia_dbm: number | null
+          qr_token: string
           router_id: string | null
           status: Database["public"]["Enums"]["infra_status"]
           updated_at: string
@@ -544,6 +545,7 @@ export type Database = {
           portas_totais?: number
           potencia_atualizada_em?: string | null
           potencia_dbm?: number | null
+          qr_token?: string
           router_id?: string | null
           status?: Database["public"]["Enums"]["infra_status"]
           updated_at?: string
@@ -560,6 +562,7 @@ export type Database = {
           portas_totais?: number
           potencia_atualizada_em?: string | null
           potencia_dbm?: number | null
+          qr_token?: string
           router_id?: string | null
           status?: Database["public"]["Enums"]["infra_status"]
           updated_at?: string
