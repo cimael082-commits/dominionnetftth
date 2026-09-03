@@ -34,6 +34,7 @@ const nav = [
   { to: "/banners", label: "Banners", icon: ImageIcon },
   { to: "/avisos", label: "Avisos", icon: Megaphone },
   { to: "/pesquisa", label: "Pesquisa", icon: Search },
+  { to: "/logs", label: "Logs", icon: ClipboardList },
   { to: "/configuracoes", label: "Configurações", icon: Settings },
 ] as const;
 
