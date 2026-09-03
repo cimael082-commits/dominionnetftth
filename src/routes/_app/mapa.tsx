@@ -31,7 +31,11 @@ import {
   Save,
   Undo2,
   Plug,
+  QrCode,
+  Printer,
+  Download,
 } from "lucide-react";
+
 import { supabase } from "@/integrations/supabase/client";
 import { useGoogleMaps } from "@/hooks/use-google-maps";
 import { Button } from "@/components/ui/button";
@@ -79,7 +83,9 @@ type Cto = {
   potencia_dbm?: number | string | null;
   potencia_atualizada_em?: string | null;
   alerta?: string | null;
+  qr_token?: string | null;
 };
+
 
 type Ceo = { id: string; nome: string; latitude: number; longitude: number; status: InfraStatus };
 type Rota = {
@@ -408,7 +414,9 @@ Potência: ${pot == null ? "não informada" : `<b style="color:${potRuim ? "#dc2
 Clientes conectados: <b>${conectados.length}</b> (${offline} offline)
 ${c.alerta ? `<br/><span style="color:#dc2626">${escHtml(c.alerta)}</span>` : ""}
 <div style="margin-top:6px;border-top:1px solid #e2e8f0;padding-top:4px">${listaHtml}</div>
+${c.qr_token ? `<div style="margin-top:6px"><a href="/cto/${escHtml(c.qr_token)}" target="_blank" rel="noopener" style="color:#1E88E5;font-weight:600">Ver portas / QR Code</a></div>` : ""}
 </div>`,
+
       });
       marker.addListener("click", () => {
         info.open({ map, anchor: marker });
@@ -1542,7 +1550,13 @@ function EditCtoDialog({ cto, onClose }: { cto: Cto | null; onClose: () => void 
           <TabsList>
             <TabsTrigger value="portas"><Plug className="h-4 w-4" /> Portas</TabsTrigger>
             <TabsTrigger value="dados">Dados</TabsTrigger>
+            <TabsTrigger value="qr"><QrCode className="h-4 w-4" /> QR Code</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="qr">
+            <CtoQrPanel cto={cto} />
+          </TabsContent>
+
 
           <TabsContent value="portas" className="space-y-2">
             <div className="text-xs text-muted-foreground">
@@ -1827,5 +1841,96 @@ function EditCeoDialog({ ceo, onClose }: { ceo: Ceo | null; onClose: () => void 
         </DialogFooter>
       </DialogContent>
     </Dialog>
+  );
+}
+
+/**
+ * Painel do QR Code permanente da CTO.
+ *
+ * O token é gerado no banco na criação da caixa e nunca muda — o adesivo
+ * impresso continua válido mesmo trocando clientes de porta.
+ */
+function CtoQrPanel({ cto }: { cto: Cto }) {
+  const [dataUrl, setDataUrl] = useState<string | null>(null);
+  const [erro, setErro] = useState<string | null>(null);
+
+  const url =
+    typeof window !== "undefined" && cto.qr_token
+      ? `${window.location.origin}/cto/${cto.qr_token}`
+      : "";
+
+  useEffect(() => {
+    let vivo = true;
+    if (!url) return;
+    import("qrcode")
+      .then((m) =>
+        m.toDataURL(url, { width: 512, margin: 1, errorCorrectionLevel: "M" }),
+      )
+      .then((d) => { if (vivo) setDataUrl(d); })
+      .catch(() => { if (vivo) setErro("Falha ao gerar o QR Code"); });
+    return () => { vivo = false; };
+  }, [url]);
+
+  function baixar() {
+    if (!dataUrl) return;
+    const a = document.createElement("a");
+    a.href = dataUrl;
+    a.download = `QRCode-CTO-${cto.nome.replace(/\s+/g, "-")}.png`;
+    a.click();
+  }
+
+  function imprimir() {
+    if (!dataUrl) return;
+    const w = window.open("", "_blank", "width=520,height=680");
+    if (!w) { toast.error("Permita pop-ups para imprimir"); return; }
+    w.document.write(
+      `<html><head><title>QR CTO ${escHtml(cto.nome)}</title></head>
+       <body style="font-family:system-ui;text-align:center;padding:24px">
+         <h1 style="font-size:22px;margin:0 0 4px">CTO ${escHtml(cto.nome)}</h1>
+         <p style="margin:0 0 16px;color:#475569;font-size:13px">Dominion Net · escaneie para ver as portas</p>
+         <img src="${dataUrl}" style="width:320px;height:320px" />
+         <p style="font-size:11px;color:#64748b;word-break:break-all">${escHtml(url)}</p>
+         <script>window.onload = () => { window.print(); }<\/script>
+       </body></html>`,
+    );
+    w.document.close();
+  }
+
+  if (!cto.qr_token) {
+    return (
+      <div className="p-4 text-sm text-muted-foreground">
+        Esta CTO ainda não possui código de QR. Recarregue a página do mapa.
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col items-center gap-3 py-2">
+      {erro && <p className="text-sm text-destructive">{erro}</p>}
+      {dataUrl ? (
+        <img
+          src={dataUrl}
+          alt={`QR Code permanente da CTO ${cto.nome}`}
+          className="h-56 w-56 rounded-lg border border-border bg-white p-2"
+        />
+      ) : (
+        <div className="h-56 w-56 animate-pulse rounded-lg border border-border bg-muted" />
+      )}
+      <p className="break-all text-center text-xs text-muted-foreground">{url}</p>
+      <div className="flex flex-wrap justify-center gap-2">
+        <Button variant="outline" size="sm" onClick={() => window.open(url, "_blank")}>
+          <Plug className="h-4 w-4" /> Visualizar portas
+        </Button>
+        <Button size="sm" onClick={baixar} disabled={!dataUrl}>
+          <Download className="h-4 w-4" /> Baixar QR Code
+        </Button>
+        <Button variant="outline" size="sm" onClick={imprimir} disabled={!dataUrl}>
+          <Printer className="h-4 w-4" /> Imprimir
+        </Button>
+      </div>
+      <p className="text-center text-[11px] text-muted-foreground">
+        Este QR Code é permanente: continua válido mesmo alterando clientes das portas.
+      </p>
+    </div>
   );
 }
