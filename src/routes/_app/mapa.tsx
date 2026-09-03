@@ -31,7 +31,11 @@ import {
   Save,
   Undo2,
   Plug,
+  QrCode,
+  Printer,
+  Download,
 } from "lucide-react";
+
 import { supabase } from "@/integrations/supabase/client";
 import { useGoogleMaps } from "@/hooks/use-google-maps";
 import { Button } from "@/components/ui/button";
