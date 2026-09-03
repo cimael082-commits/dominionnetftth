@@ -79,15 +79,9 @@ export const Route = createFileRoute("/api/public/mikrotik/sync")({
           return json(400, { error: "Campo obrigatório 'router_id' ausente" });
         }
 
-        await registrarLog({
-          tipo: "INFO",
-          categoria: "MikroTik",
-          descricao: `Sincronização iniciada com ${body.clientes.length} conexões recebidas`,
-          origem: "API MikroTik",
-          equipamento: routerId,
-          status: "em_andamento",
-          ip: ipDaRequisicao(request),
-        });
+        // Sincronizações rodam a cada poucos segundos: registrar cada início
+        // afogaria o histórico. Só gravamos o resumo quando algo muda.
+
 
         const recebidos = body.clientes
           .map((c) => ({
@@ -177,6 +171,33 @@ export const Route = createFileRoute("/api/public/mikrotik/sync")({
         // reaproveitando os dados que a API já recebeu (sem chamadas extras).
         const logsEventos: LogEntrada[] = [];
 
+        // Data/hora legível (fuso de Brasília) usada nas descrições do histórico.
+        const quando = new Date(now).toLocaleString("pt-BR", {
+          timeZone: "America/Sao_Paulo",
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+        const dataHora = quando.replace(", ", " às ");
+
+        // Quem está voltando a ficar online nesta sincronização
+        const voltando = recebidos
+          .map((r) => porLogin.get(r.pppoe_user))
+          .filter((c): c is NonNullable<typeof c> => !!c && !c.online)
+          .map((c) => c.id);
+        // Já houve queda registrada antes? Então é "voltou a ficar online".
+        const reconectados = new Set<string>();
+        if (voltando.length > 0) {
+          const { data: quedas } = await supabaseAdmin
+            .from("eventos_conexao")
+            .select("cliente_id")
+            .eq("tipo", "desconectou")
+            .in("cliente_id", voltando);
+          for (const q of quedas ?? []) if (q.cliente_id) reconectados.add(q.cliente_id);
+        }
+
         // ONLINE: encontrados nesta sincronização — pertencem a este router
         const idsOnline: string[] = [];
         let atualizados = 0;
@@ -188,6 +209,7 @@ export const Route = createFileRoute("/api/public/mikrotik/sync")({
             continue;
           }
           idsOnline.push(cli.id);
+
           const { error: uErr } = await supabaseAdmin
             .from("clientes")
             .update({
@@ -212,7 +234,10 @@ export const Route = createFileRoute("/api/public/mikrotik/sync")({
               logsEventos.push({
                 tipo: "SUCESSO",
                 categoria: "Cliente",
-                descricao: `Cliente conectado (online novamente) — IP ${r.ip ?? "—"}`,
+                descricao: reconectados.has(cli.id)
+                  ? `${cli.nome} — voltou a ficar online em ${dataHora}`
+                  : `${cli.nome} — ficou online em ${dataHora}`,
+
                 origem: "API MikroTik",
                 cliente_id: cli.id,
                 cliente_nome: cli.nome,
@@ -270,7 +295,7 @@ export const Route = createFileRoute("/api/public/mikrotik/sync")({
               logsEventos.push({
                 tipo: "ALERTA",
                 categoria: "Cliente",
-                descricao: "Cliente desconectado (offline)",
+                descricao: `${c.nome} — ficou offline em ${dataHora}`,
                 origem: "API MikroTik",
                 cliente_id: c.id,
                 cliente_nome: c.nome,
@@ -308,21 +333,24 @@ export const Route = createFileRoute("/api/public/mikrotik/sync")({
           })
           .eq("router_id", routerId);
 
-        await registrarLog({
-          tipo: "SUCESSO",
-          categoria: "MikroTik",
-          descricao: `Sincronização concluída: ${atualizados} online, ${offlineDoAntes.length} offline, ${naoEncontrados} não encontrados`,
-          origem: "API MikroTik",
-          equipamento: routerId,
-          status: "concluida",
-          ip: ipDaRequisicao(request),
-          detalhes: {
-            recebidos: recebidos.length,
-            atualizados,
-            offline: offlineDoAntes.length,
-            nao_encontrados: naoEncontrados,
-          },
-        });
+        if (eventos.length > 0) {
+          await registrarLog({
+            tipo: "SUCESSO",
+            categoria: "MikroTik",
+            descricao: `Sincronização concluída: ${atualizados} online, ${offlineDoAntes.length} offline, ${naoEncontrados} não encontrados`,
+            origem: "API MikroTik",
+            equipamento: routerId,
+            status: "concluida",
+            ip: ipDaRequisicao(request),
+            detalhes: {
+              recebidos: recebidos.length,
+              atualizados,
+              offline: offlineDoAntes.length,
+              nao_encontrados: naoEncontrados,
+            },
+          });
+        }
+
 
         return json(200, {
           ok: true,
