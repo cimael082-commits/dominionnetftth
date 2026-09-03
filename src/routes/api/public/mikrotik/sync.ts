@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { registrarLog, registrarLogs, ipDaRequisicao, type LogEntrada } from "@/lib/logs.server";
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -44,6 +45,14 @@ export const Route = createFileRoute("/api/public/mikrotik/sync")({
           request.headers.get("x-api-key") ||
           (request.headers.get("authorization") || "").replace(/^Bearer\s+/i, "");
         if (!provided || provided !== expected) {
+          await registrarLog({
+            tipo: "ALERTA",
+            categoria: "Seguranca",
+            descricao: "Tentativa de sincronização com chave de API inválida",
+            origem: "API MikroTik",
+            status: "negado",
+            ip: ipDaRequisicao(request),
+          });
           return json(401, { error: "Não autorizado" });
         }
 
@@ -51,6 +60,14 @@ export const Route = createFileRoute("/api/public/mikrotik/sync")({
         try {
           body = (await request.json()) as Body;
         } catch {
+          await registrarLog({
+            tipo: "ERRO",
+            categoria: "API",
+            descricao: "Falha de comunicação com MikroTik: JSON inválido recebido",
+            origem: "API MikroTik",
+            status: "erro",
+            ip: ipDaRequisicao(request),
+          });
           return json(400, { error: "JSON inválido" });
         }
         if (!body || !Array.isArray(body.clientes)) {
@@ -61,6 +78,16 @@ export const Route = createFileRoute("/api/public/mikrotik/sync")({
         if (!routerId) {
           return json(400, { error: "Campo obrigatório 'router_id' ausente" });
         }
+
+        await registrarLog({
+          tipo: "INFO",
+          categoria: "MikroTik",
+          descricao: `Sincronização iniciada com ${body.clientes.length} conexões recebidas`,
+          origem: "API MikroTik",
+          equipamento: routerId,
+          status: "em_andamento",
+          ip: ipDaRequisicao(request),
+        });
 
         const recebidos = body.clientes
           .map((c) => ({
@@ -108,13 +135,30 @@ export const Route = createFileRoute("/api/public/mikrotik/sync")({
         // reatribuído a este router_id em vez de ficar "não encontrado".
         const { data: clientesDb, error: errList } = await supabaseAdmin
           .from("clientes")
-          .select("id, login_pppoe, online, router_id")
+          .select("id, nome, login_pppoe, online, router_id")
           .not("login_pppoe", "is", null);
-        if (errList) return json(500, { error: errList.message });
+        if (errList) {
+          await registrarLog({
+            tipo: "ERRO",
+            categoria: "MikroTik",
+            descricao: `Sincronização com erro: ${errList.message}`,
+            origem: "API MikroTik",
+            equipamento: routerId,
+            status: "erro",
+            ip: ipDaRequisicao(request),
+          });
+          return json(500, { error: errList.message });
+        }
 
         const porLogin = new Map<
           string,
-          { id: string; login_pppoe: string | null; online: boolean; router_id: string | null }
+          {
+            id: string;
+            nome: string;
+            login_pppoe: string | null;
+            online: boolean;
+            router_id: string | null;
+          }
         >();
         for (const c of clientesDb ?? []) {
           if (c.login_pppoe) porLogin.set(c.login_pppoe.trim(), c as never);
@@ -128,6 +172,10 @@ export const Route = createFileRoute("/api/public/mikrotik/sync")({
           uptime: string | null;
           router_id: string;
         }[] = [];
+
+        // Cada evento de conexão vira também um registro no módulo de Logs,
+        // reaproveitando os dados que a API já recebeu (sem chamadas extras).
+        const logsEventos: LogEntrada[] = [];
 
         // ONLINE: encontrados nesta sincronização — pertencem a este router
         const idsOnline: string[] = [];
@@ -161,6 +209,32 @@ export const Route = createFileRoute("/api/public/mikrotik/sync")({
                 uptime: r.uptime,
                 router_id: routerId,
               });
+              logsEventos.push({
+                tipo: "SUCESSO",
+                categoria: "Cliente",
+                descricao: `Cliente conectado (online novamente) — IP ${r.ip ?? "—"}`,
+                origem: "API MikroTik",
+                cliente_id: cli.id,
+                cliente_nome: cli.nome,
+                usuario: cli.login_pppoe ?? r.pppoe_user,
+                equipamento: routerId,
+                ip: r.ip,
+                status: "online",
+              });
+              if (cli.router_id && cli.router_id !== routerId) {
+                logsEventos.push({
+                  tipo: "ALERTA",
+                  categoria: "Rede",
+                  descricao: `Cliente mudou de equipamento: ${cli.router_id} → ${routerId}`,
+                  origem: "API MikroTik",
+                  cliente_id: cli.id,
+                  cliente_nome: cli.nome,
+                  usuario: cli.login_pppoe ?? r.pppoe_user,
+                  equipamento: routerId,
+                  ip: r.ip,
+                  status: "online",
+                });
+              }
             }
           }
         }
@@ -193,6 +267,17 @@ export const Route = createFileRoute("/api/public/mikrotik/sync")({
                 uptime: null,
                 router_id: routerId,
               });
+              logsEventos.push({
+                tipo: "ALERTA",
+                categoria: "Cliente",
+                descricao: "Cliente desconectado (offline)",
+                origem: "API MikroTik",
+                cliente_id: c.id,
+                cliente_nome: c.nome,
+                usuario: c.login_pppoe,
+                equipamento: routerId,
+                status: "offline",
+              });
             }
           }
         }
@@ -200,6 +285,7 @@ export const Route = createFileRoute("/api/public/mikrotik/sync")({
         if (eventos.length > 0) {
           await supabaseAdmin.from("eventos_conexao").insert(eventos);
         }
+        await registrarLogs(logsEventos);
 
         // Estatísticas deste router
         const { count: totalRouter } = await supabaseAdmin
@@ -221,6 +307,22 @@ export const Route = createFileRoute("/api/public/mikrotik/sync")({
             online: true,
           })
           .eq("router_id", routerId);
+
+        await registrarLog({
+          tipo: "SUCESSO",
+          categoria: "MikroTik",
+          descricao: `Sincronização concluída: ${atualizados} online, ${offlineDoAntes.length} offline, ${naoEncontrados} não encontrados`,
+          origem: "API MikroTik",
+          equipamento: routerId,
+          status: "concluida",
+          ip: ipDaRequisicao(request),
+          detalhes: {
+            recebidos: recebidos.length,
+            atualizados,
+            offline: offlineDoAntes.length,
+            nao_encontrados: naoEncontrados,
+          },
+        });
 
         return json(200, {
           ok: true,
