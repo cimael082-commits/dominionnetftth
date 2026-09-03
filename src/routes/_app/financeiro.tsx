@@ -235,7 +235,19 @@ function FinanceiroPage() {
                         <span className="font-medium truncate">{d.nome}</span>
                         <WhatsappButton
                           cliente={{ nome: d.nome, telefone: d.telefone, whatsapp: d.whatsapp }}
-                          message={`Olá ${d.nome}, tudo bem? Aqui é da Dominion Net. Consta em aberto o valor de ${formatBRL(d.total)} referente a ${d.parcelas.length} mensalidade(s).`}
+                          message={[
+                            `Olá ${d.nome}! Tudo bem? 😊`,
+                            "",
+                            "Passando para lembrar que sua mensalidade da internet está em aberto.",
+                            "",
+                            "Pedimos, por favor, que verifique o pagamento e, se já tiver realizado, desconsidere esta mensagem.",
+                            "",
+                            `Caso precise da segunda via ou do Pix para pagamento, estamos à disposição. 📲 Pix: alexandrejosecicero561@gmail.com`,
+                            "",
+                            "Agradecemos pela atenção e preferência!",
+                            "",
+                            "Dominion Net 5G",
+                          ].join("\n")}
                         />
                       </div>
                       <div className="text-xs text-muted-foreground">
