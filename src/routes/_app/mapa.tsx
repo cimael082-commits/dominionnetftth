@@ -414,7 +414,9 @@ Potência: ${pot == null ? "não informada" : `<b style="color:${potRuim ? "#dc2
 Clientes conectados: <b>${conectados.length}</b> (${offline} offline)
 ${c.alerta ? `<br/><span style="color:#dc2626">${escHtml(c.alerta)}</span>` : ""}
 <div style="margin-top:6px;border-top:1px solid #e2e8f0;padding-top:4px">${listaHtml}</div>
+${c.qr_token ? `<div style="margin-top:6px"><a href="/cto/${escHtml(c.qr_token)}" target="_blank" rel="noopener" style="color:#1E88E5;font-weight:600">Ver portas / QR Code</a></div>` : ""}
 </div>`,
+
       });
       marker.addListener("click", () => {
         info.open({ map, anchor: marker });
