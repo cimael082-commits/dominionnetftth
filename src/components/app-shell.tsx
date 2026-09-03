@@ -15,12 +15,14 @@ import {
   LifeBuoy,
   ImageIcon,
   Bot,
+  ClipboardList,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { registrarLogAuth } from "@/lib/logs.functions";
 
 const nav = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -34,6 +36,7 @@ const nav = [
   { to: "/banners", label: "Banners", icon: ImageIcon },
   { to: "/avisos", label: "Avisos", icon: Megaphone },
   { to: "/pesquisa", label: "Pesquisa", icon: Search },
+  { to: "/logs", label: "Logs", icon: ClipboardList },
   { to: "/configuracoes", label: "Configurações", icon: Settings },
 ] as const;
 
@@ -90,7 +93,10 @@ export function AppShell({ children }: { children: ReactNode }) {
   }, [collapsed, hydrated]);
 
   async function signOut() {
+    const email = (await supabase.auth.getUser()).data.user?.email ?? null;
     await supabase.auth.signOut();
+    // Log de auditoria — não bloqueia a saída se falhar.
+    void registrarLogAuth({ data: { evento: "logout", usuario: email } }).catch(() => {});
     toast.success("Sessão encerrada");
     navigate({ to: "/auth", replace: true });
   }

@@ -654,6 +654,65 @@ export type Database = {
           },
         ]
       }
+      logs: {
+        Row: {
+          categoria: string
+          cliente_id: string | null
+          cliente_nome: string | null
+          created_at: string
+          data_hora: string
+          descricao: string
+          detalhes: Json
+          equipamento: string | null
+          id: string
+          ip: string | null
+          origem: string | null
+          status: string
+          tipo: string
+          usuario: string | null
+        }
+        Insert: {
+          categoria?: string
+          cliente_id?: string | null
+          cliente_nome?: string | null
+          created_at?: string
+          data_hora?: string
+          descricao: string
+          detalhes?: Json
+          equipamento?: string | null
+          id?: string
+          ip?: string | null
+          origem?: string | null
+          status?: string
+          tipo?: string
+          usuario?: string | null
+        }
+        Update: {
+          categoria?: string
+          cliente_id?: string | null
+          cliente_nome?: string | null
+          created_at?: string
+          data_hora?: string
+          descricao?: string
+          detalhes?: Json
+          equipamento?: string | null
+          id?: string
+          ip?: string | null
+          origem?: string | null
+          status?: string
+          tipo?: string
+          usuario?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "logs_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "clientes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notificacoes: {
         Row: {
           aviso_id: string | null
