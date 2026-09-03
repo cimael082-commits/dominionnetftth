@@ -60,7 +60,7 @@ export async function registrarLogs(entradas: LogEntrada[]): Promise<void> {
   if (entradas.length === 0) return;
   try {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    await supabaseAdmin.from("logs").insert(entradas.map(normalizar));
+    await supabaseAdmin.from("logs").insert(entradas.map(normalizar) as never);
   } catch (err) {
     console.error("[logs] falha ao registrar log:", err);
   }
