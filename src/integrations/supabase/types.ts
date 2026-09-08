@@ -115,6 +115,54 @@ export type Database = {
           },
         ]
       }
+      backups: {
+        Row: {
+          arquivo_path: string
+          created_at: string
+          criado_por: string | null
+          id: string
+          nome: string
+          observacao: string | null
+          status: string
+          tabelas: Json
+          tamanho_bytes: number
+          tipo: string
+          total_registros: number
+          updated_at: string
+          versao: string
+        }
+        Insert: {
+          arquivo_path: string
+          created_at?: string
+          criado_por?: string | null
+          id?: string
+          nome: string
+          observacao?: string | null
+          status?: string
+          tabelas?: Json
+          tamanho_bytes?: number
+          tipo?: string
+          total_registros?: number
+          updated_at?: string
+          versao?: string
+        }
+        Update: {
+          arquivo_path?: string
+          created_at?: string
+          criado_por?: string | null
+          id?: string
+          nome?: string
+          observacao?: string | null
+          status?: string
+          tabelas?: Json
+          tamanho_bytes?: number
+          tipo?: string
+          total_registros?: number
+          updated_at?: string
+          versao?: string
+        }
+        Relationships: []
+      }
       banners: {
         Row: {
           ativo: boolean

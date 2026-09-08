@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Save } from "lucide-react";
@@ -140,6 +140,18 @@ function ConfigPage() {
       </Card>
 
 
+
+      <Card className="p-6 flex items-center justify-between gap-4">
+        <div>
+          <h3 className="font-semibold">Backup e Restauração</h3>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Gere cópias completas do sistema e restaure em caso de falha.
+          </p>
+        </div>
+        <Button asChild variant="outline">
+          <Link to="/backup">Abrir</Link>
+        </Button>
+      </Card>
 
       <Button size="lg" onClick={() => save.mutate()} disabled={save.isPending}>
         <Save className="h-4 w-4" /> Salvar alterações

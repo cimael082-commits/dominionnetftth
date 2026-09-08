@@ -16,6 +16,7 @@ import {
   ImageIcon,
   Bot,
   ClipboardList,
+  DatabaseBackup,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
@@ -37,6 +38,7 @@ const nav = [
   { to: "/avisos", label: "Avisos", icon: Megaphone },
   { to: "/pesquisa", label: "Pesquisa", icon: Search },
   { to: "/logs", label: "Logs", icon: ClipboardList },
+  { to: "/backup", label: "Backup", icon: DatabaseBackup },
   { to: "/configuracoes", label: "Configurações", icon: Settings },
 ] as const;
 
