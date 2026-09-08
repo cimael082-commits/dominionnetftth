@@ -16,6 +16,7 @@ import {
   ImageIcon,
   Bot,
   ClipboardList,
+  DatabaseBackup,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
