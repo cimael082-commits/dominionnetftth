@@ -36,7 +36,7 @@ function TesteInternetPage() {
         src="https://maceivelocidade.lovable.app"
         title="Teste de Velocidade"
         allow="geolocation"
-        className="h-[calc(100dvh-11rem)] min-h-[720px] w-full rounded-lg border-0 bg-card"
+        className="h-[750px] min-h-[720px] w-full rounded-lg border-0 bg-card"
       />
     </section>
   );
