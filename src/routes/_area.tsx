@@ -13,6 +13,7 @@ import {
   Radio,
   Gift,
   Info,
+  Gauge,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { clearClienteToken, getClienteToken } from "@/lib/cliente-auth";
@@ -41,6 +42,7 @@ const maisMenu = [
   { to: "/cliente/notificacoes", label: "Notificações", icon: Bell },
   { to: "/cliente/avisos", label: "Avisos", icon: Info },
   { to: "/cliente/plano", label: "Meu plano", icon: Radio },
+  { to: "/cliente/teste-internet", label: "Teste de Internet", icon: Gauge },
   { to: "/cliente/indique", label: "Indique um amigo", icon: Gift },
   { to: "/cliente/perfil", label: "Meu perfil", icon: UserIcon },
 ] as const;
