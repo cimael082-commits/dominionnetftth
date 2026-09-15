@@ -34,6 +34,7 @@ import { Route as ApiAssistenteVozRouteImport } from './routes/api/assistente/vo
 import { Route as ApiAssistenteTranscreverRouteImport } from './routes/api/assistente/transcrever'
 import { Route as ApiAssistenteChatRouteImport } from './routes/api/assistente/chat'
 import { Route as AreaClienteWifiRouteImport } from './routes/_area.cliente.wifi'
+import { Route as AreaClienteTesteInternetRouteImport } from './routes/_area.cliente.teste-internet'
 import { Route as AreaClientePlanoRouteImport } from './routes/_area.cliente.plano'
 import { Route as AreaClientePerfilRouteImport } from './routes/_area.cliente.perfil'
 import { Route as AreaClienteNotificacoesRouteImport } from './routes/_area.cliente.notificacoes'
@@ -180,6 +181,12 @@ const AreaClienteWifiRoute = AreaClienteWifiRouteImport.update({
   path: '/cliente/wifi',
   getParentRoute: () => AreaRoute,
 } as any)
+const AreaClienteTesteInternetRoute =
+  AreaClienteTesteInternetRouteImport.update({
+    id: '/cliente/teste-internet',
+    path: '/cliente/teste-internet',
+    getParentRoute: () => AreaRoute,
+  } as any)
 const AreaClientePlanoRoute = AreaClientePlanoRouteImport.update({
   id: '/cliente/plano',
   path: '/cliente/plano',
@@ -319,6 +326,7 @@ export interface FileRoutesByFullPath {
   '/cliente/notificacoes': typeof AreaClienteNotificacoesRoute
   '/cliente/perfil': typeof AreaClientePerfilRoute
   '/cliente/plano': typeof AreaClientePlanoRoute
+  '/cliente/teste-internet': typeof AreaClienteTesteInternetRoute
   '/cliente/wifi': typeof AreaClienteWifiRoute
   '/api/assistente/chat': typeof ApiAssistenteChatRoute
   '/api/assistente/transcrever': typeof ApiAssistenteTranscreverRoute
@@ -365,6 +373,7 @@ export interface FileRoutesByTo {
   '/cliente/notificacoes': typeof AreaClienteNotificacoesRoute
   '/cliente/perfil': typeof AreaClientePerfilRoute
   '/cliente/plano': typeof AreaClientePlanoRoute
+  '/cliente/teste-internet': typeof AreaClienteTesteInternetRoute
   '/cliente/wifi': typeof AreaClienteWifiRoute
   '/api/assistente/chat': typeof ApiAssistenteChatRoute
   '/api/assistente/transcrever': typeof ApiAssistenteTranscreverRoute
@@ -414,6 +423,7 @@ export interface FileRoutesById {
   '/_area/cliente/notificacoes': typeof AreaClienteNotificacoesRoute
   '/_area/cliente/perfil': typeof AreaClientePerfilRoute
   '/_area/cliente/plano': typeof AreaClientePlanoRoute
+  '/_area/cliente/teste-internet': typeof AreaClienteTesteInternetRoute
   '/_area/cliente/wifi': typeof AreaClienteWifiRoute
   '/api/assistente/chat': typeof ApiAssistenteChatRoute
   '/api/assistente/transcrever': typeof ApiAssistenteTranscreverRoute
@@ -462,6 +472,7 @@ export interface FileRouteTypes {
     | '/cliente/notificacoes'
     | '/cliente/perfil'
     | '/cliente/plano'
+    | '/cliente/teste-internet'
     | '/cliente/wifi'
     | '/api/assistente/chat'
     | '/api/assistente/transcrever'
@@ -508,6 +519,7 @@ export interface FileRouteTypes {
     | '/cliente/notificacoes'
     | '/cliente/perfil'
     | '/cliente/plano'
+    | '/cliente/teste-internet'
     | '/cliente/wifi'
     | '/api/assistente/chat'
     | '/api/assistente/transcrever'
@@ -556,6 +568,7 @@ export interface FileRouteTypes {
     | '/_area/cliente/notificacoes'
     | '/_area/cliente/perfil'
     | '/_area/cliente/plano'
+    | '/_area/cliente/teste-internet'
     | '/_area/cliente/wifi'
     | '/api/assistente/chat'
     | '/api/assistente/transcrever'
@@ -776,6 +789,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AreaClienteWifiRouteImport
       parentRoute: typeof AreaRoute
     }
+    '/_area/cliente/teste-internet': {
+      id: '/_area/cliente/teste-internet'
+      path: '/cliente/teste-internet'
+      fullPath: '/cliente/teste-internet'
+      preLoaderRoute: typeof AreaClienteTesteInternetRouteImport
+      parentRoute: typeof AreaRoute
+    }
     '/_area/cliente/plano': {
       id: '/_area/cliente/plano'
       path: '/cliente/plano'
@@ -983,6 +1003,7 @@ interface AreaRouteChildren {
   AreaClienteNotificacoesRoute: typeof AreaClienteNotificacoesRoute
   AreaClientePerfilRoute: typeof AreaClientePerfilRoute
   AreaClientePlanoRoute: typeof AreaClientePlanoRoute
+  AreaClienteTesteInternetRoute: typeof AreaClienteTesteInternetRoute
   AreaClienteWifiRoute: typeof AreaClienteWifiRoute
   AreaClienteIndexRoute: typeof AreaClienteIndexRoute
 }
@@ -996,6 +1017,7 @@ const AreaRouteChildren: AreaRouteChildren = {
   AreaClienteNotificacoesRoute: AreaClienteNotificacoesRoute,
   AreaClientePerfilRoute: AreaClientePerfilRoute,
   AreaClientePlanoRoute: AreaClientePlanoRoute,
+  AreaClienteTesteInternetRoute: AreaClienteTesteInternetRoute,
   AreaClienteWifiRoute: AreaClienteWifiRoute,
   AreaClienteIndexRoute: AreaClienteIndexRoute,
 }
