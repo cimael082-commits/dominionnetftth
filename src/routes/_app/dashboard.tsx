@@ -61,16 +61,7 @@ function formatDuracao(ms: number): string {
 function useDashboard() {
   return useQuery({
     queryKey: ["dashboard"],
-    // Atualização automática, mesmo sem eventos de realtime.
-    refetchInterval: 30_000,
     queryFn: async () => {
-      const today = new Date().toISOString().slice(0, 10);
-      await supabase
-        .from("parcelas")
-        .update({ status: "vencido" })
-        .eq("status", "pendente")
-        .lt("data_vencimento", today);
-
       const [clientes, parcelasMes, eventos] = await Promise.all([
         supabase
           .from("clientes")
@@ -140,6 +131,11 @@ function Dashboard() {
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "eventos_conexao" },
+        () => qc.invalidateQueries({ queryKey: ["dashboard"] }),
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "parcelas" },
         () => qc.invalidateQueries({ queryKey: ["dashboard"] }),
       )
       .subscribe();

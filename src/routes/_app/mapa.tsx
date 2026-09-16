@@ -232,7 +232,6 @@ function MapaPage() {
   });
   const roteadoresQ = useQuery({
     queryKey: ["map", "roteadores"],
-    refetchInterval: 30000,
     queryFn: async () => {
       const { data, error } = await db
         .from("roteadores")
@@ -260,6 +259,13 @@ function MapaPage() {
         { event: "UPDATE", schema: "public", table: "clientes" },
         () => {
           clientesQ.refetch();
+        },
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "roteadores" },
+        () => {
+          roteadoresQ.refetch();
         },
       )
       .subscribe();
