@@ -82,10 +82,8 @@ function RoteadoresPage() {
       .channel("roteadores-rt")
       .on("postgres_changes", { event: "*", schema: "public", table: "roteadores" }, () => load())
       .subscribe();
-    const t = setInterval(load, 30000);
     return () => {
       supabase.removeChannel(ch);
-      clearInterval(t);
     };
   }, []);
 

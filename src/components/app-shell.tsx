@@ -14,7 +14,6 @@ import {
   Router as RouterIcon,
   LifeBuoy,
   ImageIcon,
-  Bot,
   ClipboardList,
   DatabaseBackup,
   ChevronLeft,
@@ -27,7 +26,6 @@ import { registrarLogAuth } from "@/lib/logs.functions";
 
 const nav = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/assistente", label: "Assistente IA", icon: Bot },
   { to: "/clientes", label: "Clientes", icon: Users },
   { to: "/mapa", label: "Mapa da Rede", icon: Map },
   { to: "/roteadores", label: "Roteadores", icon: RouterIcon },

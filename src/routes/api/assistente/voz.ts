@@ -11,6 +11,12 @@ export const Route = createFileRoute("/api/assistente/voz")({
         const sessao = await verificarAdmin(request);
         if (!sessao) return new Response("Não autorizado", { status: 401 });
 
+        return new Response(
+          JSON.stringify({ error: "Voz por IA desativada para reduzir o consumo de créditos." }),
+          { status: 503, headers: { "Content-Type": "application/json" } },
+        );
+
+        /* Recurso preservado abaixo para futura reativação consciente.
         const apiKey = process.env["LOVABLE_API_KEY"];
         if (!apiKey) return new Response("LOVABLE_API_KEY não configurada", { status: 500 });
 
@@ -47,6 +53,7 @@ export const Route = createFileRoute("/api/assistente/voz")({
         return new Response(upstream.body, {
           headers: { "Content-Type": "audio/mpeg", "Cache-Control": "no-store" },
         });
+        */
       },
     },
   },
