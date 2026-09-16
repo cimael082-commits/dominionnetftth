@@ -62,6 +62,15 @@ function useDashboard() {
   return useQuery({
     queryKey: ["dashboard"],
     queryFn: async () => {
+      // Preserva a atualização financeira, mas executa apenas ao abrir/recarregar
+      // o dashboard — nunca mais em um ciclo automático de 30 segundos.
+      const today = new Date().toISOString().slice(0, 10);
+      await supabase
+        .from("parcelas")
+        .update({ status: "vencido" })
+        .eq("status", "pendente")
+        .lt("data_vencimento", today);
+
       const [clientes, parcelasMes, eventos] = await Promise.all([
         supabase
           .from("clientes")
