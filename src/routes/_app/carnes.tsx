@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { FileText, Download } from "lucide-react";
+import { FileText, Download, Search } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -22,7 +22,16 @@ import { z } from "zod";
 const searchSchema = z.object({ cliente: z.string().optional() });
 
 export const Route = createFileRoute("/_app/carnes")({
-  head: () => ({ meta: [{ title: "Carnês — Dominion Net" }] }),
+  head: () => ({
+    meta: [
+      { title: "Carnês — Dominion Net" },
+      { name: "description", content: "Emita carnês de clientes com parcelas e QR Code Pix." },
+      { property: "og:title", content: "Carnês — Dominion Net" },
+      { property: "og:description", content: "Emita carnês de clientes com parcelas e QR Code Pix." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   validateSearch: searchSchema,
   component: CarnesPage,
 });
@@ -48,6 +57,7 @@ function CarnesPage() {
     },
   });
 
+  const [filtro, setFiltro] = useState("");
   const [clienteId, setClienteId] = useState<string>(search.cliente ?? "");
   const [parcelas, setParcelas] = useState<number>(12);
   const [valor, setValor] = useState<string>("");
@@ -56,6 +66,13 @@ function CarnesPage() {
     d.setMonth(d.getMonth() + 1);
     return d.toISOString().slice(0, 10);
   });
+
+  const clientesFiltrados = clientes.data?.filter((cliente) => {
+    const corresponde = cliente.nome
+      .toLocaleLowerCase("pt-BR")
+      .includes(filtro.trim().toLocaleLowerCase("pt-BR"));
+    return corresponde || cliente.id === clienteId;
+  }) ?? [];
 
   useEffect(() => {
     if (clienteId && clientes.data) {
@@ -84,8 +101,6 @@ function CarnesPage() {
       type ParcelaInsert = import("@/integrations/supabase/types").TablesInsert<"parcelas">;
       const insertRows: ParcelaInsert[] = [];
       for (let i = 0; i < parcelas; i++) {
-        // Somar meses via ano/mês evita o "estouro" do Date (31/01 + 1 mês = 03/03),
-        // que fazia meses de referência repetidos no carnê.
         const alvoMes = dataInicio.getMonth() + i;
         const ano = dataInicio.getFullYear() + Math.floor(alvoMes / 12);
         const mes = ((alvoMes % 12) + 12) % 12;
@@ -107,11 +122,9 @@ function CarnesPage() {
         });
       }
 
-      // Salvar parcelas no banco
       const { error } = await supabase.from("parcelas").insert(insertRows);
       if (error) throw error;
 
-      // Gerar PDF
       const blob = await gerarCarnePDF({
         cliente: {
           nome: cliente.nome,
@@ -159,15 +172,34 @@ function CarnesPage() {
 
       <Card className="p-6 space-y-5">
         <div className="space-y-2">
-          <Label>Cliente *</Label>
-          <Select value={clienteId} onValueChange={setClienteId}>
-            <SelectTrigger><SelectValue placeholder="Selecione o cliente" /></SelectTrigger>
-            <SelectContent>
-              {clientes.data?.map((c) => (
-                <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <Label htmlFor="pesquisar-cliente">Pesquisar cliente por nome</Label>
+          <div className="space-y-2">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                id="pesquisar-cliente"
+                placeholder="Digite o nome do cliente"
+                value={filtro}
+                onChange={(event) => setFiltro(event.target.value)}
+                className="pl-9"
+                autoComplete="off"
+              />
+            </div>
+            <Label>Cliente *</Label>
+            <Select value={clienteId} onValueChange={setClienteId}>
+              <SelectTrigger><SelectValue placeholder="Selecione o cliente" /></SelectTrigger>
+              <SelectContent>
+                {clientesFiltrados.length > 0 ? (
+                  clientesFiltrados.map((c) => (
+                    <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>
+                  ))
+                ) : null}
+              </SelectContent>
+            </Select>
+            {filtro.trim() && clientesFiltrados.length === 0 ? (
+              <p className="text-sm text-muted-foreground">Nenhum cliente encontrado.</p>
+            ) : null}
+          </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
