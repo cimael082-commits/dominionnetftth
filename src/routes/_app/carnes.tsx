@@ -48,6 +48,8 @@ function CarnesPage() {
     },
   });
 
+  const [filtro, setFiltro] = useState("");
+  const clientesFiltrados = clientes.data?.filter(c => c.nome.toLowerCase().includes(filtro.toLowerCase())) ?? [];
   const [clienteId, setClienteId] = useState<string>(search.cliente ?? "");
   const [parcelas, setParcelas] = useState<number>(12);
   const [valor, setValor] = useState<string>("");
@@ -158,12 +160,13 @@ function CarnesPage() {
       </header>
 
       <Card className="p-6 space-y-5">
+          <Input placeholder="Filtrar por nome..." value={filtro} onChange={(e) => setFiltro(e.target.value)} className="h-9 mb-2" />
         <div className="space-y-2">
           <Label>Cliente *</Label>
           <Select value={clienteId} onValueChange={setClienteId}>
             <SelectTrigger><SelectValue placeholder="Selecione o cliente" /></SelectTrigger>
             <SelectContent>
-              {clientes.data?.map((c) => (
+              {clientesFiltrados.map((c) => (
                 <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>
               ))}
             </SelectContent>
