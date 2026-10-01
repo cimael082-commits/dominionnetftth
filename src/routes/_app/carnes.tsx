@@ -49,7 +49,6 @@ function CarnesPage() {
   });
 
   const [filtro, setFiltro] = useState("");
-  const clientesFiltrados = clientes.data?.filter(c => c.nome.toLowerCase().includes(filtro.toLowerCase())) ?? [];
   const [clienteId, setClienteId] = useState<string>(search.cliente ?? "");
   const [parcelas, setParcelas] = useState<number>(12);
   const [valor, setValor] = useState<string>("");
@@ -58,6 +57,10 @@ function CarnesPage() {
     d.setMonth(d.getMonth() + 1);
     return d.toISOString().slice(0, 10);
   });
+
+  const clientesFiltrados = clientes.data?.filter(c => 
+    c.nome.toLowerCase().includes(filtro.toLowerCase())
+  ) ?? [];
 
   useEffect(() => {
     if (clienteId && clientes.data) {
@@ -86,8 +89,6 @@ function CarnesPage() {
       type ParcelaInsert = import("@/integrations/supabase/types").TablesInsert<"parcelas">;
       const insertRows: ParcelaInsert[] = [];
       for (let i = 0; i < parcelas; i++) {
-        // Somar meses via ano/mês evita o "estouro" do Date (31/01 + 1 mês = 03/03),
-        // que fazia meses de referência repetidos no carnê.
         const alvoMes = dataInicio.getMonth() + i;
         const ano = dataInicio.getFullYear() + Math.floor(alvoMes / 12);
         const mes = ((alvoMes % 12) + 12) % 12;
@@ -109,11 +110,9 @@ function CarnesPage() {
         });
       }
 
-      // Salvar parcelas no banco
       const { error } = await supabase.from("parcelas").insert(insertRows);
       if (error) throw error;
 
-      // Gerar PDF
       const blob = await gerarCarnePDF({
         cliente: {
           nome: cliente.nome,
@@ -160,17 +159,28 @@ function CarnesPage() {
       </header>
 
       <Card className="p-6 space-y-5">
-          <Input placeholder="Filtrar por nome..." value={filtro} onChange={(e) => setFiltro(e.target.value)} className="h-9 mb-2" />
         <div className="space-y-2">
           <Label>Cliente *</Label>
-          <Select value={clienteId} onValueChange={setClienteId}>
-            <SelectTrigger><SelectValue placeholder="Selecione o cliente" /></SelectTrigger>
-            <SelectContent>
-              {clientesFiltrados.map((c) => (
-                <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div className="space-y-2">
+            <Input 
+              placeholder="Buscar cliente por nome..." 
+              value={filtro} 
+              onChange={(e) => setFiltro(e.target.value)} 
+              className="h-9"
+            />
+            <Select value={clienteId} onValueChange={setClienteId}>
+              <SelectTrigger><SelectValue placeholder="Selecione o cliente" /></SelectTrigger>
+              <SelectContent>
+                {clientesFiltrados.length > 0 ? (
+                  clientesFiltrados.map((c) => (
+                    <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>
+                  ))
+                ) : (
+                  <div className="p-2 text-sm text-muted-foreground text-center">Nenhum cliente encontrado</div>
+                )}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
