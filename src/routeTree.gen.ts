@@ -9,145 +9,70 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as AppRouteImport } from './routes/_app'
-import { Route as AreaRouteImport } from './routes/_area'
 import { Route as AuthRouteImport } from './routes/auth'
-import { Route as AppAssistenteRouteImport } from './routes/_app/assistente'
-import { Route as AppAvisosRouteImport } from './routes/_app/avisos'
-import { Route as AppBackupRouteImport } from './routes/_app/backup'
-import { Route as AppBannersRouteImport } from './routes/_app/banners'
-import { Route as AppCarnesRouteImport } from './routes/_app/carnes'
-import { Route as AppChamadosRouteImport } from './routes/_app/chamados'
-import { Route as AppClientesRouteImport } from './routes/_app/clientes'
-import { Route as AppConfiguracoesRouteImport } from './routes/_app/configuracoes'
-import { Route as AppDashboardRouteImport } from './routes/_app/dashboard'
-import { Route as AppFinanceiroRouteImport } from './routes/_app/financeiro'
-import { Route as AppLogsRouteImport } from './routes/_app/logs'
-import { Route as AppMapaRouteImport } from './routes/_app/mapa'
-import { Route as AppPesquisaRouteImport } from './routes/_app/pesquisa'
-import { Route as AppRoteadoresRouteImport } from './routes/_app/roteadores'
-import { Route as ClienteLoginRouteImport } from './routes/cliente.login'
+import { Route as AreaRouteImport } from './routes/_area'
+import { Route as AppRouteImport } from './routes/_app'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as CtoTokenRouteImport } from './routes/cto.$token'
-import { Route as AppClientesIdRouteImport } from './routes/_app/clientes.$id'
+import { Route as ClienteLoginRouteImport } from './routes/cliente.login'
+import { Route as AppRoteadoresRouteImport } from './routes/_app/roteadores'
+import { Route as AppPesquisaRouteImport } from './routes/_app/pesquisa'
+import { Route as AppMapaRouteImport } from './routes/_app/mapa'
+import { Route as AppLogsRouteImport } from './routes/_app/logs'
+import { Route as AppFinanceiroRouteImport } from './routes/_app/financeiro'
+import { Route as AppDashboardRouteImport } from './routes/_app/dashboard'
+import { Route as AppConfiguracoesRouteImport } from './routes/_app/configuracoes'
+import { Route as AppClientesRouteImport } from './routes/_app/clientes'
+import { Route as AppChamadosRouteImport } from './routes/_app/chamados'
+import { Route as AppCarnesRouteImport } from './routes/_app/carnes'
+import { Route as AppBannersRouteImport } from './routes/_app/banners'
+import { Route as AppBackupRouteImport } from './routes/_app/backup'
+import { Route as AppAvisosRouteImport } from './routes/_app/avisos'
+import { Route as AppAssistenteRouteImport } from './routes/_app/assistente'
 import { Route as AreaClienteIndexRouteImport } from './routes/_area.cliente.index'
-import { Route as AreaClienteAvisosRouteImport } from './routes/_area.cliente.avisos'
-import { Route as AreaClienteChamadosRouteImport } from './routes/_area.cliente.chamados'
-import { Route as AreaClienteConexaoRouteImport } from './routes/_area.cliente.conexao'
-import { Route as AreaClienteFinanceiroRouteImport } from './routes/_area.cliente.financeiro'
-import { Route as AreaClienteIndiqueRouteImport } from './routes/_area.cliente.indique'
-import { Route as AreaClienteNotificacoesRouteImport } from './routes/_area.cliente.notificacoes'
-import { Route as AreaClientePerfilRouteImport } from './routes/_area.cliente.perfil'
-import { Route as AreaClientePlanoRouteImport } from './routes/_area.cliente.plano'
-import { Route as AreaClienteTesteInternetRouteImport } from './routes/_area.cliente.teste-internet'
-import { Route as AreaClienteWifiRouteImport } from './routes/_area.cliente.wifi'
-import { Route as ApiAssistenteChatRouteImport } from './routes/api/assistente/chat'
-import { Route as ApiAssistenteTranscreverRouteImport } from './routes/api/assistente/transcrever'
 import { Route as ApiAssistenteVozRouteImport } from './routes/api/assistente/voz'
-import { Route as ApiPublicClienteAvisosRouteImport } from './routes/api/public/cliente/avisos'
-import { Route as ApiPublicClienteBannersRouteImport } from './routes/api/public/cliente/banners'
-import { Route as ApiPublicClienteChamadosRouteImport } from './routes/api/public/cliente/chamados'
-import { Route as ApiPublicClienteFinanceiroRouteImport } from './routes/api/public/cliente/financeiro'
-import { Route as ApiPublicClienteIndicacoesRouteImport } from './routes/api/public/cliente/indicacoes'
-import { Route as ApiPublicClienteMeRouteImport } from './routes/api/public/cliente/me'
-import { Route as ApiPublicClienteNotificacoesRouteImport } from './routes/api/public/cliente/notificacoes'
-import { Route as ApiPublicClientePortalRouteImport } from './routes/api/public/cliente/portal'
-import { Route as ApiPublicCtoTokenRouteImport } from './routes/api/public/cto/$token'
-import { Route as ApiPublicMikrotikStatusRouteImport } from './routes/api/public/mikrotik/status'
+import { Route as ApiAssistenteTranscreverRouteImport } from './routes/api/assistente/transcrever'
+import { Route as ApiAssistenteChatRouteImport } from './routes/api/assistente/chat'
+import { Route as AreaClienteWifiRouteImport } from './routes/_area.cliente.wifi'
+import { Route as AreaClienteTesteInternetRouteImport } from './routes/_area.cliente.teste-internet'
+import { Route as AreaClientePlanoRouteImport } from './routes/_area.cliente.plano'
+import { Route as AreaClientePerfilRouteImport } from './routes/_area.cliente.perfil'
+import { Route as AreaClienteNotificacoesRouteImport } from './routes/_area.cliente.notificacoes'
+import { Route as AreaClienteIndiqueRouteImport } from './routes/_area.cliente.indique'
+import { Route as AreaClienteFinanceiroRouteImport } from './routes/_area.cliente.financeiro'
+import { Route as AreaClienteConexaoRouteImport } from './routes/_area.cliente.conexao'
+import { Route as AreaClienteChamadosRouteImport } from './routes/_area.cliente.chamados'
+import { Route as AreaClienteAvisosRouteImport } from './routes/_area.cliente.avisos'
+import { Route as AppClientesIdRouteImport } from './routes/_app/clientes.$id'
 import { Route as ApiPublicMikrotikSyncRouteImport } from './routes/api/public/mikrotik/sync'
+import { Route as ApiPublicMikrotikStatusRouteImport } from './routes/api/public/mikrotik/status'
+import { Route as ApiPublicCtoTokenRouteImport } from './routes/api/public/cto/$token'
+import { Route as ApiPublicClientePortalRouteImport } from './routes/api/public/cliente/portal'
+import { Route as ApiPublicClienteNotificacoesRouteImport } from './routes/api/public/cliente/notificacoes'
+import { Route as ApiPublicClienteMeRouteImport } from './routes/api/public/cliente/me'
+import { Route as ApiPublicClienteIndicacoesRouteImport } from './routes/api/public/cliente/indicacoes'
+import { Route as ApiPublicClienteFinanceiroRouteImport } from './routes/api/public/cliente/financeiro'
+import { Route as ApiPublicClienteChamadosRouteImport } from './routes/api/public/cliente/chamados'
+import { Route as ApiPublicClienteBannersRouteImport } from './routes/api/public/cliente/banners'
+import { Route as ApiPublicClienteAvisosRouteImport } from './routes/api/public/cliente/avisos'
 import { Route as ApiPublicClienteAuthLoginRouteImport } from './routes/api/public/cliente/auth/login'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AppRoute = AppRouteImport.update({
-  id: '/_app',
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AreaRoute = AreaRouteImport.update({
   id: '/_area',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthRoute = AuthRouteImport.update({
-  id: '/auth',
-  path: '/auth',
+const AppRoute = AppRouteImport.update({
+  id: '/_app',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AppAssistenteRoute = AppAssistenteRouteImport.update({
-  id: '/assistente',
-  path: '/assistente',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppAvisosRoute = AppAvisosRouteImport.update({
-  id: '/avisos',
-  path: '/avisos',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppBackupRoute = AppBackupRouteImport.update({
-  id: '/backup',
-  path: '/backup',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppBannersRoute = AppBannersRouteImport.update({
-  id: '/banners',
-  path: '/banners',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppCarnesRoute = AppCarnesRouteImport.update({
-  id: '/carnes',
-  path: '/carnes',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppChamadosRoute = AppChamadosRouteImport.update({
-  id: '/chamados',
-  path: '/chamados',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppClientesRoute = AppClientesRouteImport.update({
-  id: '/clientes',
-  path: '/clientes',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppConfiguracoesRoute = AppConfiguracoesRouteImport.update({
-  id: '/configuracoes',
-  path: '/configuracoes',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppDashboardRoute = AppDashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppFinanceiroRoute = AppFinanceiroRouteImport.update({
-  id: '/financeiro',
-  path: '/financeiro',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppLogsRoute = AppLogsRouteImport.update({
-  id: '/logs',
-  path: '/logs',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppMapaRoute = AppMapaRouteImport.update({
-  id: '/mapa',
-  path: '/mapa',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppPesquisaRoute = AppPesquisaRouteImport.update({
-  id: '/pesquisa',
-  path: '/pesquisa',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppRoteadoresRoute = AppRoteadoresRouteImport.update({
-  id: '/roteadores',
-  path: '/roteadores',
-  getParentRoute: () => AppRoute,
-} as any)
-const ClienteLoginRoute = ClienteLoginRouteImport.update({
-  id: '/cliente/login',
-  path: '/cliente/login',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CtoTokenRoute = CtoTokenRouteImport.update({
@@ -155,70 +80,89 @@ const CtoTokenRoute = CtoTokenRouteImport.update({
   path: '/cto/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AppClientesIdRoute = AppClientesIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => AppClientesRoute,
+const ClienteLoginRoute = ClienteLoginRouteImport.update({
+  id: '/cliente/login',
+  path: '/cliente/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppRoteadoresRoute = AppRoteadoresRouteImport.update({
+  id: '/roteadores',
+  path: '/roteadores',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPesquisaRoute = AppPesquisaRouteImport.update({
+  id: '/pesquisa',
+  path: '/pesquisa',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppMapaRoute = AppMapaRouteImport.update({
+  id: '/mapa',
+  path: '/mapa',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppLogsRoute = AppLogsRouteImport.update({
+  id: '/logs',
+  path: '/logs',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppFinanceiroRoute = AppFinanceiroRouteImport.update({
+  id: '/financeiro',
+  path: '/financeiro',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppDashboardRoute = AppDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppConfiguracoesRoute = AppConfiguracoesRouteImport.update({
+  id: '/configuracoes',
+  path: '/configuracoes',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppClientesRoute = AppClientesRouteImport.update({
+  id: '/clientes',
+  path: '/clientes',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppChamadosRoute = AppChamadosRouteImport.update({
+  id: '/chamados',
+  path: '/chamados',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCarnesRoute = AppCarnesRouteImport.update({
+  id: '/carnes',
+  path: '/carnes',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppBannersRoute = AppBannersRouteImport.update({
+  id: '/banners',
+  path: '/banners',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppBackupRoute = AppBackupRouteImport.update({
+  id: '/backup',
+  path: '/backup',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAvisosRoute = AppAvisosRouteImport.update({
+  id: '/avisos',
+  path: '/avisos',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAssistenteRoute = AppAssistenteRouteImport.update({
+  id: '/assistente',
+  path: '/assistente',
+  getParentRoute: () => AppRoute,
 } as any)
 const AreaClienteIndexRoute = AreaClienteIndexRouteImport.update({
   id: '/cliente/',
   path: '/cliente/',
   getParentRoute: () => AreaRoute,
 } as any)
-const AreaClienteAvisosRoute = AreaClienteAvisosRouteImport.update({
-  id: '/cliente/avisos',
-  path: '/cliente/avisos',
-  getParentRoute: () => AreaRoute,
-} as any)
-const AreaClienteChamadosRoute = AreaClienteChamadosRouteImport.update({
-  id: '/cliente/chamados',
-  path: '/cliente/chamados',
-  getParentRoute: () => AreaRoute,
-} as any)
-const AreaClienteConexaoRoute = AreaClienteConexaoRouteImport.update({
-  id: '/cliente/conexao',
-  path: '/cliente/conexao',
-  getParentRoute: () => AreaRoute,
-} as any)
-const AreaClienteFinanceiroRoute = AreaClienteFinanceiroRouteImport.update({
-  id: '/cliente/financeiro',
-  path: '/cliente/financeiro',
-  getParentRoute: () => AreaRoute,
-} as any)
-const AreaClienteIndiqueRoute = AreaClienteIndiqueRouteImport.update({
-  id: '/cliente/indique',
-  path: '/cliente/indique',
-  getParentRoute: () => AreaRoute,
-} as any)
-const AreaClienteNotificacoesRoute = AreaClienteNotificacoesRouteImport.update({
-  id: '/cliente/notificacoes',
-  path: '/cliente/notificacoes',
-  getParentRoute: () => AreaRoute,
-} as any)
-const AreaClientePerfilRoute = AreaClientePerfilRouteImport.update({
-  id: '/cliente/perfil',
-  path: '/cliente/perfil',
-  getParentRoute: () => AreaRoute,
-} as any)
-const AreaClientePlanoRoute = AreaClientePlanoRouteImport.update({
-  id: '/cliente/plano',
-  path: '/cliente/plano',
-  getParentRoute: () => AreaRoute,
-} as any)
-const AreaClienteTesteInternetRoute =
-  AreaClienteTesteInternetRouteImport.update({
-    id: '/cliente/teste-internet',
-    path: '/cliente/teste-internet',
-    getParentRoute: () => AreaRoute,
-  } as any)
-const AreaClienteWifiRoute = AreaClienteWifiRouteImport.update({
-  id: '/cliente/wifi',
-  path: '/cliente/wifi',
-  getParentRoute: () => AreaRoute,
-} as any)
-const ApiAssistenteChatRoute = ApiAssistenteChatRouteImport.update({
-  id: '/api/assistente/chat',
-  path: '/api/assistente/chat',
+const ApiAssistenteVozRoute = ApiAssistenteVozRouteImport.update({
+  id: '/api/assistente/voz',
+  path: '/api/assistente/voz',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAssistenteTranscreverRoute =
@@ -227,42 +171,85 @@ const ApiAssistenteTranscreverRoute =
     path: '/api/assistente/transcrever',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiAssistenteVozRoute = ApiAssistenteVozRouteImport.update({
-  id: '/api/assistente/voz',
-  path: '/api/assistente/voz',
+const ApiAssistenteChatRoute = ApiAssistenteChatRouteImport.update({
+  id: '/api/assistente/chat',
+  path: '/api/assistente/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicClienteAvisosRoute = ApiPublicClienteAvisosRouteImport.update({
-  id: '/api/public/cliente/avisos',
-  path: '/api/public/cliente/avisos',
+const AreaClienteWifiRoute = AreaClienteWifiRouteImport.update({
+  id: '/cliente/wifi',
+  path: '/cliente/wifi',
+  getParentRoute: () => AreaRoute,
+} as any)
+const AreaClienteTesteInternetRoute =
+  AreaClienteTesteInternetRouteImport.update({
+    id: '/cliente/teste-internet',
+    path: '/cliente/teste-internet',
+    getParentRoute: () => AreaRoute,
+  } as any)
+const AreaClientePlanoRoute = AreaClientePlanoRouteImport.update({
+  id: '/cliente/plano',
+  path: '/cliente/plano',
+  getParentRoute: () => AreaRoute,
+} as any)
+const AreaClientePerfilRoute = AreaClientePerfilRouteImport.update({
+  id: '/cliente/perfil',
+  path: '/cliente/perfil',
+  getParentRoute: () => AreaRoute,
+} as any)
+const AreaClienteNotificacoesRoute = AreaClienteNotificacoesRouteImport.update({
+  id: '/cliente/notificacoes',
+  path: '/cliente/notificacoes',
+  getParentRoute: () => AreaRoute,
+} as any)
+const AreaClienteIndiqueRoute = AreaClienteIndiqueRouteImport.update({
+  id: '/cliente/indique',
+  path: '/cliente/indique',
+  getParentRoute: () => AreaRoute,
+} as any)
+const AreaClienteFinanceiroRoute = AreaClienteFinanceiroRouteImport.update({
+  id: '/cliente/financeiro',
+  path: '/cliente/financeiro',
+  getParentRoute: () => AreaRoute,
+} as any)
+const AreaClienteConexaoRoute = AreaClienteConexaoRouteImport.update({
+  id: '/cliente/conexao',
+  path: '/cliente/conexao',
+  getParentRoute: () => AreaRoute,
+} as any)
+const AreaClienteChamadosRoute = AreaClienteChamadosRouteImport.update({
+  id: '/cliente/chamados',
+  path: '/cliente/chamados',
+  getParentRoute: () => AreaRoute,
+} as any)
+const AreaClienteAvisosRoute = AreaClienteAvisosRouteImport.update({
+  id: '/cliente/avisos',
+  path: '/cliente/avisos',
+  getParentRoute: () => AreaRoute,
+} as any)
+const AppClientesIdRoute = AppClientesIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AppClientesRoute,
+} as any)
+const ApiPublicMikrotikSyncRoute = ApiPublicMikrotikSyncRouteImport.update({
+  id: '/api/public/mikrotik/sync',
+  path: '/api/public/mikrotik/sync',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicClienteBannersRoute = ApiPublicClienteBannersRouteImport.update({
-  id: '/api/public/cliente/banners',
-  path: '/api/public/cliente/banners',
+const ApiPublicMikrotikStatusRoute = ApiPublicMikrotikStatusRouteImport.update({
+  id: '/api/public/mikrotik/status',
+  path: '/api/public/mikrotik/status',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicClienteChamadosRoute =
-  ApiPublicClienteChamadosRouteImport.update({
-    id: '/api/public/cliente/chamados',
-    path: '/api/public/cliente/chamados',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicClienteFinanceiroRoute =
-  ApiPublicClienteFinanceiroRouteImport.update({
-    id: '/api/public/cliente/financeiro',
-    path: '/api/public/cliente/financeiro',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicClienteIndicacoesRoute =
-  ApiPublicClienteIndicacoesRouteImport.update({
-    id: '/api/public/cliente/indicacoes',
-    path: '/api/public/cliente/indicacoes',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicClienteMeRoute = ApiPublicClienteMeRouteImport.update({
-  id: '/api/public/cliente/me',
-  path: '/api/public/cliente/me',
+const ApiPublicCtoTokenRoute = ApiPublicCtoTokenRouteImport.update({
+  id: '/api/public/cto/$token',
+  path: '/api/public/cto/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicClientePortalRoute = ApiPublicClientePortalRouteImport.update({
+  id: '/api/public/cliente/portal',
+  path: '/api/public/cliente/portal',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicClienteNotificacoesRoute =
@@ -271,24 +258,37 @@ const ApiPublicClienteNotificacoesRoute =
     path: '/api/public/cliente/notificacoes',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicClientePortalRoute = ApiPublicClientePortalRouteImport.update({
-  id: '/api/public/cliente/portal',
-  path: '/api/public/cliente/portal',
+const ApiPublicClienteMeRoute = ApiPublicClienteMeRouteImport.update({
+  id: '/api/public/cliente/me',
+  path: '/api/public/cliente/me',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicCtoTokenRoute = ApiPublicCtoTokenRouteImport.update({
-  id: '/api/public/cto/$token',
-  path: '/api/public/cto/$token',
+const ApiPublicClienteIndicacoesRoute =
+  ApiPublicClienteIndicacoesRouteImport.update({
+    id: '/api/public/cliente/indicacoes',
+    path: '/api/public/cliente/indicacoes',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicClienteFinanceiroRoute =
+  ApiPublicClienteFinanceiroRouteImport.update({
+    id: '/api/public/cliente/financeiro',
+    path: '/api/public/cliente/financeiro',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicClienteChamadosRoute =
+  ApiPublicClienteChamadosRouteImport.update({
+    id: '/api/public/cliente/chamados',
+    path: '/api/public/cliente/chamados',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicClienteBannersRoute = ApiPublicClienteBannersRouteImport.update({
+  id: '/api/public/cliente/banners',
+  path: '/api/public/cliente/banners',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicMikrotikStatusRoute = ApiPublicMikrotikStatusRouteImport.update({
-  id: '/api/public/mikrotik/status',
-  path: '/api/public/mikrotik/status',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicMikrotikSyncRoute = ApiPublicMikrotikSyncRouteImport.update({
-  id: '/api/public/mikrotik/sync',
-  path: '/api/public/mikrotik/sync',
+const ApiPublicClienteAvisosRoute = ApiPublicClienteAvisosRouteImport.update({
+  id: '/api/public/cliente/avisos',
+  path: '/api/public/cliente/avisos',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicClienteAuthLoginRoute =
@@ -614,18 +614,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_app': {
-      id: '/_app'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof AppRouteImport
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_area': {
@@ -635,116 +628,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AreaRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
+    '/_app': {
+      id: '/_app'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AppRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_app/assistente': {
-      id: '/_app/assistente'
-      path: '/assistente'
-      fullPath: '/assistente'
-      preLoaderRoute: typeof AppAssistenteRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/avisos': {
-      id: '/_app/avisos'
-      path: '/avisos'
-      fullPath: '/avisos'
-      preLoaderRoute: typeof AppAvisosRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/backup': {
-      id: '/_app/backup'
-      path: '/backup'
-      fullPath: '/backup'
-      preLoaderRoute: typeof AppBackupRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/banners': {
-      id: '/_app/banners'
-      path: '/banners'
-      fullPath: '/banners'
-      preLoaderRoute: typeof AppBannersRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/carnes': {
-      id: '/_app/carnes'
-      path: '/carnes'
-      fullPath: '/carnes'
-      preLoaderRoute: typeof AppCarnesRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/chamados': {
-      id: '/_app/chamados'
-      path: '/chamados'
-      fullPath: '/chamados'
-      preLoaderRoute: typeof AppChamadosRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/clientes': {
-      id: '/_app/clientes'
-      path: '/clientes'
-      fullPath: '/clientes'
-      preLoaderRoute: typeof AppClientesRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/configuracoes': {
-      id: '/_app/configuracoes'
-      path: '/configuracoes'
-      fullPath: '/configuracoes'
-      preLoaderRoute: typeof AppConfiguracoesRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/dashboard': {
-      id: '/_app/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof AppDashboardRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/financeiro': {
-      id: '/_app/financeiro'
-      path: '/financeiro'
-      fullPath: '/financeiro'
-      preLoaderRoute: typeof AppFinanceiroRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/logs': {
-      id: '/_app/logs'
-      path: '/logs'
-      fullPath: '/logs'
-      preLoaderRoute: typeof AppLogsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/mapa': {
-      id: '/_app/mapa'
-      path: '/mapa'
-      fullPath: '/mapa'
-      preLoaderRoute: typeof AppMapaRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/pesquisa': {
-      id: '/_app/pesquisa'
-      path: '/pesquisa'
-      fullPath: '/pesquisa'
-      preLoaderRoute: typeof AppPesquisaRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/roteadores': {
-      id: '/_app/roteadores'
-      path: '/roteadores'
-      fullPath: '/roteadores'
-      preLoaderRoute: typeof AppRoteadoresRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/cliente/login': {
-      id: '/cliente/login'
-      path: '/cliente/login'
-      fullPath: '/cliente/login'
-      preLoaderRoute: typeof ClienteLoginRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/cto/$token': {
@@ -754,12 +649,110 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CtoTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_app/clientes/$id': {
-      id: '/_app/clientes/$id'
-      path: '/$id'
-      fullPath: '/clientes/$id'
-      preLoaderRoute: typeof AppClientesIdRouteImport
-      parentRoute: typeof AppClientesRoute
+    '/cliente/login': {
+      id: '/cliente/login'
+      path: '/cliente/login'
+      fullPath: '/cliente/login'
+      preLoaderRoute: typeof ClienteLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_app/roteadores': {
+      id: '/_app/roteadores'
+      path: '/roteadores'
+      fullPath: '/roteadores'
+      preLoaderRoute: typeof AppRoteadoresRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/pesquisa': {
+      id: '/_app/pesquisa'
+      path: '/pesquisa'
+      fullPath: '/pesquisa'
+      preLoaderRoute: typeof AppPesquisaRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/mapa': {
+      id: '/_app/mapa'
+      path: '/mapa'
+      fullPath: '/mapa'
+      preLoaderRoute: typeof AppMapaRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/logs': {
+      id: '/_app/logs'
+      path: '/logs'
+      fullPath: '/logs'
+      preLoaderRoute: typeof AppLogsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/financeiro': {
+      id: '/_app/financeiro'
+      path: '/financeiro'
+      fullPath: '/financeiro'
+      preLoaderRoute: typeof AppFinanceiroRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/dashboard': {
+      id: '/_app/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AppDashboardRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/configuracoes': {
+      id: '/_app/configuracoes'
+      path: '/configuracoes'
+      fullPath: '/configuracoes'
+      preLoaderRoute: typeof AppConfiguracoesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/clientes': {
+      id: '/_app/clientes'
+      path: '/clientes'
+      fullPath: '/clientes'
+      preLoaderRoute: typeof AppClientesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/chamados': {
+      id: '/_app/chamados'
+      path: '/chamados'
+      fullPath: '/chamados'
+      preLoaderRoute: typeof AppChamadosRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/carnes': {
+      id: '/_app/carnes'
+      path: '/carnes'
+      fullPath: '/carnes'
+      preLoaderRoute: typeof AppCarnesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/banners': {
+      id: '/_app/banners'
+      path: '/banners'
+      fullPath: '/banners'
+      preLoaderRoute: typeof AppBannersRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/backup': {
+      id: '/_app/backup'
+      path: '/backup'
+      fullPath: '/backup'
+      preLoaderRoute: typeof AppBackupRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/avisos': {
+      id: '/_app/avisos'
+      path: '/avisos'
+      fullPath: '/avisos'
+      preLoaderRoute: typeof AppAvisosRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/assistente': {
+      id: '/_app/assistente'
+      path: '/assistente'
+      fullPath: '/assistente'
+      preLoaderRoute: typeof AppAssistenteRouteImport
+      parentRoute: typeof AppRoute
     }
     '/_area/cliente/': {
       id: '/_area/cliente/'
@@ -768,81 +761,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AreaClienteIndexRouteImport
       parentRoute: typeof AreaRoute
     }
-    '/_area/cliente/avisos': {
-      id: '/_area/cliente/avisos'
-      path: '/cliente/avisos'
-      fullPath: '/cliente/avisos'
-      preLoaderRoute: typeof AreaClienteAvisosRouteImport
-      parentRoute: typeof AreaRoute
-    }
-    '/_area/cliente/chamados': {
-      id: '/_area/cliente/chamados'
-      path: '/cliente/chamados'
-      fullPath: '/cliente/chamados'
-      preLoaderRoute: typeof AreaClienteChamadosRouteImport
-      parentRoute: typeof AreaRoute
-    }
-    '/_area/cliente/conexao': {
-      id: '/_area/cliente/conexao'
-      path: '/cliente/conexao'
-      fullPath: '/cliente/conexao'
-      preLoaderRoute: typeof AreaClienteConexaoRouteImport
-      parentRoute: typeof AreaRoute
-    }
-    '/_area/cliente/financeiro': {
-      id: '/_area/cliente/financeiro'
-      path: '/cliente/financeiro'
-      fullPath: '/cliente/financeiro'
-      preLoaderRoute: typeof AreaClienteFinanceiroRouteImport
-      parentRoute: typeof AreaRoute
-    }
-    '/_area/cliente/indique': {
-      id: '/_area/cliente/indique'
-      path: '/cliente/indique'
-      fullPath: '/cliente/indique'
-      preLoaderRoute: typeof AreaClienteIndiqueRouteImport
-      parentRoute: typeof AreaRoute
-    }
-    '/_area/cliente/notificacoes': {
-      id: '/_area/cliente/notificacoes'
-      path: '/cliente/notificacoes'
-      fullPath: '/cliente/notificacoes'
-      preLoaderRoute: typeof AreaClienteNotificacoesRouteImport
-      parentRoute: typeof AreaRoute
-    }
-    '/_area/cliente/perfil': {
-      id: '/_area/cliente/perfil'
-      path: '/cliente/perfil'
-      fullPath: '/cliente/perfil'
-      preLoaderRoute: typeof AreaClientePerfilRouteImport
-      parentRoute: typeof AreaRoute
-    }
-    '/_area/cliente/plano': {
-      id: '/_area/cliente/plano'
-      path: '/cliente/plano'
-      fullPath: '/cliente/plano'
-      preLoaderRoute: typeof AreaClientePlanoRouteImport
-      parentRoute: typeof AreaRoute
-    }
-    '/_area/cliente/teste-internet': {
-      id: '/_area/cliente/teste-internet'
-      path: '/cliente/teste-internet'
-      fullPath: '/cliente/teste-internet'
-      preLoaderRoute: typeof AreaClienteTesteInternetRouteImport
-      parentRoute: typeof AreaRoute
-    }
-    '/_area/cliente/wifi': {
-      id: '/_area/cliente/wifi'
-      path: '/cliente/wifi'
-      fullPath: '/cliente/wifi'
-      preLoaderRoute: typeof AreaClienteWifiRouteImport
-      parentRoute: typeof AreaRoute
-    }
-    '/api/assistente/chat': {
-      id: '/api/assistente/chat'
-      path: '/api/assistente/chat'
-      fullPath: '/api/assistente/chat'
-      preLoaderRoute: typeof ApiAssistenteChatRouteImport
+    '/api/assistente/voz': {
+      id: '/api/assistente/voz'
+      path: '/api/assistente/voz'
+      fullPath: '/api/assistente/voz'
+      preLoaderRoute: typeof ApiAssistenteVozRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/assistente/transcrever': {
@@ -852,74 +775,95 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAssistenteTranscreverRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/assistente/voz': {
-      id: '/api/assistente/voz'
-      path: '/api/assistente/voz'
-      fullPath: '/api/assistente/voz'
-      preLoaderRoute: typeof ApiAssistenteVozRouteImport
+    '/api/assistente/chat': {
+      id: '/api/assistente/chat'
+      path: '/api/assistente/chat'
+      fullPath: '/api/assistente/chat'
+      preLoaderRoute: typeof ApiAssistenteChatRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/cliente/avisos': {
-      id: '/api/public/cliente/avisos'
-      path: '/api/public/cliente/avisos'
-      fullPath: '/api/public/cliente/avisos'
-      preLoaderRoute: typeof ApiPublicClienteAvisosRouteImport
-      parentRoute: typeof rootRouteImport
+    '/_area/cliente/wifi': {
+      id: '/_area/cliente/wifi'
+      path: '/cliente/wifi'
+      fullPath: '/cliente/wifi'
+      preLoaderRoute: typeof AreaClienteWifiRouteImport
+      parentRoute: typeof AreaRoute
     }
-    '/api/public/cliente/banners': {
-      id: '/api/public/cliente/banners'
-      path: '/api/public/cliente/banners'
-      fullPath: '/api/public/cliente/banners'
-      preLoaderRoute: typeof ApiPublicClienteBannersRouteImport
-      parentRoute: typeof rootRouteImport
+    '/_area/cliente/teste-internet': {
+      id: '/_area/cliente/teste-internet'
+      path: '/cliente/teste-internet'
+      fullPath: '/cliente/teste-internet'
+      preLoaderRoute: typeof AreaClienteTesteInternetRouteImport
+      parentRoute: typeof AreaRoute
     }
-    '/api/public/cliente/chamados': {
-      id: '/api/public/cliente/chamados'
-      path: '/api/public/cliente/chamados'
-      fullPath: '/api/public/cliente/chamados'
-      preLoaderRoute: typeof ApiPublicClienteChamadosRouteImport
-      parentRoute: typeof rootRouteImport
+    '/_area/cliente/plano': {
+      id: '/_area/cliente/plano'
+      path: '/cliente/plano'
+      fullPath: '/cliente/plano'
+      preLoaderRoute: typeof AreaClientePlanoRouteImport
+      parentRoute: typeof AreaRoute
     }
-    '/api/public/cliente/financeiro': {
-      id: '/api/public/cliente/financeiro'
-      path: '/api/public/cliente/financeiro'
-      fullPath: '/api/public/cliente/financeiro'
-      preLoaderRoute: typeof ApiPublicClienteFinanceiroRouteImport
-      parentRoute: typeof rootRouteImport
+    '/_area/cliente/perfil': {
+      id: '/_area/cliente/perfil'
+      path: '/cliente/perfil'
+      fullPath: '/cliente/perfil'
+      preLoaderRoute: typeof AreaClientePerfilRouteImport
+      parentRoute: typeof AreaRoute
     }
-    '/api/public/cliente/indicacoes': {
-      id: '/api/public/cliente/indicacoes'
-      path: '/api/public/cliente/indicacoes'
-      fullPath: '/api/public/cliente/indicacoes'
-      preLoaderRoute: typeof ApiPublicClienteIndicacoesRouteImport
-      parentRoute: typeof rootRouteImport
+    '/_area/cliente/notificacoes': {
+      id: '/_area/cliente/notificacoes'
+      path: '/cliente/notificacoes'
+      fullPath: '/cliente/notificacoes'
+      preLoaderRoute: typeof AreaClienteNotificacoesRouteImport
+      parentRoute: typeof AreaRoute
     }
-    '/api/public/cliente/me': {
-      id: '/api/public/cliente/me'
-      path: '/api/public/cliente/me'
-      fullPath: '/api/public/cliente/me'
-      preLoaderRoute: typeof ApiPublicClienteMeRouteImport
-      parentRoute: typeof rootRouteImport
+    '/_area/cliente/indique': {
+      id: '/_area/cliente/indique'
+      path: '/cliente/indique'
+      fullPath: '/cliente/indique'
+      preLoaderRoute: typeof AreaClienteIndiqueRouteImport
+      parentRoute: typeof AreaRoute
     }
-    '/api/public/cliente/notificacoes': {
-      id: '/api/public/cliente/notificacoes'
-      path: '/api/public/cliente/notificacoes'
-      fullPath: '/api/public/cliente/notificacoes'
-      preLoaderRoute: typeof ApiPublicClienteNotificacoesRouteImport
-      parentRoute: typeof rootRouteImport
+    '/_area/cliente/financeiro': {
+      id: '/_area/cliente/financeiro'
+      path: '/cliente/financeiro'
+      fullPath: '/cliente/financeiro'
+      preLoaderRoute: typeof AreaClienteFinanceiroRouteImport
+      parentRoute: typeof AreaRoute
     }
-    '/api/public/cliente/portal': {
-      id: '/api/public/cliente/portal'
-      path: '/api/public/cliente/portal'
-      fullPath: '/api/public/cliente/portal'
-      preLoaderRoute: typeof ApiPublicClientePortalRouteImport
-      parentRoute: typeof rootRouteImport
+    '/_area/cliente/conexao': {
+      id: '/_area/cliente/conexao'
+      path: '/cliente/conexao'
+      fullPath: '/cliente/conexao'
+      preLoaderRoute: typeof AreaClienteConexaoRouteImport
+      parentRoute: typeof AreaRoute
     }
-    '/api/public/cto/$token': {
-      id: '/api/public/cto/$token'
-      path: '/api/public/cto/$token'
-      fullPath: '/api/public/cto/$token'
-      preLoaderRoute: typeof ApiPublicCtoTokenRouteImport
+    '/_area/cliente/chamados': {
+      id: '/_area/cliente/chamados'
+      path: '/cliente/chamados'
+      fullPath: '/cliente/chamados'
+      preLoaderRoute: typeof AreaClienteChamadosRouteImport
+      parentRoute: typeof AreaRoute
+    }
+    '/_area/cliente/avisos': {
+      id: '/_area/cliente/avisos'
+      path: '/cliente/avisos'
+      fullPath: '/cliente/avisos'
+      preLoaderRoute: typeof AreaClienteAvisosRouteImport
+      parentRoute: typeof AreaRoute
+    }
+    '/_app/clientes/$id': {
+      id: '/_app/clientes/$id'
+      path: '/$id'
+      fullPath: '/clientes/$id'
+      preLoaderRoute: typeof AppClientesIdRouteImport
+      parentRoute: typeof AppClientesRoute
+    }
+    '/api/public/mikrotik/sync': {
+      id: '/api/public/mikrotik/sync'
+      path: '/api/public/mikrotik/sync'
+      fullPath: '/api/public/mikrotik/sync'
+      preLoaderRoute: typeof ApiPublicMikrotikSyncRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/mikrotik/status': {
@@ -929,11 +873,67 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicMikrotikStatusRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/mikrotik/sync': {
-      id: '/api/public/mikrotik/sync'
-      path: '/api/public/mikrotik/sync'
-      fullPath: '/api/public/mikrotik/sync'
-      preLoaderRoute: typeof ApiPublicMikrotikSyncRouteImport
+    '/api/public/cto/$token': {
+      id: '/api/public/cto/$token'
+      path: '/api/public/cto/$token'
+      fullPath: '/api/public/cto/$token'
+      preLoaderRoute: typeof ApiPublicCtoTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/cliente/portal': {
+      id: '/api/public/cliente/portal'
+      path: '/api/public/cliente/portal'
+      fullPath: '/api/public/cliente/portal'
+      preLoaderRoute: typeof ApiPublicClientePortalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/cliente/notificacoes': {
+      id: '/api/public/cliente/notificacoes'
+      path: '/api/public/cliente/notificacoes'
+      fullPath: '/api/public/cliente/notificacoes'
+      preLoaderRoute: typeof ApiPublicClienteNotificacoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/cliente/me': {
+      id: '/api/public/cliente/me'
+      path: '/api/public/cliente/me'
+      fullPath: '/api/public/cliente/me'
+      preLoaderRoute: typeof ApiPublicClienteMeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/cliente/indicacoes': {
+      id: '/api/public/cliente/indicacoes'
+      path: '/api/public/cliente/indicacoes'
+      fullPath: '/api/public/cliente/indicacoes'
+      preLoaderRoute: typeof ApiPublicClienteIndicacoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/cliente/financeiro': {
+      id: '/api/public/cliente/financeiro'
+      path: '/api/public/cliente/financeiro'
+      fullPath: '/api/public/cliente/financeiro'
+      preLoaderRoute: typeof ApiPublicClienteFinanceiroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/cliente/chamados': {
+      id: '/api/public/cliente/chamados'
+      path: '/api/public/cliente/chamados'
+      fullPath: '/api/public/cliente/chamados'
+      preLoaderRoute: typeof ApiPublicClienteChamadosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/cliente/banners': {
+      id: '/api/public/cliente/banners'
+      path: '/api/public/cliente/banners'
+      fullPath: '/api/public/cliente/banners'
+      preLoaderRoute: typeof ApiPublicClienteBannersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/cliente/avisos': {
+      id: '/api/public/cliente/avisos'
+      path: '/api/public/cliente/avisos'
+      fullPath: '/api/public/cliente/avisos'
+      preLoaderRoute: typeof ApiPublicClienteAvisosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/cliente/auth/login': {
