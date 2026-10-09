@@ -18,7 +18,7 @@ jobs:
           bun-version: latest
       - name: Install dependencies and refresh lockfile
         run: bun install
-      - name: Lint
-        run: bun run lint
       - name: Build production app
         run: bun run build
+      - name: Lint
+        run: bun run lint
