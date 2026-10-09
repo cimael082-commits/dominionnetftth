@@ -1,0 +1,24 @@
+name: Validate migration
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [migration/independent-hosting-audit]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Install dependencies and refresh lockfile
+        run: bun install
+      - name: Lint
+        run: bun run lint
+      - name: Build production app
+        run: bun run build
