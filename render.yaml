@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: dominionnet-ftth
+    runtime: node
+    plan: free
+    buildCommand: bun install && bun run build
+    startCommand: bun run start
+    envVars:
+      - key: NITRO_PRESET
+        value: render-com
+      - key: HOST
+        value: 0.0.0.0
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_PUBLISHABLE_KEY
+        sync: false
+      - key: VITE_SUPABASE_URL
+        sync: false
+      - key: VITE_SUPABASE_PUBLISHABLE_KEY
+        sync: false
+      - key: VITE_GOOGLE_MAPS_BROWSER_KEY
+        sync: false
+      - key: VITE_GOOGLE_MAPS_TRACKING_ID
+        sync: false
