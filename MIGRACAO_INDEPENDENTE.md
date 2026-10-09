@@ -1,34 +1,31 @@
 # Migração independente — Dominion Net FTTH
 
 ## Objetivo
-Preparar o app para ser compilado e hospedado sem depender da plataforma Lovable, preservando o Supabase, login, mapa FTTH/Google Maps e sincronização MikroTik.
+Preparar o Dominion Net FTTH para rodar fora da Lovable, preservando Supabase/login, mapa FTTH e sincronização MikroTik.
 
-## Regras de segurança
-- Trabalhar nesta branch: `migration/independent-hosting-audit`.
-- Não alterar `main` nem mesclar sem compilar e testar.
-- Nunca versionar `.env`, tokens, senhas ou chaves privadas.
-- Chaves Supabase publishable e Google Maps de navegador são expostas ao cliente por natureza; restringir a chave do Maps por domínio e APIs. Nunca usar uma chave Supabase secret/service_role no navegador.
-- Manter endpoints de IA desativados até confirmar que não fazem chamadas ao Lovable AI Gateway.
-- Não alterar esquema nem dados do Supabase sem backup e validação.
+## Proteções
+- Todo o trabalho fica na branch `migration/independent-hosting-audit`; `main` não foi alterada.
+- Não mesclar nem colocar em produção antes de a instalação, o lint, o build e os testes funcionais passarem.
+- Nunca versionar `.env`, senhas ou chaves privadas. O `.env` foi removido somente nesta branch; se continha credenciais reais, rotacione-as no serviço correspondente, pois removê-lo do commit atual não apaga o histórico antigo.
+- Use apenas a chave publicável do Supabase no navegador; nunca use `service_role`/secret no frontend.
+- Restrinja a chave de navegador do Google Maps por domínio e APIs.
 
-## Descobertas iniciais
-- Aplicação React + TypeScript + Vite/TanStack Start.
-- Supabase JS está integrado; existem migrações SQL versionadas.
-- O build ainda importa `@lovable.dev/vite-tanstack-config`.
-- O carregador do Google Maps usa variáveis com prefixo `VITE_LOVABLE_CONNECTOR_`.
-- O cliente Supabase importa armazenamento de sessão específico da prévia Lovable.
-- Há arquivos do gateway de IA Lovable; revisar todas as rotas que os importam antes de removê-los.
-- O arquivo `.env` estava versionado. Foi removido nesta branch e substituído por um modelo vazio `.env.example`; valores existentes não foram copiados.
+## Alterações feitas nesta branch
+- Criado `.env.example` sem valores secretos e atualizado `.gitignore`.
+- Removido o `.env` versionado nesta branch.
+- Removido do cliente Supabase o armazenamento de sessão específico da prévia Lovable.
+- Renomeadas as variáveis do Google Maps para `VITE_GOOGLE_MAPS_BROWSER_KEY` e `VITE_GOOGLE_MAPS_TRACKING_ID`.
+- Substituída a configuração Vite da Lovable por plugins Vite/TanStack Start, Tailwind, React e Nitro.
+- Removida a dependência `@lovable.dev/vite-tanstack-config` do `package.json`; o CI executa `bun install` para atualizar/verificar o lockfile.
+- Adicionado comando de inicialização de produção e workflow do GitHub Actions para lint/build.
+- Criado `render.yaml` como ponto de partida para hospedagem Render. As variáveis de ambiente devem ser preenchidas no painel do serviço, não no GitHub.
 
-## Próximas etapas
-1. Substituir configuração de build da Lovable por configuração Vite/TanStack oficial e validar dependências.
-2. Migrar autenticação para armazenamento padrão do navegador fora da prévia Lovable.
-3. Renomear variáveis do Google Maps e atualizar os usos sem interromper o mapa.
-4. Auditar e manter todas as rotas/endpoints de IA desativados.
-5. Confirmar integração MikroTik, mapa, clientes, caixas/CTOs e histórico.
-6. Rodar instalação limpa, lint e build; corrigir falhas.
-7. Configurar hospedagem independente e variáveis de ambiente fora do repositório.
-8. Só então abrir PR e avaliar deploy. A branch `main` permanece intacta.
+## Ainda precisa validar
+1. Aguardar e corrigir os resultados do GitHub Actions: instalação, lint e build.
+2. Auditar os arquivos/rotas que usam o gateway de IA Lovable e desativá-los com segurança; não declarar IA desligada até concluir essa auditoria.
+3. Testar login, sessão após recarregar, mapa/Google Maps, clientes/CTOs e sincronização MikroTik.
+4. Configurar as variáveis do Supabase e Google Maps no host e testar o deploy em ambiente de teste.
+5. Só depois considerar merge para `main`.
 
-## Status
-Auditoria inicial iniciada. Ainda não afirmar que a migração ou o deploy estão concluídos.
+## Status atual
+A configuração de build e o rascunho de hospedagem foram alterados na branch de migração. Ainda não há confirmação de build bem-sucedido, testes funcionais nem deploy ativo. A PR continua em rascunho e não foi mesclada.
